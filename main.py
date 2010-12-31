@@ -32,7 +32,7 @@ class Tract(db.Model):
 
 def prepare(tract):
     out = {}
-    out['data'] = tract.data
+    out['data'] = json.loads(tract.data) #TODO turn this in to pickle?
     out['tractid'] = tract.tractid
     out['order'] = tract.order
     out['pictures'] = map(cp.loads,tract.picturelist)
