@@ -1,13 +1,17 @@
 import csv
+import shelve
 
 def addone(n):
-    return {1: int(n[0])+1}
+    return {'population': int(n[0])+1}
 default_cols_to_fns = {('B01003_1_EST',): addone}
 
-def process_acs_file(acs_file='test_acs.txt', cols_to_fns_map=default_cols_to_fns, shelf='test.shelf'):
+def process_acs_file(acs_file='test_acs.txt', cols_to_fns_map=default_cols_to_fns, shelf_file='test.shelf'):
 
     #open the file as a CSV with delimiter '|'
     csvfile = csv.reader(open(acs_file, 'rb'), delimiter='|')    
+    
+    #open the shelf
+    shelf = shelve.open(shelf_file)
     
     #store the first row as the column names
     machine_names = csvfile.next()
@@ -16,7 +20,7 @@ def process_acs_file(acs_file='test_acs.txt', cols_to_fns_map=default_cols_to_fn
     human_names = csvfile.next()
         
     #until the end of the file, for each row...
-    for row in csvfile:
+    for i, row in enumerate(csvfile):
 
         #rewrite the row as a dict (key = column, value = value)
         row_dict = {}
@@ -25,9 +29,15 @@ def process_acs_file(acs_file='test_acs.txt', cols_to_fns_map=default_cols_to_fn
                     
         #transform the rowdict, getting back a transformed dict
         transformed_row = transform_row(row_dict, cols_to_fns_map)
+                
+        #shelve it        
+        id = row_dict['GEO_ID2']
+        shelf[id] = transformed_row
         
-        print transformed_row
-        #shelve it
+        if (i != 0) and ((i%100) == 0):
+            shelf.sync()
+            
+    shelf.close()
     
 
 def transform_row(row_dict, cols_to_fns_map):
