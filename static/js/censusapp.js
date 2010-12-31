@@ -1,4 +1,4 @@
-var fetch_url = 'localhost:8080/context';
+var fetch_url = 'http://localhost:8080/context';
 
 $(function() {
 
@@ -142,7 +142,7 @@ $(function() {
             // of the view since it is often run on a 'change' event
             // fired by the Tract model changing, which would otherwise
             // cause it to run in the context of the model
-            _.bindAll(this, 'render');
+            _.bind(this, 'render');
             
             // doubly-linked, can be convenient
             this.model.view = this;
@@ -222,11 +222,14 @@ $(function() {
     _.extend(TractDataManager.prototype, {
         
         initialize: function() {
+            _.bindAll(this, 'lhCallback', 'rhCallback', 'reachLeft', 'reachRight');
             //bind to tract-nav events
-            this.bind('nav:tract-left', this.reachLeft);
-            this.bind('nav:tract-right', this.reachRight);
+            this.ring.bind('nav:tract-left', this.reachLeft);
+            this.ring.bind('nav:tract-right', this.reachRight);
             
-            _.bindAll(this, this.lhCallback, this.rhCallback);
+            console.debug(this);
+           
+            
             
             this.pending = {};
             this.pending.left = this.pending.right = null;
@@ -234,26 +237,26 @@ $(function() {
         },
         
         reachLeft: function() {
-            alert('Reaching left');
             //if this.ring.currentTractIndex is
-            //within this.width of 0
+            //within this.width of 0            
             if (this.ring.currentTractIndex < this.width) {
+                console.debug('reaching left');
                 //if there's no leftwards request pending
                 if (this.pending.left === null) {
                     //get more context to the left, calling back
                     //to lhCallback
                     var getParams = {
                         n: 20,
-                        j: this.ring.first.get('tractid'),
+                        j: this.ring.first().get('tractid'),
                         direction: 'left',
                     };
                     request = $.ajax({
-                                    url: url,
+                                    url: fetch_url,
                                     data: getParams,
                                     type: 'GET',
-                                    success: lhCallback,
+                                    success: this.lhCallback,
                                     dataType: 'json',
-                                    error: retryAjax
+                                    error: this.retryAjax
                     
                     });
                     //and noting the request in this.pending
@@ -275,16 +278,16 @@ $(function() {
                 if (this.pending.right === null) {
                     var getParams = {
                         n: 20,
-                        j: this.ring.last.get('tractid'),
+                        j: this.ring.last().get('tractid'),
                         direction: 'right',
                     };
                     request = $.ajax({
                                     url: url,
                                     data: getParams,
                                     type: 'GET',
-                                    success: rhCallback,
+                                    success: this.rhCallback,
                                     dataType: 'json',
-                                    error: retryAjax
+                                    error: this.retryAjax
                     
                     });
                     //and noting the request in this.pending
@@ -335,14 +338,12 @@ $(function() {
         
         initialize: function() {
             // might have to do some bindAlling here...
-            _.bindAll(this, 'addOneView', 'render');//'addAllViews', 'render')
-            // not going to do it until I understand why
+            _.bindAll(this, 'addOneView', 'render');            
         
             this.currentTractOrder = 0;
             this.shownView = null;  
                         
             Tracts.bind('all',       this.render);
-            //Tracts.bind('refresh',   this.addAllViews);                
             Tracts.fetch();
 
 
