@@ -1,3 +1,30 @@
 img.tractpic {
     display: block;
 }
+
+div.button {
+    cursor: pointer;
+    display: inline;
+    font-size: 2em;
+}
+
+div.author {
+    text-align: right;
+    font-style: italic;
+}
+
+div.rightnav {
+    text-align: right;
+}
+
+div.stat {
+}
+
+div.inline {
+    display: inline;
+}
+
+div#credits {
+    font-size: .5em;
+    text-align: right;
+}
