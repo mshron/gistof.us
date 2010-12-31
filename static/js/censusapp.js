@@ -153,12 +153,14 @@ $(function() {
             this.nowImgDiv = null;
             
             // initial render
+            // create the first imgdiv
             templateParams = this.model.toJSON();
             templateParams['nowImgIndex'] = this.nowImgIndex;
             $(this.el).html(this.template(templateParams));            
-            this.nowImgDiv = this.$('.imgdiv');
-            this.imgDivs[this.nowImgIndex] = this.nowImgDiv;
-
+            
+            var nowImgDiv = $(this.imgDivTemplate(templateParams));
+            this.imgDivs[this.nowImgIndex] = this.nowImgDiv;   
+            this.$('.tract-pictures').append(this.nowImgDiv);
         },
         
         render: function() {            
@@ -195,7 +197,7 @@ $(function() {
             var maxImgIndex = this.model.get('pictures').length-1;
             
             // roll around to end if going negative
-            if (imgIndex === 0)        { this.gotoImg(maxImgIndex) }
+            if (imgIndex <= 0)        { this.gotoImg(maxImgIndex) }
             // otherwise, decrement
             else                       { this.gotoImg(imgIndex-1 ) }
         },
@@ -364,7 +366,7 @@ $(function() {
 
         //
         addOneView: function(tract) {                  
-            var view = new TractView({model: tract});              
+            var view = new TractView({model: tract});
             $(view.render().el).hide();
             this.$('#tract-view-box').append(view.el);
         },
