@@ -33,6 +33,7 @@ class Tract(db.Model):
 def prepare(tract):
     out = {}
     out['data'] = tract.data
+    out['tractid'] = tract.tractid
     out['order'] = tract.order
     out['pictures'] = map(cp.loads,tract.picturelist)
     return out
@@ -56,9 +57,10 @@ class Context(webapp.RequestHandler):
         j = self.request.get('j')
         if j:
             j = int(j)
-        n = int(self.request.get('n'))
+        n = self.request.get('n')
         if not n:
             n = 10
+        n = int(n)
         direction = self.request.get('dir')
         result = getcontext(n, j, direction)
         prep_result = map(prepare, result)
