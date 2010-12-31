@@ -62,31 +62,7 @@ def transform_row(row_dict, cols_to_fns_map):
     
     #return the row transformation
     return row_transformation
-    
-    
-#transforming rows
-#row transform takes in 1. row as dict, 2. cols->fn map
-#for each element of the map, either call fn or throw error
-#for each successfully called map fn, add the returned k/v pair to the output hash
-#return the hash
-
-
-#map fns
-#take in a tuple of values, output key/value pair
-#key is ultimate JSON name of doom, value is uJSON value od
-
-
-
-def addtwo(n):
-    return {2: n[0]+2}
-    
-def sum(n):
-    return {'s': n[0]+n[1]}
-
-cols_to_fns_map = {('first',): addone, 
-                   ('second',): addtwo,
-                   ('first','second'): sum}
-row_dict = {'first': 10, 'second': 20, 'third': 50}
+        
 
 if __name__=='__main__':
     process_acs_file()
