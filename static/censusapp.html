@@ -43,7 +43,7 @@
 
       <div id='tract-view-box'></div>     
       
-      <div id='credits' class='row'>These are the credits</div> <!-- ROW -->
+      <div id='credits' class='twelvecol row last'>These are the credits</div> <!-- ROW -->
     </div>     
   </body>
 
@@ -51,34 +51,18 @@
   <script type='text/template' id='tract-template'>
       <div class='tract-view'>        
           <div class='tract-content row'>         <!-- ROW -->
-            <div class='fourcol'>&nbsp;</div>
-            <div class='tract-pictures sixcol'></div>
-            <div class='fourcol last'>&nbsp;</div>
-
-          <div class='tract-nav row'> <!-- ROW -->
-            <div class='onecol'>
-                <div id="left" class="button">&#171;</div>
-                <div id="previousPicture" class="button">&lang;</div>
+            <div class="onecol">&nbsp;</div>
+            <div class='threecol'>
+                <a href="#" id="left">Previous Tract</a>
+                <a href="#" id="previousPicture">Previous Picture</a>
+                <div class='stat inline'>#<%= tractid %></div>
+                <div class='stat inline'>Pop: <%= data.population %></div>
             </div>
-            <div class='padding tencol'>&nbsp;</div>
-            <div class='onecol last rightnav'>
-                <div id="nextPicture" class="button">&rang;</div>
-                <div id="right" class="button">&#187;</div>
+            <div class='tract-pictures fivecol'></div>
+            <div class='threecol last'>
+                <a href="#" id="nextPicture">Next Picture</a>
+                <a href="#" id="right">Next Tract</a>
             </div>
-          </div>
-
-
-
-            <div class='padding row threecol'>&nbsp;</div> <!-- ROW -->
-            <div class='tract-stats sixcol'> 
-                #<%= tractid %><br/>
-                Population: <%= data.population %><br/>
-            </div>
-            <div class="padding threecol last">&nbsp;</div>
-
-          </div>
-          
-          <div class='tract-stats'></div>       
       </div>
       
   </script>
