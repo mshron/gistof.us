@@ -364,12 +364,6 @@ $(function() {
             this.$('#tract-view-box').append(view.el);
         },
         
-        /*
-        addAllViews: function() {                       
-            Tracts.each(this.addOneView);
-        },
-        */
-        
         left:  function() { Tracts.moveLeft(); },
         right: function() { Tracts.moveRight(); },
         
