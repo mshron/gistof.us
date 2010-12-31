@@ -104,7 +104,10 @@ $(function() {
             
             // current correct?
             // if so, no need to modify the currentTractIndex
-            if (this.at(orig).get('tractid') == origID)   { return; }
+            if (this.at(orig).get('tractid') == origID)   { 
+                console.debug('leaving currentTractIndex at '+orig);
+                return; 
+            }
             
             // climb to max, loop to 0, climb to orig
             var counter = orig+1;
@@ -114,6 +117,7 @@ $(function() {
             while (counter != orig) {
                 if (this.at(counter).get('tractid') == origID) {
                     this.currentTractIndex = counter;
+                    console.debug('setting currentTractIndex to '+counter+' (originally '+orig+')');
                     return;                
                 }
                 
@@ -157,8 +161,14 @@ $(function() {
             templateParams = this.model.toJSON();
             templateParams['nowImgIndex'] = this.nowImgIndex;
             $(this.el).html(this.template(templateParams));            
-            
-            var nowImgDiv = $(this.imgDivTemplate(templateParams));
+
+            var nowImgDiv = null;
+            if (templateParams.pictures.length != 0) {
+                nowImgDiv = $(this.imgDivTemplate(templateParams));
+            }
+            else {
+                nowImgDiv = '<div>No pictures here, move along</div>';
+            }
             this.imgDivs[this.nowImgIndex] = this.nowImgDiv;   
             this.$('.tract-pictures').append(this.nowImgDiv);
         },
@@ -170,7 +180,13 @@ $(function() {
             if (newImgDiv === null) {
                 templateParams = this.model.toJSON();
                 templateParams['nowImgIndex'] = this.nowImgIndex;
-                newImgDiv = $(this.imgDivTemplate(templateParams));
+                var newImgDiv = null;
+                if (templateParams.pictures.length != 0) {
+                    newImgDiv = $(this.imgDivTemplate(templateParams));
+                }
+                else {
+                    nowImgDiv = '<div>No pictures here, move along</div>';
+                }
                 this.imgDivs[this.nowImgIndex] = newImgDiv;
                 this.$('.tract-pictures').append(newImgDiv); 
             }                        
@@ -246,7 +262,7 @@ $(function() {
                     //get more context to the left, calling back
                     //to lhCallback
                     var getParams = {
-                        n: 20,
+                        n: 10,
                         j: this.ring.first().get('tractid'),
                         direction: 'left',
                     };
@@ -277,7 +293,7 @@ $(function() {
                 //back to rhCallback...
                 if (this.pending.right === null) {
                     var getParams = {
-                        n: 20,
+                        n: 10,
                         j: this.ring.last().get('tractid'),
                         direction: 'right',
                     };
