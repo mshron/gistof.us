@@ -64,7 +64,7 @@ class Context(webapp.RequestHandler):
         prep_result = map(prepare, result)
         out = json.dumps(prep_result)
         self.response.headers['Content-Type'] = 'application/X-JSON'
-        self.response.out.write(json.dumps(out))
+        self.response.out.write(out)
         
 
 class AddTracts(webapp.RequestHandler):
