@@ -37,26 +37,10 @@
       
       <div id='title-row' class='row'>
         <div class='title twelvecol last'>
-          <h1>Title</h1>
+          <h1>gistof.us</h1>
         </div>      
       </div>      
-      
-      <div class='controls row'>                    <!-- ROW -->
-        <div class='threecol'>
-          <a href='#' id='left'>Left</a>
-        </div>
-        <div class='threecol'>
-          <a href='#' id='right'>Right</a>
-        </div>      
-        <div class='threecol'>
-          <a href='#' id='previousPicture'>Previous Picture</a>             
-        </div>
-        <div class='threecol last'>
-          <a href='#' id='nextPicture'>Next Picture</a>
-        </div>
-      </div>
-     
-      
+
       <div id='tract-view-box'></div>     
       
       <div id='credits' class='row'>These are the credits</div> <!-- ROW -->
@@ -66,18 +50,31 @@
   <!-- Templates -->
   <script type='text/template' id='tract-template'>
       <div class='tract-view'>        
-          <div class='tract-title row'>           <!-- ROW-->
-            <h5 class='twelvecol last'>
-                #<%= tractid %>
-            </h5>
-          </div>            
-          
           <div class='tract-content row'>         <!-- ROW -->
-            <div class='tract-pictures twelvecol last'></div>
+            <div class='fourcol'>&nbsp;</div>
+            <div class='tract-pictures sixcol'></div>
+            <div class='fourcol last'>&nbsp;</div>
+
+          <div class='tract-nav row'> <!-- ROW -->
+            <div class='onecol'>
+                <div id="left" class="button">&#171;</div>
+                <div id="previousPicture" class="button">&lang;</div>
             </div>
-            <div class='tract-stats row fourcol'> <!-- ROW -->
+            <div class='padding tencol'>&nbsp;</div>
+            <div class='onecol last rightnav'>
+                <div id="nextPicture" class="button">&rang;</div>
+                <div id="right" class="button">&#187;</div>
+            </div>
+          </div>
+
+
+
+            <div class='padding row threecol'>&nbsp;</div> <!-- ROW -->
+            <div class='tract-stats sixcol'> 
+                #<%= tractid %><br/>
                 Population: <%= data.population %><br/>
             </div>
+            <div class="padding threecol last">&nbsp;</div>
 
           </div>
           
@@ -89,7 +86,7 @@
   <script type='text/template' id='imgdiv-template'>
       <div class='imgdiv'>
           <img class="tractpic" src='<%= pictures[nowImgIndex].url %>'></img>
-          <em><%= pictures[nowImgIndex]['order'] %>: <%= pictures[nowImgIndex].metadata.author %><em>
+          <div class="author"><%= pictures[nowImgIndex]['order'] %>: <%= pictures[nowImgIndex].metadata.author %><div>
       </div>
   </script>
   
