@@ -41,7 +41,7 @@ def prepare(tract):
 def getcontext(n, j=None, direction=None):
     if not j:
         j = random.randint(0, 2**32 - 1)
-    if direction == 'left':
+    if direction == 'left': 
         query = Tract.all().order('-order').filter('order <=', j)
     else:
         query = Tract.all().order('order').filter('order >=', j)
@@ -57,12 +57,21 @@ class Context(webapp.RequestHandler):
         j = self.request.get('j')
         if j:
             j = int(j)
+            bidirectional = True
+        else:
+            bidirectional = False
         n = self.request.get('n')
         if not n:
             n = 10
         n = int(n)
-        direction = self.request.get('dir')
-        result = getcontext(n, j, direction)
+        if bidirectional:
+            result_right = getcontext(n+1, j, 'right')
+            result_left = getcontext(n+1, j, 'left')
+            result = result_left[1:][::-1] + result_right
+        else:
+            direction = self.request.get('dir')
+            result = getcontext(n, j, direction)
+            
         prep_result = map(prepare, result)
         out = json.dumps(prep_result)
         self.response.headers['Content-Type'] = 'application/X-JSON'
