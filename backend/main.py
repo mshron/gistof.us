@@ -41,7 +41,7 @@ def prepare(tract):
 def getcontext(n, j=None, direction=None):
     if not j:
         j = random.randint(0, 2**32 - 1)
-    if direction == 'left':
+    if direction == 'left': 
         query = Tract.all().order('-order').filter('order <=', j)
     else:
         query = Tract.all().order('order').filter('order >=', j)
@@ -57,12 +57,21 @@ class Context(webapp.RequestHandler):
         j = self.request.get('j')
         if j:
             j = int(j)
+            bidirectional = True
+        else:
+            bidirectional = False
         n = self.request.get('n')
         if not n:
             n = 10
         n = int(n)
-        direction = self.request.get('dir')
-        result = getcontext(n, j, direction)
+        if bidirectional:
+            result_right = getcontext(n+1, j, 'right')
+            result_left = getcontext(n+1, j, 'left')
+            result = result_left[1:][::-1] + result_right
+        else:
+            direction = self.request.get('dir')
+            result = getcontext(n, j, direction)
+            
         prep_result = map(prepare, result)
         out = json.dumps(prep_result)
         self.response.headers['Content-Type'] = 'application/X-JSON'
@@ -90,23 +99,27 @@ class AddTracts(webapp.RequestHandler):
             self.response.out.write('Put %s @ %s\n'%(tractid, rand))
 
 class AssociatePictures(webapp.RequestHandler):
-    def post(self):
-        tractid = self.request.get('tractid')
-        hexurl = self.request.get('hexurl')
-        url = hexurl.decode('hex')
-        author = self.request.get('author')
-        order = random.randint(0,2**16 - 1)
-        metadata = {'author': author}
-        photo = {'url': url, 'metadata': metadata, 'order': order}
-        tract_query = db.GqlQuery("SELECT * FROM Tract WHERE tractid=:1",tractid)
-        tract = tract_query.get()
-        if not tract:
-            self.response.out.write("%s failed\n"%tractid)
-        else:
-            pkl = db.Blob(cp.dumps(photo))
-            tract.picturelist.append(pkl)
-            tract.put()
-
+    def put(self): #patterned after addtracts
+        lines = csv.reader(self.request.body_file)
+        for line in lines:
+            # tract, hexurl, hexauthor
+            tractid = line[0]
+            hexurl = line[1]
+            url = hexurl.decode('hex')
+            hexauthor = line[2]
+            author = hexauthor.decode('hex')
+            order = random.randint(0,2**16 - 1)
+            metadata = {'author': author}
+            photo = {'url': url, 'metadata': metadata, 'order': order}
+            tract_query = db.GqlQuery("SELECT * FROM Tract WHERE tractid=:1",tractid)
+            tract = tract_query.get()
+            if not tract:
+                self.response.out.write("Adding to %s failed\n"%tractid)
+            else:
+                pkl = db.Blob(cp.dumps(photo))
+                tract.picturelist.append(pkl)
+                tract.put()
+        self.response.out.write("Finished.")
              
 class ReadMemcache(webapp.RequestHandler):
     def get(self):
@@ -114,8 +127,8 @@ class ReadMemcache(webapp.RequestHandler):
         print memcache.get(key)
 
 def main():
-    application = webapp.WSGIApplication([('/addtracts/.*', AddTracts),
-        ('/addpicture', AssociatePictures),
+    application = webapp.WSGIApplication([('/addtracts', AddTracts),
+        ('/addpictures', AssociatePictures),
         ('/context',Context),
         ('/mem',ReadMemcache)], debug=True)
     util.run_wsgi_app(application)
