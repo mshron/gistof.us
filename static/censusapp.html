@@ -62,40 +62,38 @@
   </body>
 
   <!-- Templates -->
-    <script type='text/template' id='tract-template'>
-        <div class='tract-view'>        
-            <div class='tract-title row'>           <!-- ROW-->
-              <h5 class='twelvecol last'>
-                  #<%= id %>
-                  Name: <%= name %>
-              </h5>
-            </div>            
-            
-            <div class='tract-content row'>         <!-- ROW -->
-              <div class='tract-pictures eightcol'>
-                  <div class='imgdiv'>
-                  <img src='<%= nowImgIndex %>'></img>
-                  Picture <%= nowImgIndex %>
-                  </div>
-                </img>
-              </div>
-              <div class='tract-stats fourcol last'>
-                a: <%= stats["a"] %><br>
-                b: <%= stats["b"] %>
-              </div>
-
+  <script type='text/template' id='tract-template'>
+      <div class='tract-view'>        
+          <div class='tract-title row'>           <!-- ROW-->
+            <h5 class='twelvecol last'>
+                #<%= id %>
+                Name: <%= name %>
+            </h5>
+          </div>            
+          
+          <div class='tract-content row'>         <!-- ROW -->
+            <div class='tract-pictures eightcol'>
+                <div class='imgdiv'>
+                Picture <%= nowImgIndex %>
+                </div>
+              </img>
             </div>
-            
-            <div class='tract-stats'></div>         <!-- ROW-->
-        </div>
-        
-    </script>
+            <div class='tract-stats fourcol last'>
+                Population: <%= data.population %><br/>
+            </div>
+
+          </div>
+          
+          <div class='tract-stats'></div>         <!-- ROW-->
+      </div>
+      
+  </script>
     
-    <script type='text/template' id='imgdiv-template'>
-        <div class='imgdiv'>
-            <img src='<%= pictures[nowImgIndex].url %>'></img>
-            Picture <%= pictures[nowImgIndex].uniqueID %>
-        </div>
-    </script>
+  <script type='text/template' id='imgdiv-template'>
+      <div class='imgdiv'>
+          <img src='<%= pictures[nowImgIndex].url %>'></img>
+          <em><%= pictures[nowImgIndex]['order'] %>: <%=<em>
+      </div>
+  </script>
   
 </html>
