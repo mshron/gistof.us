@@ -2,7 +2,11 @@ var fetch_url = 'localhost:8080/context';
 
 $(function() {
 
-    Tract = Backbone.Model.extend({});
+    Tract = Backbone.Model.extend({
+        initialize: function() {
+            App.addOneView(this);
+        }
+    });
     
     TractRing = Backbone.Collection.extend({
 
@@ -27,9 +31,9 @@ $(function() {
                     var center = Math.floor(this.length/2)  ;
                     this.currentTract = this.at(center);
                     this.currentTractIndex = center;
-                }
+                });
                 
-            this.bind('add', fixDisplacedIndex);
+            this.bind('add', this.fixDisplacedIndex);
                 
             // create a new TractDataManager
             this.manager = new TractDataManager(this);
@@ -62,7 +66,7 @@ $(function() {
                 this.trigger('nav:block-right');
             }
             else {
-                this.currentTract = this.at(--this.currentTractIndex);
+                this.currentTract = this.at(++this.currentTractIndex);
                 this.trigger('nav:tract-right');
             }
         },
@@ -96,11 +100,11 @@ $(function() {
             // === in order to make sure that if a tract is
             // overwritten by a duplicate tract, they still
             // compare as the same thing.
-            var origID = this.currentTract.get('id')
+            var origID = this.currentTract.get('tractid')
             
             // current correct?
             // if so, no need to modify the currentTractIndex
-            if (this.at(orig).get('id') == origID)   { return; }
+            if (this.at(orig).get('tractid') == origID)   { return; }
             
             // climb to max, loop to 0, climb to orig
             var counter = orig+1;
@@ -108,7 +112,7 @@ $(function() {
                 counter = 0;
             }
             while (counter != orig) {
-                if (this.at(counter).get('id') == origID) {
+                if (this.at(counter).get('tractid') == origID) {
                     this.currentTractIndex = counter;
                     return;                
                 }
@@ -217,11 +221,12 @@ $(function() {
         
         initialize: function() {
             //bind to tract-nav events
-            this.bind('nav:tract-left', reachLeft);
-            this.bind('nav:tract-right', reachRight);
+            this.bind('nav:tract-left', this.reachLeft);
+            this.bind('nav:tract-right', this.reachRight);
             
-            _.bindAll(this, lhCallback, rhCallback);
+            _.bindAll(this, this.lhCallback, this.rhCallback);
             
+            this.pending = {};
             this.pending.left = this.pending.right = null;
         
         },
@@ -236,7 +241,7 @@ $(function() {
                     //to lhCallback
                     var getParams = {
                         n: 20,
-                        j: this.ring.first.get('id'),
+                        j: this.ring.first.get('tractid'),
                         direction: 'left',
                     };
                     request = $.ajax({
@@ -267,7 +272,7 @@ $(function() {
                 if (this.pending.right === null) {
                     var getParams = {
                         n: 20,
-                        j: this.ring.last.get('id'),
+                        j: this.ring.last.get('tractid'),
                         direction: 'right',
                     };
                     request = $.ajax({
@@ -305,14 +310,13 @@ $(function() {
                 // failure?  try again in 10 seconds
                 setTimeout($.ajax(this), 10000);
             }
-            
         }
         
     });
     
-    ImageDataManager(view) = function(view) {
+    ImageDataManager = function(view) {
     
-    }
+    };
     
     // the AppView handles controls for next/prev tract/img
     AppView = Backbone.View.extend({
@@ -379,4 +383,4 @@ $(function() {
     Tracts = new TractRing();
     App = new AppView();
     
-}
+});
