@@ -26,6 +26,8 @@
 	<link rel="stylesheet" href="css/mobile.css" media="handheld, only screen and (max-width: 767px)" />
 	<!-- Put your layout here -->
 	<link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
+    <!-- This one is actually from us! -->
+    <link rel="stylesheet" href="css/gistofus.css" type="text/css"/>
     
     
   </head>
@@ -66,8 +68,7 @@
       <div class='tract-view'>        
           <div class='tract-title row'>           <!-- ROW-->
             <h5 class='twelvecol last'>
-                #<%= id %>
-                Name: <%= name %>
+                #<%= tractid %>
             </h5>
           </div>            
           
@@ -76,7 +77,6 @@
                 <div class='imgdiv'>
                 Picture <%= nowImgIndex %>
                 </div>
-              </img>
             </div>
             <div class='tract-stats fourcol last'>
                 Population: <%= data.population %><br/>
@@ -91,8 +91,8 @@
     
   <script type='text/template' id='imgdiv-template'>
       <div class='imgdiv'>
-          <img src='<%= pictures[nowImgIndex].url %>'></img>
-          <em><%= pictures[nowImgIndex]['order'] %>: <%=<em>
+          <img class="tractpic" src='<%= pictures[nowImgIndex].url %>'></img>
+          <em><%= pictures[nowImgIndex]['order'] %>: <%= pictures[nowImgIndex].metadata.author =><em>
       </div>
   </script>
   
