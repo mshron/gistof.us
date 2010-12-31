@@ -209,7 +209,7 @@ $(function() {
     
     TractDataManager = function(ring) {
         this.ring = ring;
-        this.width = 10;
+        this.width = 2;
         this.initialize();
     }
     
@@ -232,6 +232,7 @@ $(function() {
         },
         
         reachLeft: function() {
+            alert('Reaching left');
             //if this.ring.currentTractIndex is
             //within this.width of 0
             if (this.ring.currentTractIndex < this.width) {
