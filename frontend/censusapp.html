@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <script src="https://github.com/documentcloud/underscore/raw/master/underscore.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script src="https://github.com/documentcloud/backbone/raw/master/backbone.js"></script>
+    <!--<script src="js/jquery.js"></script>
+    <script src="js/underscore.js"></script>
+    <script src="js/backbone.js"></script>-->
+    <script src="js/censusapp.js"></script>
+    
+    <!-- The 1140px Grid -->
+	<link rel="stylesheet" href="css/1140.css" type="text/css" media="screen" />
+	
+	<!--[if lte IE 9]>
+	<link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
+	<![endif]-->
+	
+	<!-- Type and image presets - NOT ESSENTIAL -->
+	<link rel="stylesheet" href="css/typeimg.css" type="text/css" media="screen" />
+	<!-- Make minor type adjustments for 1024 monitors -->
+	<link rel="stylesheet" href="css/smallerscreen.css" media="only screen and (max-width: 1023px)" />
+	<!-- Resets grid for mobile -->
+	<link rel="stylesheet" href="css/mobile.css" media="handheld, only screen and (max-width: 767px)" />
+	<!-- Put your layout here -->
+	<link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
+    
+    
+  </head>
+
+  <body>
+    <div id='census-app' class='container'>        
+      
+      <div id='title-row' class='row'>
+        <div class='title twelvecol last'>
+          <h1>Title</h1>
+        </div>      
+      </div>      
+      
+      <div class='controls row'>                    <!-- ROW -->
+        <div class='threecol'>
+          <a href='#' id='left'>Left</a>
+        </div>
+        <div class='threecol'>
+          <a href='#' id='right'>Right</a>
+        </div>      
+        <div class='threecol'>
+          <a href='#' id='previousPicture'>Previous Picture</a>             
+        </div>
+        <div class='threecol last'>
+          <a href='#' id='nextPicture'>Next Picture</a>
+        </div>
+      </div>
+     
+      
+      <div id='tract-view-box'></div>     
+      
+      <div id='credits' class='row'>These are the credits</div> <!-- ROW -->
+    </div>     
+  </body>
+
+  <!-- Templates -->
+    <script type='text/template' id='tract-template'>
+        <div class='tract-view'>        
+            <div class='tract-title row'>           <!-- ROW-->
+              <h5 class='twelvecol last'>
+                  #<%= id %>
+                  Name: <%= name %>
+              </h5>
+            </div>            
+            
+            <div class='tract-content row'>         <!-- ROW -->
+              <div class='tract-pictures eightcol'>
+                  <div class='imgdiv'>
+                  <img src='<%= nowImgIndex %>'></img>
+                  Picture <%= nowImgIndex %>
+                  </div>
+                </img>
+              </div>
+              <div class='tract-stats fourcol last'>
+                a: <%= stats["a"] %><br>
+                b: <%= stats["b"] %>
+              </div>
+
+            </div>
+            
+            <div class='tract-stats'></div>         <!-- ROW-->
+        </div>
+        
+    </script>
+    
+    <script type='text/template' id='imgdiv-template'>
+        <div class='imgdiv'>
+            <img src='<%= pictures[nowImgIndex].url %>'></img>
+            Picture <%= pictures[nowImgIndex].uniqueID %>
+        </div>
+    </script>
+  
+</html>
