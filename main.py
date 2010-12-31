@@ -59,7 +59,6 @@ class Context(webapp.RequestHandler):
         j = self.request.get('j')
         if j:
             j = int(j)
-        else:
         n = self.request.get('n')
         if not n:
             n = 10
