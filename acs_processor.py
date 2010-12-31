@@ -88,3 +88,5 @@ cols_to_fns_map = {('first',): addone,
                    ('first','second'): sum}
 row_dict = {'first': 10, 'second': 20, 'third': 50}
 
+if __name__=='__main__':
+    process_acs_file()
