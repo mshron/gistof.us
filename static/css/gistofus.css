@@ -28,3 +28,12 @@ div#credits {
     font-size: .5em;
     text-align: right;
 }
+
+div.container {
+    font-family: "museo-slab-1","museo-slab-2",serif;
+}
+
+h1#title {
+    font-family: "museo-slab-1","museo-slab-2",serif;
+}
+}
