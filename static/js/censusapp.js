@@ -49,11 +49,11 @@ $(function() {
             // this only happens when we haven't succeeded in fetching
             // more tract data from the left
             if (this.currentTractIndex == 0) {
-                this.trigger('nav:block-left');
+                this.trigger('nav:block', 'left');
             }
             else {                
                 this.currentTract = this.at(--this.currentTractIndex);
-                this.trigger('nav:tract-left');
+                this.trigger('nav:tract', 'left');
             }
         },
             
@@ -63,11 +63,11 @@ $(function() {
             // more tract data from the right
             lastIndex = this.length-1;
             if (this.currentTractIndex == lastIndex) {
-                this.trigger('nav:block-right');
+                this.trigger('nav:block', 'right');
             }
             else {
                 this.currentTract = this.at(++this.currentTractIndex);
-                this.trigger('nav:tract-right');
+                this.trigger('nav:tract', 'right');
             }
         },
         
@@ -238,20 +238,61 @@ $(function() {
     _.extend(TractDataManager.prototype, {
         
         initialize: function() {
-            _.bindAll(this, 'addTractsCB', 'reachLeft', 'reachRight');
-            //bind to tract-nav events
-            this.ring.bind('nav:tract-left', this.reachLeft);
-            this.ring.bind('nav:tract-right', this.reachRight);
-            
-            console.debug(this);
-           
-            
-            
+            _.bindAll(this, 'addTractsCB', 'reach')//, 'reachLeft', 'reachRight');
+            this.ring.bind('nav:tract', this.reach);
             this.pending = {};
             this.pending.left = this.pending.right = null;
-        
         },
         
+        //direction comes from the second argument to the Backbone.trigger call
+        //that caused this callback to fire
+        reach: function(direction) {
+            var needContext = false;
+            var from = -1;
+            var amount = 10;
+
+            var allowable = (this.ring.length - 1) - this.width;
+            if (this.ring.currentTractIndex < this.width &&
+                                   direction === 'left') {
+                needContext = true;
+                from = this.ring.first().get('order');
+            }
+            else if (this.ring.currentTractIndex > allowable &&
+                                      direction === 'right') {
+                needContext = true;
+                from = this.ring.last().get('order');
+            }
+            
+            //if we don't need context, we're done
+            if (!needContext)                         { return; }
+            // if we already are fetching context in this direction,
+            // don't do it again!
+            if (this.pending[direction])              { return; }
+
+            // GET parameters for the AJAX request
+            var getParams = {
+                n: amount,
+                j: from,
+                dir: direction,
+            };
+
+            // make the request
+            request = $.ajax({
+                            url: fetch_url,
+                            data: getParams,
+                            type: 'GET',
+                            dataType: 'json',
+                            context: this,         //context for callbacks
+                            success: function(tracts) {
+                                this.addTractsCB(tracts, direction);
+                            },
+                            error: this.retryAjax
+            });
+
+            //and note the request in this.pending
+            this.pending[direction] = request;
+        },
+
         reachLeft: function() {
             //if this.ring.currentTractIndex is
             //within this.width of 0            
@@ -337,6 +378,9 @@ $(function() {
                     knownids.push(newTract);
                     console.debug('adding: '+newTract.order);
                 }
+                else {
+                    console.debug('(dupe!) Rejected order #'+newTract.order);
+                }
             }, this);  //set the context for the _.each to the manager
 
             //request is finished, note it
@@ -392,7 +436,7 @@ $(function() {
            
     	    var $debug_numTracts = ($('#DEBUG-numTracts') || null);
             if ($debug_numTracts.length > 0) {
-        	    $debug_numTracts.html(Tracts.length);	    
+        	    $debug_numTracts.html(Tracts.length-1);
             }
             var $debug_nowTract = ($('#DEBUG-nowTract') || null);
             if ($debug_nowTract.length > 0) {
