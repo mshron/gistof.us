@@ -119,7 +119,13 @@ class AssociatePictures(webapp.RequestHandler):
                 tract.picturelist.append(pkl)
                 tract.put()
         self.response.out.write("Finished.")
-             
+
+class OrderData(webapp.RequestHandler):
+    def get(self):
+       query = Tract.all().order('order') 
+       for q in query:
+            self.response.out.write("%s,"%q.order)
+
 class ReadMemcache(webapp.RequestHandler):
     def get(self):
         key = self.request.get('key')
@@ -129,6 +135,7 @@ def main():
     application = webapp.WSGIApplication([('/addtracts', AddTracts),
         ('/addpictures', AssociatePictures),
         ('/context',Context),
+        ('/orders',OrderData),
         ('/mem',ReadMemcache)], debug=True)
     util.run_wsgi_app(application)
 
