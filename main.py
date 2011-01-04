@@ -42,9 +42,11 @@ def getcontext(n, j=None, direction=None):
     if not j:
         j = random.randint(0, 2**32 - 1)
     if direction == 'left': 
-        query = Tract.all().order('-order').filter('order <=', j)
+#query = Tract.all().filter('order <=', j).order('-order')
+        query = db.GqlQuery('SELECT * FROM Tract WHERE order <= :1 ORDER BY order DESC',j)
     elif direction == 'right':
-        query = Tract.all().order('order').filter('order >=', j)
+#        query = Tract.all().filter('order >=', j).order('order')
+        query = db.GqlQuery('SELET * FROM Tract WHERE order >= :1 ORDER BY order',j)
     else:
         raise IndexError("Need a direction to know how to index")
     out = query.fetch(n)
