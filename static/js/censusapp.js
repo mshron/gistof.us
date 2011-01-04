@@ -40,6 +40,7 @@ $(function() {
             
             this.currentTract = null;
             this.currentTractIndex = null;
+
         },             
         
         comparator: function(tract) { return tract.get('order'); },   
@@ -442,7 +443,8 @@ $(function() {
             if ($debug_nowTract.length > 0) {
                 $debug_nowTract.html(Tracts.currentTractIndex);
             }
-
+ 
+            $('.inlinesparkline').sparkline(Tracts.map(function(t) { return t.get('order'); }));
             if (this.shownView !== null) { 
                 $(this.shownView.el).hide(); 
             }
@@ -485,4 +487,5 @@ $(function() {
             gistus_debug = true;
         }
     } 
+    window.TOGGLE_DEBUG();
 });
