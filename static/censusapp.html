@@ -41,7 +41,11 @@
         <div class='title twelvecol last'>
           <h1 id='title'>gistof.us</h1>
         </div>      
-      </div>      
+      </div>
+      Tracts:
+      <span class='debug'>
+          <span id='DEBUG-nowTract'>???</span>/<span id='DEBUG-numTracts'>???</span>
+      </span>
 
       <div id='tract-view-box'></div>     
       
@@ -57,8 +61,12 @@
             <div class='threecol'>
                 <a href="#" id="left">Previous Tract</a>
                 <a href="#" id="previousPicture">Previous Picture</a>
-                <div class='stat inline'>#<%= tractid %></div>
-                <div class='stat inline'>Pop: <%= data.population %></div>
+                <div class='stat inline'>#<%= tractid %></div><br>
+                <div class='stat inline'>Pop: <%= data.population %></div><br>
+                <div class='debug'>
+                    <div class='stat inline'>Order: <%= order %></div><br>
+            		<div class='stat inline'>Pics: <%= pictures.length %></div>
+                </div>
             </div>
             <div class='tract-pictures fivecol'></div>
             <div class='threecol last'>

@@ -238,7 +238,7 @@ $(function() {
     _.extend(TractDataManager.prototype, {
         
         initialize: function() {
-            _.bindAll(this, 'lhCallback', 'rhCallback', 'reachLeft', 'reachRight');
+            _.bindAll(this, 'addTractsCB', 'reachLeft', 'reachRight');
             //bind to tract-nav events
             this.ring.bind('nav:tract-left', this.reachLeft);
             this.ring.bind('nav:tract-right', this.reachRight);
@@ -263,15 +263,18 @@ $(function() {
                     //to lhCallback
                     var getParams = {
                         n: 10,
-                        j: this.ring.first().get('tractid'),
+                        j: this.ring.first().get('order'),
                         direction: 'left',
                     };
                     request = $.ajax({
                                     url: fetch_url,
                                     data: getParams,
                                     type: 'GET',
-                                    success: this.lhCallback,
                                     dataType: 'json',
+                                    context: this,
+                                    success: function(tracts) {
+                                        this.addTractsCB(tracts, 'left');
+                                    },
                                     error: this.retryAjax
                     
                     });
@@ -294,17 +297,19 @@ $(function() {
                 if (this.pending.right === null) {
                     var getParams = {
                         n: 10,
-                        j: this.ring.last().get('tractid'),
+                        j: this.ring.last().get('order'),
                         direction: 'right',
                     };
                     request = $.ajax({
-                                    url: url,
+                                    url: fetch_url,
                                     data: getParams,
                                     type: 'GET',
-                                    success: this.rhCallback,
                                     dataType: 'json',
+                                    context: this,
+                                    success: function(tracts) { 
+					                    this.addTractsCB(tracts,'right'); 
+				                    },
                                     error: this.retryAjax
-                    
                     });
                     //and noting the request in this.pending
                     this.pending.right = request;
@@ -312,20 +317,33 @@ $(function() {
             }
         },
         
-        lhCallback: function(tracts) {
-            //add the new tracts to the collection
-            this.ring.add(tracts);            
-            //clear the request from this.pending
-            this.pending.left = null;
-        },
-        
-        rhCallback: function(tracts) {
-            //add the new tracts to the collection
-            this.ring.add(tracts);            
-            //clear the request from this.pending
-            this.pending.right = null;
-        },
-        
+        addTractsCB: function(newTracts, direction) {
+            //make a list of all tractids already in the collection
+            var knownids = this.ring.map(function(t) { 
+                                                return t.get('tractid') 
+                                            });
+            console.debug('highest: '+this.ring.last().get('order'));
+            console.debug('lowest: '+this.ring.first().get('order'));
+
+	        //for each new tract
+            _.each(newTracts, function(newTract) {
+                //record the new tract's id for comparison
+                var newid = newTract.tractid;
+                //if this new tract isn't known, add it
+                if (! _.any(knownids, function(ktid) { return ktid === newid; })) {
+                    this.ring.add(newTract);
+                    //also, record that there is now a tract with that tract id	
+                    //in case there are duplicates WITHIN the new tracts
+                    knownids.push(newTract);
+                    console.debug('adding: '+newTract.order);
+                }
+            }, this);  //set the context for the _.each to the manager
+
+            //request is finished, note it
+            this.pending[direction] = null;
+	    },
+
+        //not a very good retrying function... TODO rewrite it 
         retryAjax: function(xhr, textStatus, errorThrown) {
             if (textStatus == 'timeout') {
                 this.trigger('error:fetch-timeout');
@@ -369,10 +387,18 @@ $(function() {
         render: function() {            
             var currentTract = (Tracts.currentTract || null);  
             if (currentTract === null) { return; }
-            
             var currentView = (currentTract.view || null);
             if (currentView === null) { return; }
            
+    	    var $debug_numTracts = ($('#DEBUG-numTracts') || null);
+            if ($debug_numTracts.length > 0) {
+        	    $debug_numTracts.html(Tracts.length);	    
+            }
+            var $debug_nowTract = ($('#DEBUG-nowTract') || null);
+            if ($debug_nowTract.length > 0) {
+                $debug_nowTract.html(Tracts.currentTractIndex);
+            }
+
             if (this.shownView !== null) { 
                 $(this.shownView.el).hide(); 
             }
@@ -402,5 +428,17 @@ $(function() {
 
     Tracts = new TractRing();
     App = new AppView();
-    
+
+    var gistus_debug = false;
+    window.TOGGLE_DEBUG = function toggle_debug() {
+        $debugElements = $('.debug');
+        if (gistus_debug) {
+            $debugElements.css('display', 'none');
+            gistus_debug = false;
+        }
+        else {
+            $debugElements.css('display', 'block');
+            gistus_debug = true;
+        }
+    } 
 });
