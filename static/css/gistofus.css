@@ -30,10 +30,12 @@ div#credits {
 }
 
 div.container {
-    font-family: "m-1c-1","m-1c-2",sans-serif;
+    font-family: "droid-sans-1","droid-sans-2",sans-serif;
+
 }
 
 h1#title {
-    font-family: "m-1c-1","m-1c-2",sans-serif;
+    font-family: "droid-sans-1","droid-sans-2",sans-serif;
+
 }
 }
