@@ -50,7 +50,13 @@ def getcontext(n, j=None, direction=None):
     out = query.fetch(n)
     l = len(out)
     if l<n:
-        query = Tract.all()
+        if direction=='right':
+            s = 'order'
+        elif direction=='left':
+            s = '-order'
+        else:
+            raise IndexError("Need a direction to know how to index")
+        query = Tract.all().order(s)
         out.extend(query.fetch(n-l))
     return out
 
