@@ -105,7 +105,7 @@ $(function() {
             // current correct?
             // if so, no need to modify the currentTractIndex
             if (this.at(orig).get('tractid') == origID)   { 
-                console.debug('leaving currentTractIndex at '+orig);
+//              console.debug('leaving currentTractIndex at '+orig);
                 return; 
             }
             
@@ -117,7 +117,7 @@ $(function() {
             while (counter != orig) {
                 if (this.at(counter).get('tractid') == origID) {
                     this.currentTractIndex = counter;
-                    console.debug('setting currentTractIndex to '+counter+' (originally '+orig+')');
+//                  console.debug('setting currentTractIndex to '+counter+' (originally '+orig+')');
                     return;                
                 }
                 
@@ -167,7 +167,7 @@ $(function() {
                 nowImgDiv = $(this.imgDivTemplate(templateParams));
             }
             else {
-                nowImgDiv = '<div>No pictures here, move along</div>';
+                nowImgDiv = $('<div>No pictures here, move along</div>');
             }
             this.imgDivs[this.nowImgIndex] = this.nowImgDiv;   
             this.$('.tract-pictures').append(this.nowImgDiv);
