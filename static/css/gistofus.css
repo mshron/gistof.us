@@ -21,22 +21,23 @@ div.stat {
     width: 200px;
 }
 
-div.stat_title {
+.stat_title {
   text-align: right;
   font-size: 1.2em;
-  text-align: right;
-  right-margin: 10px;
-  float: left
+  text-align: left;
+  width: 100px;
 }
 
-div.stat_local {
+.stat_local {
     float: left;
+    width: 50px;
 }
 
-div.stat_global {
+.stat_global {
     float: left;
     margin-left: 2pt;
     margin-right: 2pt;
+    width: 50px;
 }
 
 
