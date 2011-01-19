@@ -33,7 +33,7 @@ $(function() {
                     this.currentTractIndex = center;
                 });
                 
-            this.bind('add', this.fixDisplacedIndex);
+            this.bind('add:left', this.fixDisplacedIndex);
                 
             // create a new TractDataManager
             this.manager = new TractDataManager(this);
@@ -69,7 +69,7 @@ $(function() {
                this.models.unshift(model);
                model.bind('all', this._boundOnModelEvent);
                this.length++;
-               if (!options.silent) model.trigger('add', model, this, options);
+               if (!options.silent) model.trigger('add:left', model, this, options);
                return model;
 
 
@@ -103,22 +103,17 @@ $(function() {
             }
         },
         
-        // This function is called when an 'add' event is
+        // This function is called when an 'add:left' event is
         // fired on the collection.        
         fixDisplacedIndex: function() {        
-            // locate the correct index in the collection
-            // for this.currentTract
-            
-            // if we added stuff only to the right,
-            // this will be the same as the current 
-            // this.currentTractIndex
-            
-            // if we added stuff to the left, then the new
-            // index is GREATER THAN the stored value
-            // and searching UP will find it quickly
-            
-            // the search wraps around until it comes back to
-            // the starting value, in case of big problems
+            // each time, we simply have to move the currentTractIndex
+            // one to the right
+                             
+            // example: currentTractIndex is 1
+            // we add an element on the left
+            // the current tract is now the 2th element, instead of the 1th
+            // (the new one is the 0th)
+            // so we increment currentTractIndex
             
             // if there's no currentTract, don't bother trying
             // to fix things that don't exist
@@ -126,41 +121,8 @@ $(function() {
             
             // orig is the currentTractIndex we had stored
             // before we added in more tracts
-            var orig = this.currentTractIndex;        
-
-            // we will compare tracts by id rather than
-            // === in order to make sure that if a tract is
-            // overwritten by a duplicate tract, they still
-            // compare as the same thing.
-            var origID = this.currentTract.get('tractid')
+            this.currentTractIndex++;
             
-            // current correct?
-            // if so, no need to modify the currentTractIndex
-            if (this.at(orig).get('tractid') == origID)   { 
-//              console.debug('leaving currentTractIndex at '+orig);
-                return; 
-            }
-            
-            // climb to max, loop to 0, climb to orig
-            var counter = orig+1;
-            if (counter > this.length-1) {
-                counter = 0;
-            }
-            while (counter != orig) {
-                if (this.at(counter).get('tractid') == origID) {
-                    this.currentTractIndex = counter;
-//                  console.debug('setting currentTractIndex to '+counter+' (originally '+orig+')');
-                    return;                
-                }
-                
-                counter++;
-                if (counter > this.length-1) { 
-                    counter = 0; 
-                }
-            }
-            // if we get here, somehow the tract wasn't in
-            // the collection after adding more tracts
-            // UHhhh....
         }
                 
     });    
