@@ -18,26 +18,25 @@ div.rightnav {
 }
 
 div.stat {
-    width: 200px;
+    border: 1px #eee solid;
+    float: left;
+    width: 150px;
+    margin: 5px;
 }
 
 .stat_title {
   text-align: right;
   font-size: 1.2em;
   text-align: left;
-  width: 100px;
 }
 
 .stat_local {
-    float: left;
-    width: 50px;
+    float: right;
+    margin-left: 5px;
 }
 
 .stat_global {
-    float: left;
-    margin-left: 2pt;
-    margin-right: 2pt;
-    width: 50px;
+    float: right;
 }
 
 

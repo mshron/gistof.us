@@ -62,34 +62,31 @@
           <div class='tract-content row'>         <!-- ROW -->
             <div class="onecol">&nbsp;</div>
             <div class='fourcol'>
-                <div class='stat'>#<%= tractid %></div><br>
-                <table id='statsbox'>
-                    <tr>
-                        <td class='stat_title'>Population</td>
-                        <td class='stat_local'><%= data.population %></td>
-                        <td class='stat_global'>T</td>
-                    </tr>
-                    <tr>
-                        <td class='stat_title'>Income</td>
-                        <td class='stat_local'>&nbsp;</td>
-                        <td class='stat_global'>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td class='stat_title'>Age</td>
-                        <td class='stat_local'>&nbsp;</td>
-                        <td class='stat_global'>&nbsp;</td>
-                    <tr>
-                    <tr>
-                        <td class='stat_title'>Children p. cap.</td>
-                        <td class='stat_local'>&nbsp;</td>
-                        <td class='stat_global'>&nbsp;</td>
-                    </tr>
-                    <div class='debug'>
-                        <div class='stat inline'>Order: <%= order %></div><br>
-            	    	<div class='stat inline'>Pics: <%= pictures.length %></div>
-                    </div>
-                    </tr>
-               </table>
+                <div class='stat'>#<%= tractid %></div>
+                <div class='stat'>
+                    <div class='stat_title'>Population</div>
+                    <div class='stat_local'><%= data.population %></div>
+                    <div class='stat_global'>T</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Income distribution</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Age distribution</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Children per-capita</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
+                <div class='debug'>
+                    <div class='stat inline'>Order: <%= order %></div><br>
+            		<div class='stat inline'>Pics: <%= pictures.length %></div>
+                </div>
             </div>
             <div class='tract-pictures fivecol'></div>
             <div class='threecol last'>
