@@ -170,32 +170,83 @@ $(function() {
             console.debug('nowImgDiv is always:');
             console.debug(this.nowImgDiv)
             */
+            this.setRenderDistance(true, 0);
+        },
+
+        // this function sets the img caching parameters for the View
+        // and then renders it
+        setRenderDistance: function(on, distance) {
+            if (this.on && (on == false)) {
+                this.dumpDivs();
+            }
+            this.on = on;               //whether ANY img divs should be kept
+
+            this.distance = distance;   //how many right and left of current 
+                                        //we require to be present
+                                        //0 means "just the current"
+                                        //> numPictures/2 means all
+
             this.render();
+
+
+        },
+
+        //$.remove()s all the imgDivs of the View to clear up space
+        dumpDivs: function() {
+            _.each(this.imgDivs, function(div) {
+                if (div) { $(div).remove(); }   
+            });
+        },
+
+        render: function() {            
+            if (!this.on)                           { return; }
+
+            //ensure that sufficient context exists left and right
+
+            //current one
+            this.createImgDiv(this.nowImgIndex);
+
+            //actual distance
+            // (limited to half the number of pictures we have)
+            var dist = Math.min(Math.floor(this.numPictures/2), this.distance); 
+            
+            //context
+            for (var i=1; i<=dist; i++) {
+               var rightIndex = (this.nowImgIndex+i) % this.imgDivs.length;
+               var leftIndex = (this.nowImgIndex-i);
+               if (leftIndex < 0) {
+                   leftIndex = this.imgDivs.length + leftIndex;
+               }
+
+               this.createImgDiv(rightIndex);
+               this.createImgDiv(leftIndex);
+            }
+
+            var newImgDiv = this.imgDivs[this.nowImgIndex];
+            $(this.nowImgDiv).hide();
+            $(newImgDiv).show();
+            this.nowImgDiv = newImgDiv;
+            
+            return this;
         },
         
-        render: function() {            
-            var newImgDiv = (this.imgDivs[this.nowImgIndex] || null);
+        createImgDiv: function(index) {
+            var newImgDiv = (this.imgDivs[index] || null);
             
             // create a new div if it hasn't been created yet
             if (newImgDiv === null) {
                 templateParams = this.model.toJSON();
-                templateParams['nowImgIndex'] = this.nowImgIndex;
-                var newImgDiv = null;
+                templateParams['nowImgIndex'] = index;
                 if (templateParams.pictures.length != 0) {
                     newImgDiv = $(this.imgDivTemplate(templateParams));
                 }
                 else {
-                    nowImgDiv = '<div>No pictures here, move along</div>';
+                    newImgDiv = $('<div>No pictures here, move along</div>');
                 }
-                this.imgDivs[this.nowImgIndex] = newImgDiv;
-                this.$('.tract-pictures').append(newImgDiv); 
+                this.imgDivs[index] = newImgDiv.hide();
+                this.$('.tract-pictures').append(newImgDiv);
             }                        
             
-            $(this.nowImgDiv).hide();
-            $(newImgDiv).show();
-            this.nowImgDiv = newImgDiv;
-
-            return this;
         },
         
         nextPicture: function() {            
