@@ -39,9 +39,9 @@ def prepare(tract):
     out['pictures'] = map(cp.loads,tract.picturelist)
     return out
 
-def getcontext(n, j=None, direction=None):
-    if not j:
-        j = random.randint(0, 2**32 - 1)
+def getcontext(n, j, direction=None):
+    #if not j:
+        #j = random.randint(0, 2**32 - 1)
     if direction == 'left': 
         query = Tract.all().order('-order').filter('order <=', j).filter('has_pictures =', True)
     elif direction == 'right':
@@ -63,13 +63,29 @@ def getcontext(n, j=None, direction=None):
 
 class Context(webapp.RequestHandler):
     def get(self):
+        # j is the order property of the tract from which we want context
         j = self.request.get('j')
-        if j:
-            j = int(j)
+        if not j:
+            # if client provides no j, pick a random place to start them
+            j = random.randint(0, 2**32 - 1)
+        j = int(j)
+
+        # n is the number of tracts of context desired
         n = self.request.get('n')
         if not n:
+            # n has a default value
             n = 10
         n = int(n)
+
+        # 'dir' means 'I want context starting at the Tract with order 'j' 
+        # and going dir 'n' Tracts'
+        # TODO: Context queries with a direction specified should NOT include
+        # Tract 'j' in their results - if a client makes a directional request
+        # that includes a 'j', it presumably already HAS j in its collection.
+        # Note that a query which specifies j and not dir SHOULD include j since
+        # this type of query indicates that the client wants to START its browsing
+        # experience at j, as if a user wanted to return to a specific place
+        # after having left the site and returning to a bookmark/hotlink.
         direction = self.request.get('dir')
         if not direction:
             result_right = getcontext(n+1, j, 'right')

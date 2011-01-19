@@ -33,7 +33,7 @@ $(function() {
                     this.currentTractIndex = center;
                 });
                 
-            this.bind('add', this.fixDisplacedIndex);
+            this.bind('add:left', this.fixDisplacedIndex);
                 
             // create a new TractDataManager
             this.manager = new TractDataManager(this);
@@ -43,7 +43,38 @@ $(function() {
 
         },             
         
-        comparator: function(tract) { return tract.get('order'); },   
+        addLeft: function(models, options) {
+            if (_.isArray(models)) {
+                for (var i = 0, l = models.length; i < l; i++) {
+                    this._addLeft(models[i], options);
+                }
+            } 
+            else {
+                this._addLeft(models, options);
+            }
+            return this;
+        },
+
+        _addLeft: function(model, options) {
+
+               options || (options = {});
+               if (!(model instanceof Backbone.Model)) {
+                   model = new this.model(model, {collection: this});
+               }
+               var already = this.getByCid(model);
+               if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
+               this._byId[model.id] = model;
+               this._byCid[model.cid] = model;
+               model.collection = this;
+               this.models.unshift(model);
+               model.bind('all', this._boundOnModelEvent);
+               this.length++;
+               if (!options.silent) model.trigger('add:left', model, this, options);
+               return model;
+
+
+        },
+        //comparator: function(tract) { return tract.get('order'); },   
         
         moveLeft: function() {            
             //all the way left?  let everyone know
@@ -72,22 +103,17 @@ $(function() {
             }
         },
         
-        // This function is called when an 'add' event is
+        // This function is called when an 'add:left' event is
         // fired on the collection.        
         fixDisplacedIndex: function() {        
-            // locate the correct index in the collection
-            // for this.currentTract
-            
-            // if we added stuff only to the right,
-            // this will be the same as the current 
-            // this.currentTractIndex
-            
-            // if we added stuff to the left, then the new
-            // index is GREATER THAN the stored value
-            // and searching UP will find it quickly
-            
-            // the search wraps around until it comes back to
-            // the starting value, in case of big problems
+            // each time, we simply have to move the currentTractIndex
+            // one to the right
+                             
+            // example: currentTractIndex is 1
+            // we add an element on the left
+            // the current tract is now the 2th element, instead of the 1th
+            // (the new one is the 0th)
+            // so we increment currentTractIndex
             
             // if there's no currentTract, don't bother trying
             // to fix things that don't exist
@@ -95,41 +121,8 @@ $(function() {
             
             // orig is the currentTractIndex we had stored
             // before we added in more tracts
-            var orig = this.currentTractIndex;        
-
-            // we will compare tracts by id rather than
-            // === in order to make sure that if a tract is
-            // overwritten by a duplicate tract, they still
-            // compare as the same thing.
-            var origID = this.currentTract.get('tractid')
+            this.currentTractIndex++;
             
-            // current correct?
-            // if so, no need to modify the currentTractIndex
-            if (this.at(orig).get('tractid') == origID)   { 
-//              console.debug('leaving currentTractIndex at '+orig);
-                return; 
-            }
-            
-            // climb to max, loop to 0, climb to orig
-            var counter = orig+1;
-            if (counter > this.length-1) {
-                counter = 0;
-            }
-            while (counter != orig) {
-                if (this.at(counter).get('tractid') == origID) {
-                    this.currentTractIndex = counter;
-//                  console.debug('setting currentTractIndex to '+counter+' (originally '+orig+')');
-                    return;                
-                }
-                
-                counter++;
-                if (counter > this.length-1) { 
-                    counter = 0; 
-                }
-            }
-            // if we get here, somehow the tract wasn't in
-            // the collection after adding more tracts
-            // UHhhh....
         }
                 
     });    
@@ -285,7 +278,7 @@ $(function() {
                             dataType: 'json',
                             context: this,         //context for callbacks
                             success: function(tracts) {
-                                this.addTractsCB(tracts, direction);
+                                this.addTractsCB(tracts, direction, from);
                             },
                             error: this.retryAjax
             });
@@ -294,94 +287,24 @@ $(function() {
             this.pending[direction] = request;
         },
 
-        reachLeft: function() {
-            //if this.ring.currentTractIndex is
-            //within this.width of 0            
-            if (this.ring.currentTractIndex < this.width) {
-                console.debug('reaching left');
-                //if there's no leftwards request pending
-                if (this.pending.left === null) {
-                    //get more context to the left, calling back
-                    //to lhCallback
-                    var getParams = {
-                        n: 10,
-                        j: this.ring.first().get('order'),
-                        direction: 'left',
-                    };
-                    request = $.ajax({
-                                    url: fetch_url,
-                                    data: getParams,
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    context: this,
-                                    success: function(tracts) {
-                                        this.addTractsCB(tracts, 'left');
-                                    },
-                                    error: this.retryAjax
-                    
-                    });
-                    //and noting the request in this.pending
-                    this.pending.left = request;
-                }
+        addTractsCB: function(newTracts, direction, from) {
+            //if the server gave back context that includes j,
+            //don't add j again right after itself
+            if (newTracts[0].order === from) { 
+                newTracts.shift(); 
+                console.debug('Server gave j back with results, not duping it');
             }
-        },
-        
-                
-        reachRight: function() {
-            //if this.ring.currentTractIndex is
-            //within this.width of this.ring.length
-            var allowable = (this.ring.length - 1) - this.width;
-            if (allowable < 0) { allowable = 0; }            
-            if (this.ring.currentTractIndex > allowable) {
-                //if there's no rightwards request pending
-                //get more context to the right, calling 
-                //back to rhCallback...
-                if (this.pending.right === null) {
-                    var getParams = {
-                        n: 10,
-                        j: this.ring.last().get('order'),
-                        direction: 'right',
-                    };
-                    request = $.ajax({
-                                    url: fetch_url,
-                                    data: getParams,
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    context: this,
-                                    success: function(tracts) { 
-					                    this.addTractsCB(tracts,'right'); 
-				                    },
-                                    error: this.retryAjax
-                    });
-                    //and noting the request in this.pending
-                    this.pending.right = request;
-                }
-            }
-        },
-        
-        addTractsCB: function(newTracts, direction) {
-            //make a list of all tractids already in the collection
-            var knownids = this.ring.map(function(t) { 
-                                                return t.get('tractid') 
-                                            });
-            console.debug('highest: '+this.ring.last().get('order'));
-            console.debug('lowest: '+this.ring.first().get('order'));
-
+            
 	        //for each new tract
             _.each(newTracts, function(newTract) {
-                //record the new tract's id for comparison
-                var newid = newTract.tractid;
-                //if this new tract isn't known, add it
-                if (! _.any(knownids, function(ktid) { return ktid === newid; })) {
+                if (direction === 'right') {
                     this.ring.add(newTract);
-                    //also, record that there is now a tract with that tract id	
-                    //in case there are duplicates WITHIN the new tracts
-                    knownids.push(newTract);
-                    console.debug('adding: '+newTract.order);
                 }
                 else {
-                    console.debug('(dupe!) Rejected order #'+newTract.order);
+                    this.ring.addLeft(newTract);
                 }
+                console.debug('adding: '+newTract.order);
+                
             }, this);  //set the context for the _.each to the manager
 
             //request is finished, note it
@@ -475,17 +398,12 @@ $(function() {
     Tracts = new TractRing();
     App = new AppView();
 
-    var gistus_debug = false;
-    window.TOGGLE_DEBUG = function toggle_debug() {
+    DEBUGON = function() {
         $debugElements = $('.debug');
-        if (gistus_debug) {
-            $debugElements.css('display', 'none');
-            gistus_debug = false;
-        }
-        else {
-            $debugElements.css('display', 'block');
-            gistus_debug = true;
-        }
-    } 
-    window.TOGGLE_DEBUG();
+        $debugElements.addClass('.debugVisible');
+    }
+    DEBUGOFF = function() {
+        $debugElements = $('.debug');
+        $debugElements.removeClass('.debugVisible');
+    }
 });
