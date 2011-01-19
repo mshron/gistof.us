@@ -66,7 +66,7 @@ $(function() {
                this._byId[model.id] = model;
                this._byCid[model.cid] = model;
                model.collection = this;
-               this.models.unshift(model);
+               this.models.unshift(model);  //to the left!
                model.bind('all', this._boundOnModelEvent);
                this.length++;
                if (!options.silent) model.trigger('add:left', model, this, options);
@@ -74,7 +74,6 @@ $(function() {
 
 
         },
-        //comparator: function(tract) { return tract.get('order'); },   
         
         moveLeft: function() {            
             //all the way left?  let everyone know
@@ -146,25 +145,32 @@ $(function() {
             this.model.view = this;
             
             // keeping track of which image we're viewing at any given time
-            this.nowImgIndex = 0;
-            this.imgDivs = [];
+            this.numPictures = this.model.get('pictures').length;
+            this.imgDivs = Array(this.numPictures);
             this.nowImgDiv = null;
+            this.nowImgIndex = 0;
             
             // initial render
             // create the first imgdiv
             templateParams = this.model.toJSON();
             templateParams['nowImgIndex'] = this.nowImgIndex;
             $(this.el).html(this.template(templateParams));            
-
+            /*
             var nowImgDiv = null;
             if (templateParams.pictures.length != 0) {
                 nowImgDiv = $(this.imgDivTemplate(templateParams));
             }
             else {
                 nowImgDiv = $('<div>No pictures here, move along</div>');
+                console.debug('theoretically creating an empty div thing');
+                console.debug(nowImgDiv);
             }
-            this.imgDivs[this.nowImgIndex] = this.nowImgDiv;   
-            this.$('.tract-pictures').append(this.nowImgDiv);
+            this.imgDivs[this.nowImgIndex] = nowImgDiv;   
+            this.$('.tract-pictures').append(nowImgDiv);
+            console.debug('nowImgDiv is always:');
+            console.debug(this.nowImgDiv)
+            */
+            this.render();
         },
         
         render: function() {            
