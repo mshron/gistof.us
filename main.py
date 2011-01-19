@@ -29,6 +29,7 @@ class Tract(db.Model):
     data = db.TextProperty()
     tractid = db.StringProperty()
     order = db.IntegerProperty()
+    has_pictures = db.BooleanProperty()
 
 def prepare(tract):
     out = {}
@@ -42,9 +43,9 @@ def getcontext(n, j, direction=None):
     #if not j:
         #j = random.randint(0, 2**32 - 1)
     if direction == 'left': 
-        query = Tract.all().order('-order').filter('order <=', j)
+        query = Tract.all().order('-order').filter('order <=', j).filter('has_pictures =', True)
     elif direction == 'right':
-        query = Tract.all().order('order').filter('order >=', j)
+        query = Tract.all().order('order').filter('order >=', j).filter('has_pictures =', True)
     else:
         raise IndexError("Need a direction to know how to index")
     out = query.fetch(n)
@@ -116,6 +117,7 @@ class AddTracts(webapp.RequestHandler):
                 rand = random.randint(0, 2**32 - 1)
             tract.order = rand
             tract.data = data
+            tract.has_pictures = False
             tract.put()
             self.response.out.write('Put %s @ %s\n'%(tractid, rand))
 
@@ -139,6 +141,7 @@ class AssociatePictures(webapp.RequestHandler):
             else:
                 pkl = db.Blob(cp.dumps(photo))
                 tract.picturelist.append(pkl)
+                tract.has_pictures = True
                 tract.put()
         self.response.out.write("Finished.")
 

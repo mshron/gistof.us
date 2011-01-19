@@ -30,8 +30,8 @@
     <!-- This one is actually from us! -->
     <link rel="stylesheet" href="css/gistofus.css" type="text/css"/>
 
-    <script type="text/javascript" src="http://use.typekit.com/czs6ani.js"></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    <link href='http://fonts.googleapis.com/css?family=Old+Standard+TT:regular,italic,bold' rel='stylesheet' type='text/css'>
+
     
     
   </head>
@@ -43,8 +43,8 @@
           <h1 id='title'>gistof.us</h1>
         </div>      
       </div>
-      Tracts:
       <div class='debug'>
+      Tracts:
           <span id='DEBUG-nowTract'>???</span>/<span id='DEBUG-numTracts'>???</span>
       </div>
 
@@ -61,11 +61,28 @@
       <div class='tract-view'>        
           <div class='tract-content row'>         <!-- ROW -->
             <div class="onecol">&nbsp;</div>
-            <div class='threecol'>
-                <a href="#" id="left">Previous Tract</a>
-                <a href="#" id="previousPicture">Previous Picture</a>
-                <div class='stat inline'>#<%= tractid %></div><br>
-                <div class='stat inline'>Pop: <%= data.population %></div><br>
+            <div class='fourcol'>
+                <div class='stat'>#<%= tractid %></div>
+                <div class='stat'>
+                    <div class='stat_title'>Population</div>
+                    <div class='stat_local'><%= data.population %></div>
+                    <div class='stat_global'>T</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Income distribution</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Age distribution</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Children per-capita</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
                 <div class='debug'>
                     <div class='stat inline'>Order: <%= order %></div><br>
             		<div class='stat inline'>Pics: <%= pictures.length %></div>
@@ -73,9 +90,22 @@
             </div>
             <div class='tract-pictures fivecol'></div>
             <div class='threecol last'>
+          </div>
+          <!-- ROW -->
+          <div class='twocol row'>&nbsp;</div>
+          <div class='threecol'>
+                <a href="#" id="left">Previous Tract</a>
+                <a href="#" id="previousPicture">Previous Picture</a>
+          </div>
+          <div class='fivecol rightnav'>
                 <a href="#" id="nextPicture">Next Picture</a>
                 <a href="#" id="right">Next Tract</a>
-            </div>
+          </div>
+          <div class='twocol last'>&nbsp;</div>
+
+
+
+
       </div>
       
   </script>

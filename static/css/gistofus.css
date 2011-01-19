@@ -18,7 +18,27 @@ div.rightnav {
 }
 
 div.stat {
+    border: 1px #eee solid;
+    float: left;
+    width: 150px;
+    margin: 5px;
 }
+
+.stat_title {
+  text-align: right;
+  font-size: 1.2em;
+  text-align: left;
+}
+
+.stat_local {
+    float: right;
+    margin-left: 5px;
+}
+
+.stat_global {
+    float: right;
+}
+
 
 div.inline {
     display: inline;
@@ -30,15 +50,12 @@ div#credits {
 }
 
 div.container {
-    font-family: "droid-sans-1","droid-sans-2",sans-serif;
+  font-family: 'Old Standard TT', arial, serif;
 
 }
 
 h1#title {
-    font-family: "droid-sans-1","droid-sans-2",sans-serif;
+    font-family: 'Old Standard TT', arial, serif;
 
 }
 
-.debug {
-    display: block
-}
