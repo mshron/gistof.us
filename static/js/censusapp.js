@@ -139,7 +139,7 @@ $(function() {
             // of the view since it is often run on a 'change' event
             // fired by the Tract model changing, which would otherwise
             // cause it to run in the context of the model
-            _.bind(this, 'render');
+            _.bindAll(this, 'render', 'setRenderDistance');
             
             // doubly-linked, can be convenient
             this.model.view = this;
@@ -171,11 +171,13 @@ $(function() {
             console.debug(this.nowImgDiv)
             */
             this.setRenderDistance(true, 0);
+            //this.setRenderDistance(false, 0);
         },
 
         // this function sets the img caching parameters for the View
         // and then renders it
         setRenderDistance: function(on, distance) {
+            console.debug(this.model.get('tractid'), on, distance);
             if (this.on && (on == false)) {
                 this.dumpDivs();
             }
@@ -252,6 +254,8 @@ $(function() {
         nextPicture: function() {            
             var imgIndex = this.nowImgIndex;
             var maxImgIndex = this.model.get('pictures').length-1;
+
+            this.trigger('nav:img', 'right');
             
             // roll around to start if overflowing the end of the pictures
             if (imgIndex === maxImgIndex) { this.gotoImg(0) }
@@ -263,6 +267,8 @@ $(function() {
             var imgIndex = this.nowImgIndex;
             var maxImgIndex = this.model.get('pictures').length-1;
             
+            this.trigger('nav:img', 'left');
+
             // roll around to end if going negative
             if (imgIndex <= 0)        { this.gotoImg(maxImgIndex) }
             // otherwise, decrement
@@ -278,7 +284,7 @@ $(function() {
     
     TractDataManager = function(ring) {
         this.ring = ring;
-        this.width = 2;
+        this.width = 2;       //number of tracts of context required
         this.initialize();
     }
     
@@ -289,12 +295,43 @@ $(function() {
     _.extend(TractDataManager.prototype, {
         
         initialize: function() {
-            _.bindAll(this, 'addTractsCB', 'reach')//, 'reachLeft', 'reachRight');
+            _.bindAll(this, 'addTractsCB', 'reach', 'manageImages');
             this.ring.bind('nav:tract', this.reach);
+            this.ring.bind('nav:tract', this.manageImages);
+            this.ring.bind('refresh', this.manageImages);
             this.pending = {};
             this.pending.left = this.pending.right = null;
         },
         
+        manageImages: function() {
+            var r = this.ring;
+            var i = r.currentTractIndex;
+            var ct = r.currentTract;
+            
+            if (!ct) { return; }
+            
+            //set the current tract's view to 3
+            if (ct.view) {
+                ct.view.setRenderDistance(true, 3);
+            }
+            
+            //adjacent to 1
+            if (r.at(i+1)) {
+                r.at(i+1).view.setRenderDistance(true, 1);
+            }
+            if (r.at(i-1)) {
+                r.at(i-1).view.setRenderDistance(true, 1);
+            }
+        
+            //doubly adjacent to on/0
+            if (r.at(i+2)) {
+                r.at(i+2).view.setRenderDistance(true, 0);
+            }
+            if (r.at(i-2)) {
+                r.at(i-2).view.setRenderDistance(true, 0);
+            }
+        },
+
         //direction comes from the second argument to the Backbone.trigger call
         //that caused this callback to fire
         reach: function(direction) {
@@ -379,9 +416,6 @@ $(function() {
         
     });
     
-    ImageDataManager = function(view) {
-    
-    };
     
     // the AppView handles controls for next/prev tract/img
     AppView = Backbone.View.extend({
