@@ -170,8 +170,8 @@ $(function() {
             console.debug('nowImgDiv is always:');
             console.debug(this.nowImgDiv)
             */
-            this.setRenderDistance(true, 0);
-            //this.setRenderDistance(false, 0);
+            //this.setRenderDistance(true, 0);
+            this.setRenderDistance(false, 0);
         },
 
         // this function sets the img caching parameters for the View
@@ -200,8 +200,10 @@ $(function() {
             });
         },
 
+        //render always returns this (the view rendered) to permit
+        //chaining of calls like (view.render().el).hide()
         render: function() {            
-            if (!this.on)                           { return; }
+            if (!this.on)                           { return this; }
 
             //ensure that sufficient context exists left and right
 
