@@ -106,6 +106,10 @@ div.rightnav {
     text-align: right;
 }
 
+div.navbar {
+    background-color: #fafafa;
+}
+
 div.stat {
     /*border: 1px #eee solid;*/
     float: left;
