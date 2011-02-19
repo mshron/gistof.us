@@ -108,8 +108,22 @@
   <!-- Templates -->
   <script type='text/template' id='tract-template'>
       <div class='tract-view'>        
+          <!-- ROW -->
+          <div class='twocol row'>&nbsp;</div>
+          <div class='threecol'>
+                <a href="#" id="left">Previous Tract</a>
+                <a href="#" id="previousPicture">Previous Picture</a>
+          </div>
+          <div class='fivecol rightnav'>
+                <a href="#" id="nextPicture">Next Picture</a>
+                <a href="#" id="right">Next Tract</a>
+          </div>
+          <div class='twocol last'>&nbsp;</div>
+
+
           <div class='tract-content row'>         <!-- ROW -->
-            <div class="onecol">&nbsp;</div>
+
+            <div class='tract-pictures sixcol'></div>
             <div class='fourcol'>
                 <div class='stat'>#<%= tractid %></div>
                 <div class='stat'>
@@ -137,21 +151,8 @@
             		<div class='stat inline'>Pics: <%= pictures.length %></div>
                 </div>
             </div>
-            <div class='tract-pictures fivecol'></div>
-            <div class='threecol last'>
+            <div class='threecol last'></div>
           </div>
-          <!-- ROW -->
-          <div class='twocol row'>&nbsp;</div>
-          <div class='threecol'>
-                <a href="#" id="left">Previous Tract</a>
-                <a href="#" id="previousPicture">Previous Picture</a>
-          </div>
-          <div class='fivecol rightnav'>
-                <a href="#" id="nextPicture">Next Picture</a>
-                <a href="#" id="right">Next Tract</a>
-          </div>
-          <div class='twocol last'>&nbsp;</div>
-
 
 
 
