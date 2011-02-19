@@ -107,20 +107,20 @@ div.rightnav {
 }
 
 div.stat {
-    border: 1px #eee solid;
+    /*border: 1px #eee solid;*/
     float: left;
-    width: 150px;
+    width: 300px;
     margin: 5px;
 }
 
 .stat_title {
-  text-align: right;
-  font-size: 1.2em;
+  font-size: .8em;
   text-align: left;
+  float: left;
 }
 
 .stat_local {
-    float: right;
+    float: left;
     margin-left: 5px;
 }
 
@@ -146,6 +146,10 @@ div.container {
 h1#title {
     font-family: 'Old Standard TT', arial, serif;
 
+}
+
+div.debug {
+    display: none;
 }
 
 /* Remove this pretty soon... okay for now */
