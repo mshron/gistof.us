@@ -29,8 +29,9 @@ def photolist_to_urls(l):
     out = []
     for photo in l:
         this = {}
-        this['owner'] = photo['owner']
-        this['title'] = photo['title']
+        this['metadata'] = {}
+        this['metadata']['owner'] = photo['owner']
+        this['metadata']['title'] = photo['title']
         this['url'] =  parse_photo_to_url(photo)
         out.append(this)
     return out

@@ -145,6 +145,27 @@ class AssociatePictures(webapp.RequestHandler):
                 tract.put()
         self.response.out.write("Finished.")
 
+class AssociatePicturesJSON(webapp.RequestHandler):
+    def put(self): # now takes json files: {'tractid': [photo1,photo2], etc.}
+        _data = json.load(self.request.body_file)
+        assert isinstance(_data, dict)
+        for tractid,_photos in _data.iteritems():
+            _picturelist = []
+            for photo in _photos:
+                photo['order'] = random.randint(0,2**16-1)
+            tract_query = db.GqlQuery("SELECT * FROM Tract WHERE tractid=:1", tractid)
+            tract = tract_query.get()
+            if not tract:
+                self.response.out.write("Adding to %s failed\n"%tractid)
+            else:
+                pkl = [db.Blob(cp.dumps(p)) for p in _photos]
+                tract.picturelist.extend(pkl)
+                tract.has_pictures = True
+                tract.put()
+                self.response.out.write("Added photos to %s.\n"%tractid)
+        self.response.out.write("Finished.\n")
+
+
 class OrderData(webapp.RequestHandler):
     def get(self):
        query = Tract.all().order('order') 
@@ -159,6 +180,7 @@ class ReadMemcache(webapp.RequestHandler):
 def main():
     application = webapp.WSGIApplication([('/addtracts', AddTracts),
         ('/addpictures', AssociatePictures),
+        ('/addpictures_json', AssociatePicturesJSON),
         ('/context',Context),
         ('/orders',OrderData),
         ('/mem',ReadMemcache)], debug=True)

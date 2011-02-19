@@ -1,0 +1,158 @@
+<!doctype html>  
+
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>gistof &mdot; us</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="css/style.css?v=2">
+  <script src="js/libs/modernizr-1.6.min.js"></script>
+
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+
+    </header>
+    
+    <div id="main">
+    <div id='census-app' class='container'>        
+      <div id='title-row' class='row'>
+        <div class='title twelvecol last'>
+          <h1 id='title'>gistof.us</h1>
+        </div>      
+      </div>
+      <div class='debug'>
+      Tracts:
+          <span id='DEBUG-nowTract'>???</span>/<span id='DEBUG-numTracts'>???</span>
+      </div>
+
+      <div id='tract-view-box'></div>     
+      <div class='debug'>
+            Tract orders: <span class='inlinesparkline'></span>
+      </div>
+      <div id='credits' class='twelvecol row last'>These are the credits</div> <!-- ROW -->
+    </div>     
+
+
+      </div>
+ 
+    </div>
+    
+    <footer>
+
+    </footer>
+  </div> <!-- end of #container -->
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery-1.4.2.js"%3E%3C/script%3E'))</script>
+  
+  
+  <!-- scripts concatenated and minified via ant build script-->
+  <script src="js/plugins.js"></script>
+  <script src="js/script.js"></script>
+  <!-- end concatenated and minified scripts-->
+  
+  
+  <!--[if lt IE 7 ]>
+    <script src="js/libs/dd_belatedpng.js"></script>
+    <script> DD_belatedPNG.fix('img, .png_bg'); </script>
+  <![endif]-->
+
+  <!-- yui profiler and profileviewer - remove for production -->
+  <script src="js/profiling/yahoo-profiling.min.js"></script>
+  <script src="js/profiling/config.js"></script>
+  <!-- end profiling code -->
+ 
+  <script src="js/mylibs/underscore.js"></script>
+  <script src="js/mylibs/backbone.js"></script>
+  <script src="js/mylibs/censusapp.js"></script>
+  <script src="js/mylibs/sparklines.js"></script>
+
+  <script type='text/template' id='imgdiv-template'>
+      <div class='imgdiv'>
+          <img class="tractpic" src='<%= pictures[nowImgIndex].url %>'></img>
+          <div class="author"><%= pictures[nowImgIndex]['order'] %>: <%= pictures[nowImgIndex].metadata.author %><div>
+      </div>
+  </script>
+
+
+  <!-- change the UA-XXXXX-X to be your site's ID -->
+  <script>
+   var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
+   (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.async = true;
+    g.src = ('https:' == location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g, s);
+   })(document, 'script');
+  </script>
+  
+</body>
+  <!-- Templates -->
+  <script type='text/template' id='tract-template'>
+      <div class='tract-view'>        
+          <div class='tract-content row'>         <!-- ROW -->
+            <div class="onecol">&nbsp;</div>
+            <div class='fourcol'>
+                <div class='stat'>#<%= tractid %></div>
+                <div class='stat'>
+                    <div class='stat_title'>Population</div>
+                    <div class='stat_local'><%= data.population %></div>
+                    <div class='stat_global'>T</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Income distribution</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Age distribution</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
+                <div class='stat'>
+                    <div class='stat_title'>Children per-capita</div>
+                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_global'>&nbsp;</div>
+                </div>
+                <div class='debug'>
+                    <div class='stat inline'>Order: <%= order %></div><br>
+            		<div class='stat inline'>Pics: <%= pictures.length %></div>
+                </div>
+            </div>
+            <div class='tract-pictures fivecol'></div>
+            <div class='threecol last'>
+          </div>
+          <!-- ROW -->
+          <div class='twocol row'>&nbsp;</div>
+          <div class='threecol'>
+                <a href="#" id="left">Previous Tract</a>
+                <a href="#" id="previousPicture">Previous Picture</a>
+          </div>
+          <div class='fivecol rightnav'>
+                <a href="#" id="nextPicture">Next Picture</a>
+                <a href="#" id="right">Next Tract</a>
+          </div>
+          <div class='twocol last'>&nbsp;</div>
+
+
+
+
+</html>
