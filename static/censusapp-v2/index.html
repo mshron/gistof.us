@@ -84,13 +84,6 @@
   <script src="js/mylibs/censusapp.js"></script>
   <script src="js/mylibs/sparklines.js"></script>
 
-  <script type='text/template' id='imgdiv-template'>
-      <div class='imgdiv'>
-          <img class="tractpic" src='<%= pictures[nowImgIndex].url %>'></img>
-          <div class="author"><%= pictures[nowImgIndex]['order'] %>: <%= pictures[nowImgIndex].metadata.author %><div>
-      </div>
-  </script>
-
 
   <!-- change the UA-XXXXX-X to be your site's ID -->
   <script>
@@ -153,6 +146,14 @@
                 </div>
             </div>
           </div>
+
+</script>
+  <script type='text/template' id='imgdiv-template'>
+      <div class='imgdiv'>
+          <img class="tractpic" src='<%= pictures[nowImgIndex].url %>'></img>
+          <div class="author"><%= pictures[nowImgIndex]['order'] %>: <%= pictures[nowImgIndex].metadata.title %></div>
+      </div>
+  </script>
 
 
 
