@@ -102,6 +102,10 @@ div.author {
     font-style: italic;
 }
 
+div.author a {
+    color: black;
+}
+
 div.rightnav {
     text-align: right;
 }

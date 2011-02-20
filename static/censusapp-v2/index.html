@@ -109,7 +109,7 @@
                 <div class='stat'>
                     <div class='stat_title'>Population</div>
                     <div class='stat_local'><%= data.population %></div>
-                    <div class='stat_global'>T</div>
+                    <div class='stat_global'>1</div>
                 </div>
                 <div class='stat'>
                     <div class='stat_title'>Income distribution</div>
@@ -151,7 +151,7 @@
   <script type='text/template' id='imgdiv-template'>
       <div class='imgdiv'>
           <img class="tractpic" src='<%= pictures[nowImgIndex].url %>'></img>
-          <div class="author"><%= pictures[nowImgIndex]['order'] %>: <%= pictures[nowImgIndex].metadata.title %></div>
+          <div class="author"><a href=<%= pictures[nowImgIndex].originalurl %></a><%= pictures[nowImgIndex].metadata.title %></a></div>
       </div>
   </script>
 

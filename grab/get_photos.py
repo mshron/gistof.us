@@ -25,6 +25,10 @@ def get_photos(url):
 def parse_photo_to_url(d):
     return "http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(secret)s.jpg"%d
 
+def parse_photo_to_original_url(d):
+    return "http://www.flickr.com/photos/%(owner)s/%(id)s"%d
+
+
 def photolist_to_urls(l):
     out = []
     for photo in l:
@@ -33,6 +37,7 @@ def photolist_to_urls(l):
         this['metadata']['owner'] = photo['owner']
         this['metadata']['title'] = photo['title']
         this['url'] =  parse_photo_to_url(photo)
+        this['original_url'] = parse_photo_to_original_url(photo)
         out.append(this)
     return out
 
@@ -48,3 +53,6 @@ def bboxes_to_photoset(rects):
 # nm_shp = shape_to_dict('tr35_d00.shp')
 # nm_rects = find_rects(nm_shp)
 # nm_pics = bboxes_to_photoset(nm_rects[k[1]][0])
+
+# then save, e.g. by hand:
+#  json.dump({tractid: pics},open('%s.json'%tractid,'w'))
