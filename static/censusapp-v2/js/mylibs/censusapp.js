@@ -1,6 +1,9 @@
 var fetch_url = 'http://localhost:8080/context';
 
+
+
 $(function() {
+
 
     Tract = Backbone.Model.extend({
         initialize: function() {
@@ -230,7 +233,7 @@ $(function() {
             $(this.nowImgDiv).hide();
             $(newImgDiv).show();
             this.nowImgDiv = newImgDiv;
-            
+
             return this;
         },
         
@@ -461,6 +464,10 @@ $(function() {
             }
  
             $('.inlinesparkline').sparkline(Tracts.map(function(t) { return t.get('order'); }));
+
+
+            
+
             if (this.shownView !== null) { 
                 $(this.shownView.el).hide(); 
             }
@@ -499,4 +506,6 @@ $(function() {
         $debugElements = $('.debug');
         $debugElements.removeClass('.debugVisible');
     }
+
+    
 });

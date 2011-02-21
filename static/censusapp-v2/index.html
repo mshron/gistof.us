@@ -108,17 +108,17 @@
                 <div class='stat'>#<%= tractid %></div>
                 <div class='stat'>
                     <div class='stat_title'>Population</div>
-                    <div class='stat_local'><%= data.population.value %>&plusmn<%= data.population.moe %></div>
-                    <div class='stat_global'>&nbsp</div>
+                    <div class='stat_local'><%= data.population.total %>&plusmn;<%= data.population.total_moe %></div>
+                    <div class='stat_global'>&nbsp;</div>
                 </div>
                 <div class='stat'>
-                    <div class='stat_title'>Income distribution</div>
-                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_title'>Below Poverty Line</div>
+                    <div class='stat_local'><%= data.poverty.pct_below_100pc %></div>
                     <div class='stat_global'>&nbsp;</div>
                 </div>
                 <div class='stat'>
                     <div class='stat_title'>Age distribution</div>
-                    <div class='stat_local'>&nbsp;</div>
+                    <div class='stat_local'><span class="inlinebar"><%= data.age.distribution %></span></div>
                     <div class='stat_global'>&nbsp;</div>
                 </div>
                 <div class='stat'>
@@ -154,6 +154,13 @@
           <div class="author"><a href=<%= pictures[nowImgIndex].originalurl %></a><%= pictures[nowImgIndex].metadata.title %></a></div>
       </div>
   </script>
+
+  <script type="text/javascript">
+   // Design stuff goes here
+   $('.inlinebar').sparkline('html', {type: 'bar', barColor: 'blue'} );
+  </script>
+
+
 
 
 
