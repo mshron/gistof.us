@@ -20,7 +20,8 @@ for key in shelves[0]:
     data = [sh.get(key) for sh in shelves]
     for d in data:
         if d:
-            final.update(d)
+            for k,v in d.iteritems():
+                final.setdefault(k,{}).update(v)
     out.writerow([key,json.dumps(final).encode('hex')])
     print "Wrote: %s"%key
 

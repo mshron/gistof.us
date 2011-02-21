@@ -108,8 +108,8 @@
                 <div class='stat'>#<%= tractid %></div>
                 <div class='stat'>
                     <div class='stat_title'>Population</div>
-                    <div class='stat_local'><%= data.population %></div>
-                    <div class='stat_global'>1</div>
+                    <div class='stat_local'><%= data.population.value %>&plusmn<%= data.population.moe %></div>
+                    <div class='stat_global'>&nbsp</div>
                 </div>
                 <div class='stat'>
                     <div class='stat_title'>Income distribution</div>
