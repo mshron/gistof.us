@@ -13,7 +13,8 @@ transforms = [('population','value',
                 addone),
               ('population','moe',
                'Universe:  TOTAL POPULATION: Total(Margin of Error (+/-))', 
-               id)]
+               id),
+              ('population','nonexistant', 'FOOO', id)]
 
 def setup_shelf(shelf_file):
     shelf = shelve.open(shelf_file)
@@ -23,9 +24,15 @@ def transform(data, transforms):
     out = {}
     for _di,_k,_t,_fn in transforms:
         if isinstance(_t,tuple):
-            _dat = tuple(data[t] for t in _t)  
+            try:
+                _dat = tuple(data[t] for t in _t)  
+            except:
+               continue 
         else:
-            _dat = data[_t]
+            try:
+                _dat = data[_t]
+            except:
+                continue
         out.setdefault(_di,{})[_k] = _fn(_dat)
     return out
 
