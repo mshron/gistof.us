@@ -1,7 +1,5 @@
 var fetch_url = 'http://localhost:8080/context';
 
-
-
 $(function() {
 
 
@@ -180,7 +178,7 @@ $(function() {
         // this function sets the img caching parameters for the View
         // and then renders it
         setRenderDistance: function(on, distance) {
-            console.debug(this.model.get('tractid'), on, distance);
+            //console.debug(this.model.get('tractid'), on, distance);
             if (this.on && (on == false)) {
                 this.dumpDivs();
             }
@@ -463,18 +461,51 @@ $(function() {
                 $debug_nowTract.html(Tracts.currentTractIndex);
             }
  
-            $('.inlinesparkline').sparkline(Tracts.map(function(t) { return t.get('order'); }));
-
-
-            
-
+            // show the new tract's view, hide the old one
             if (this.shownView !== null) { 
                 $(this.shownView.el).hide(); 
             }
             $(currentView.el).show();
             this.shownView = currentView;
-                   
+
+            // show the correct stats for this new tract            
+            this.displayStats(this.shownView.model);       
         },
+
+        displayStats: function(tract) {
+            console.debug('displaying stats:');
+            console.debug(tract);
+            var data = tract.get('data');
+
+            //population
+            var pop_total = data.population.total;
+            var pop_moe = data.population.total_moe;
+            $('#population-stat .stat_local').html(pop_total+'&plusmn;'+pop_moe);
+            //age
+            var age_distribution = data.age.distribution;
+            $age_stat = $('#age-distribution-stat .stat_local');
+            $age_stat.sparkline(age_distribution, {type: 'bar', barColor: 'blue'});
+
+            //poverty
+            var pct_below_100pc = data.poverty.pct_below_100pc;
+            pct_below_100pc = (pct_below_100pc * 100).toFixed(2);
+            pct_below_100pc = pct_below_100pc + "%";
+            $('#below-poverty-stat .stat_local').html(pct_below_100pc);
+           
+            //sex
+            var female = data.sex.female;
+            var female_moe = data.sex.female_moe;
+            var male = data.sex.male;
+            var male_moe = data.sex.male_moe;
+
+            $('#sex-stat .stat_local').sparkline([female, -male], {type: 'bar'})
+//            var female_string = 'Female: '+female+'&plusmn;'+female_moe;
+//            var male_string = 'Male: '+male+'&plusmn;'+male_moe;
+//            var sex_string = female_string+' | '+male_string;
+
+//            $('#sex-stat .stat_local').html(sex_string);
+        },
+
 
         //
         addOneView: function(tract) {                  
