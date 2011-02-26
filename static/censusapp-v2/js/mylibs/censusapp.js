@@ -1,7 +1,5 @@
 var fetch_url = 'http://localhost:8080/context';
 
-
-
 $(function() {
 
 
@@ -463,16 +461,15 @@ $(function() {
                 $debug_nowTract.html(Tracts.currentTractIndex);
             }
  
-            $('.inlinesparkline').sparkline(Tracts.map(function(t) { return t.get('order'); }));
-
-
-            
-
+            // show the new tract's view, hide the old one
             if (this.shownView !== null) { 
                 $(this.shownView.el).hide(); 
             }
             $(currentView.el).show();
             this.shownView = currentView;
+
+            // show the correct stats for this new tract
+             
                    
         },
 
