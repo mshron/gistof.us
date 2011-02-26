@@ -29,32 +29,64 @@
     </header>
     
     <div id="main">
-    <div id='census-app' class='container'>        
-      <div id='title-row' class='row'>
-        <div class='title twelvecol last'>
-          <h1 id='title'>gistof.us</h1>
-        </div>      
-      </div>
-      <div class='debug'>
-      Tracts:
-          <span id='DEBUG-nowTract'>???</span>/<span id='DEBUG-numTracts'>???</span>
-      </div>
+      <div id='census-app' class='container'>        
+      
+        <div id='title-row' class='row'>
+          <div class='title twelvecol last'>
+            <h1 id='title'>gistof.us</h1>
+          </div>      
+        </div> <!-- end of #title-row -->
+         
+        <div id='tract-view-box'></div>     
 
-      <div id='tract-view-box'></div>     
-      <div class='debug'>
-            Tract orders: <span class='inlinesparkline'></span>
-      </div>
-      <div id='credits' class='twelvecol row last'>These are the credits</div> <!-- ROW -->
-    </div>     
+        <div id='stats-box' class='fourcol'>
+          <div class='stat'>
+            <div class='stat_title'>Population</div>
+            <div class='stat_local'>&nbsp;</div>
+            <div class='stat_global'>&nbsp;</div>
+          </div>
+          <div class='stat'>
+            <div class='stat_title'>Below Poverty Line</div>
+            <div class='stat_local'>&nbsp;</div>
+            <div class='stat_global'>&nbsp;</div>
+          </div>
+          <div class='stat'>
+            <div class='stat_title'>Age distribution</div>
+            <div class='stat_local'><span class="inlinebar"></div>
+            <div class='stat_global'>&nbsp;</div>
+          </div>
+          <div class='stat'>
+            <div class='stat_title'>Children per-capita</div>
+            <div class='stat_local'>&nbsp;</div>
+            <div class='stat_global'>&nbsp;</div>
+          </div>
+          <div class='debug'>
+            <div class='stat inline'>&nbsp;</div>
+            <div class='stat inline'>&nbsp;</div>
+          </div>
+        </div>
 
+        <div id='nav-box' class='twocol last navbar'>
+          <div class='leftnav'>
+            <a href="#" id="left">&lt;&lt;&nbsp;Previous Tract</a>
+          </div>
+          <div class='leftnav'>
+            <a href="#" id="previousPicture">&lt;&nbsp;&nbsp;Previous Picture</a>
+          </div>
+          <div class='leftnav'>
+            <a href="#" id="nextPicture">&gt;&nbsp;&nbsp;Next Picture</a>
+          </div>
+          <div class='leftnav'>
+            <a href="#" id="right">&gt;&gt;&nbsp;Next Tract</a>
+          </div>
+        </div>
 
-      </div>
- 
-    </div>
+        
+        <div id='credits' class='twelvecol row last'>These are the credits</div>
+      </div> <!--end of #census-app --> 
+    </div>   <!--end of #main -->
     
     <footer>
-
-
     </footer>
   </div> <!-- end of #container -->
 
@@ -101,51 +133,8 @@
   <!-- Templates -->
   <script type='text/template' id='tract-template'>
       <div class='tract-view'>        
-          <div class='tract-content row'>         <!-- ROW -->
-
-            <div class='tract-pictures fivecol'>&nbsp;</div>
-            <div class='fourcol statsbar'>
-                <div class='stat'>#<%= tractid %></div>
-                <div class='stat'>
-                    <div class='stat_title'>Population</div>
-                    <div class='stat_local'><%= data.population.total %>&plusmn;<%= data.population.total_moe %></div>
-                    <div class='stat_global'>&nbsp;</div>
-                </div>
-                <div class='stat'>
-                    <div class='stat_title'>Below Poverty Line</div>
-                    <div class='stat_local'><%= data.poverty.pct_below_100pc %></div>
-                    <div class='stat_global'>&nbsp;</div>
-                </div>
-                <div class='stat'>
-                    <div class='stat_title'>Age distribution</div>
-                    <div class='stat_local'><span class="inlinebar"><%= data.age.distribution %></span></div>
-                    <div class='stat_global'>&nbsp;</div>
-                </div>
-                <div class='stat'>
-                    <div class='stat_title'>Children per-capita</div>
-                    <div class='stat_local'>&nbsp;</div>
-                    <div class='stat_global'>&nbsp;</div>
-                </div>
-                <div class='debug'>
-                    <div class='stat inline'>Order: <%= order %></div><br>
-            		<div class='stat inline'>Pics: <%= pictures.length %></div>
-                </div>
-            </div>
-            <div class='twocol last navbar'>
-                <div class='leftnav'>
-                    <a href="#" id="left">&lt;&lt;&nbsp;Previous Tract</a>
-                </div>
-                <div class='leftnav'>
-                    <a href="#" id="previousPicture">&lt;&nbsp;&nbsp;Previous Picture</a>
-                </div>
-                <div class='leftnav'>
-                    <a href="#" id="nextPicture">&gt;&nbsp;&nbsp;Next Picture</a>
-                </div>
-                <div class='leftnav'>
-                    <a href="#" id="right">&gt;&gt;&nbsp;Next Tract</a>
-                </div>
-            </div>
-          </div>
+         <div class='tract-pictures fivecol'>&nbsp;</div>
+      </div>
 
 </script>
   <script type='text/template' id='imgdiv-template'>
@@ -160,8 +149,11 @@
    $('.inlinebar').sparkline('html', {type: 'bar', barColor: 'blue'} );
   </script>
 
+  <script type='text/template' id='stats-template'>
+  </script>
+    
 
+  <script type='text/template' id='nav-template'>
 
-
-
+  </script>
 </html>
