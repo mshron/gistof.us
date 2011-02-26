@@ -487,10 +487,17 @@ $(function() {
             $age_stat.sparkline(age_distribution, {type: 'bar', barColor: 'blue'});
 
             //poverty
-            var pct_below_100pc = data.poverty.pct_below_100pc;
+            var pct_below_100pc = data.poverty.pct_below_100pc
+            var fontsize = 18;
+            if (pct_below_100pc < 0.1) {
+                fontsize = 12;
+            }
             pct_below_100pc = (pct_below_100pc * 100).toFixed(2);
-            pct_below_100pc = pct_below_100pc + "%";
+            pct_below_100pc = pct_below_100pc + "%";            
+            
             $('#below-poverty-stat .stat_local').html(pct_below_100pc);
+            $('#below-poverty-stat .stat_local').animate({fontSize: fontsize},
+                                                         2000);
            
             //sex
             var female = data.sex.female;
