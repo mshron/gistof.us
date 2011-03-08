@@ -50,12 +50,17 @@ def age_distribution(longtuple):
     out[4] = ages[21:23].sum()
     return out
 
+def list_id(longtuple):
+    list = [int(x) for x in longtuple if can_int(x)]
+
+    return list
+
 transforms = [('population','total',
                'Universe:  TOTAL POPULATION: Total (Estimate)',
                 id),
               ('population','total_moe',
                'Universe:  TOTAL POPULATION: Total(Margin of Error (+/-))', 
-               id),
+                id),
               ('sex','male',
                 'Universe:  TOTAL POPULATION: Male (Estimate)',
                 addone),
@@ -199,6 +204,26 @@ transforms = [('population','total',
                 ('Universe:  TOTAL POPULATION: Hispanic or Latino (Estimate)',
                  'Universe:  TOTAL POPULATION: Total (Estimate)'),
                 ratio),
+
+              ('race', 'totals',
+                ('Universe:  TOTAL POPULATION: White alone (Estimate)',
+                'Universe:  TOTAL POPULATION: Black or African American alone (Estimate)',
+                'Universe:  TOTAL POPULATION: American Indian and Alaska Native alone (Estimate)',
+                'Universe:  TOTAL POPULATION: Asian alone (Estimate)',
+                'Universe:  TOTAL POPULATION: Native Hawaiian and Other Pacific Islander alone (Estimate)',
+                'Universe:  TOTAL POPULATION: Some other race alone (Estimate)',
+                'Universe:  TOTAL POPULATION: Two or more races (Estimate)'),
+                list_id),
+              
+              ('race', 'totals_moe',
+                ('Universe:  TOTAL POPULATION: White alone(Margin of Error (+/-))',
+                'Universe:  TOTAL POPULATION: Black or African American alone(Margin of Error (+/-))',
+                'Universe:  TOTAL POPULATION: American Indian and Alaska Native alone(Margin of Error (+/-))',
+                'Universe:  TOTAL POPULATION: Asian alone(Margin of Error (+/-))',
+                'Universe:  TOTAL POPULATION: Native Hawaiian and Other Pacific Islander alone(Margin of Error (+/-))',
+                'Universe:  TOTAL POPULATION: Some other race alone(Margin of Error (+/-))',
+                'Universe:  TOTAL POPULATION: Two or more races(Margin of Error (+/-))'),
+list_id),
 
               ('population','nonexistant', 'FOOO', id)]
 
