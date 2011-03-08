@@ -22,6 +22,19 @@ def can_int(x):
     except:
         return False
     
+def sex_by_age(longtuple):
+    _ages = [int(x) for x in longtuple if can_int(x)]
+    _ages_arr = np.asarray(_ages)
+
+    # five age categories
+    out = [0]*5
+    out[0] = _ages_arr[0:6].sum()
+    out[1] = _ages_arr[6:11].sum()
+    out[2] = _ages_arr[11:15].sum()
+    out[3] = _ages_arr[15:21].sum()
+    out[4] = _ages_arr[21:23].sum()
+    return out
+
 
 def age_distribution(longtuple):
     _ages = [int(x) for x in longtuple if can_int(x)]
@@ -39,7 +52,7 @@ def age_distribution(longtuple):
 
 transforms = [('population','total',
                'Universe:  TOTAL POPULATION: Total (Estimate)',
-                addone),
+                id),
               ('population','total_moe',
                'Universe:  TOTAL POPULATION: Total(Margin of Error (+/-))', 
                id),
@@ -129,6 +142,64 @@ transforms = [('population','total',
                 'Universe:  TOTAL POPULATION: Female; 80 to 84 years (Estimate)',
                 'Universe:  TOTAL POPULATION: Female; 85 years and over (Estimate)'),
                 age_distribution),
+
+              ('sex_by_age', 'male',
+                ('Universe:  TOTAL POPULATION: Male; Under 5 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 5 to 9 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 10 to 14 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 15 to 17 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 18 and 19 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 20 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 21 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 22 to 24 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 25 to 29 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 30 to 34 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 35 to 39 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 40 to 44 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 45 to 49 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 50 to 54 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 55 to 59 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 60 and 61 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 62 to 64 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 65 and 66 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 67 to 69 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 70 to 74 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 75 to 79 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 80 to 84 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Male; 85 years and over (Estimate)'),
+                sex_by_age),
+
+              ('sex_by_age', 'female',
+                ('Universe:  TOTAL POPULATION: Female; Under 5 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 5 to 9 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 10 to 14 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 15 to 17 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 18 and 19 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 20 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 21 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 22 to 24 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 25 to 29 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 30 to 34 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 35 to 39 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 40 to 44 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 45 to 49 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 50 to 54 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 55 to 59 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 60 and 61 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 62 to 64 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 65 and 66 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 67 to 69 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 70 to 74 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 75 to 79 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 80 to 84 years (Estimate)',
+                'Universe:  TOTAL POPULATION: Female; 85 years and over (Estimate)'),
+                sex_by_age),
+
+              ('hispanic_or_latino', 'pct_hispanic_or_latino',
+                ('Universe:  TOTAL POPULATION: Hispanic or Latino (Estimate)',
+                 'Universe:  TOTAL POPULATION: Total (Estimate)'),
+                ratio),
+
               ('population','nonexistant', 'FOOO', id)]
 
 def setup_shelf(shelf_file):
