@@ -86,6 +86,21 @@ def educational_attainment_18plus(longtuple):
             associates_degree, bachelors_degree, grad_or_professional_degree]
 
     return out
+
+def veteran_status(longtuple):
+    _vets = [int_0nan(x) for x in longtuple]
+    _vets_arr = np.asarray(_vets)
+
+    total_civilian_pop = _vets_arr[0]
+
+    if total_civilian_pop == 0:
+        return 0
+        
+    vet_columns = [6, 12, 18, 24, 30, 38, 44, 50, 56, 62]
+    total_veteran_pop = sum([_vets_arr[x] for x in vet_columns])
+
+    return ratio((total_veteran_pop, total_civilian_pop)) 
+
   
 transforms = [('population','total',
                'Universe:  TOTAL POPULATION: Total (Estimate)',
@@ -151,7 +166,8 @@ transforms = [('population','total',
               
               ('educational_attainment_18plus', 'total',
                'Universe:  POPULATION 18 YEARS AND OVER: Total (Estimate)', id),
-               
+
+              ('veteran_status', 'pct_veteran', cols.veteran_status, veteran_status),
 
               ('population','nonexistant', 'FOOO', id)]
 
