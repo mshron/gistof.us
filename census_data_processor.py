@@ -2,6 +2,7 @@ import csv
 import shelve
 import sys
 import numpy as np
+import transforms_columns as cols
 
 def addone(n):
     return int(n)+1
@@ -9,11 +10,21 @@ def addone(n):
 def id(x):
     return x
 
+def list_id(longtuple):
+    list = [int(x) for x in longtuple if can_int(x)]
+    return list
+
 def ratio((a,b)):
   try:
         _r =  float(a)/float(b)
         return "%.04f"%_r
   except: return "***"
+
+def int_0nan(x):
+    if can_int(x):
+        return int(x)
+    else:
+        return 0
 
 def can_int(x):
     try: 
@@ -50,11 +61,32 @@ def age_distribution(longtuple):
     out[4] = ages[21:23].sum()
     return out
 
-def list_id(longtuple):
-    list = [int(x) for x in longtuple if can_int(x)]
+def educational_attainment_18plus(longtuple):
+    # sum each educational level from each age group
+    # results will be list: 
+    # [<9th, some HS, HSgrad/GED, some college, assoc, bach, grad/professional]
+    
+    # this is probably bad - replaces NaN values in the data with 0
+    # we should handle these some other way, I assume
+    _attains = [int_0nan(x) for x in longtuple] 
+    _attains_arr = np.asarray(_attains)
 
-    return list
+    lt9th_indices = [6,22,38,54,70,88,104,120,136,152]
 
+    print len(longtuple)
+    lt9 = sum([_attains_arr[x] for x in lt9th_indices])
+    hs_no_degree = sum([_attains_arr[x+2] for x in lt9th_indices])
+    hs_grad_or_equiv = sum([_attains_arr[x+4] for x in lt9th_indices])
+    college_no_degree = sum([_attains_arr[x+6] for x in lt9th_indices])
+    associates_degree = sum([_attains_arr[x+8] for x in lt9th_indices])
+    bachelors_degree = sum([_attains_arr[x+10] for x in lt9th_indices])
+    grad_or_professional_degree = sum([_attains_arr[x+12] for x in lt9th_indices])
+
+    out = [lt9, hs_no_degree, hs_grad_or_equiv, college_no_degree,
+            associates_degree, bachelors_degree, grad_or_professional_degree]
+
+    return out
+  
 transforms = [('population','total',
                'Universe:  TOTAL POPULATION: Total (Estimate)',
                 id),
@@ -99,131 +131,27 @@ transforms = [('population','total',
                ('Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Foreign born (Estimate)',
                 'Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Total (Estimate)'),
                ratio),
-              ('age', 'distribution',
-                ('Universe:  TOTAL POPULATION: Male; Under 5 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 5 to 9 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 10 to 14 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 15 to 17 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 18 and 19 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 20 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 21 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 22 to 24 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 25 to 29 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 30 to 34 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 35 to 39 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 40 to 44 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 45 to 49 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 50 to 54 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 55 to 59 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 60 and 61 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 62 to 64 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 65 and 66 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 67 to 69 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 70 to 74 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 75 to 79 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 80 to 84 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 85 years and over (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; Under 5 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 5 to 9 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 10 to 14 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 15 to 17 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 18 and 19 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 20 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 21 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 22 to 24 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 25 to 29 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 30 to 34 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 35 to 39 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 40 to 44 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 45 to 49 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 50 to 54 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 55 to 59 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 60 and 61 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 62 to 64 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 65 and 66 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 67 to 69 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 70 to 74 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 75 to 79 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 80 to 84 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 85 years and over (Estimate)'),
-                age_distribution),
+              ('age', 'distribution', cols.age_distribution, age_distribution),
 
-              ('sex_by_age', 'male',
-                ('Universe:  TOTAL POPULATION: Male; Under 5 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 5 to 9 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 10 to 14 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 15 to 17 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 18 and 19 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 20 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 21 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 22 to 24 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 25 to 29 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 30 to 34 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 35 to 39 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 40 to 44 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 45 to 49 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 50 to 54 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 55 to 59 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 60 and 61 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 62 to 64 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 65 and 66 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 67 to 69 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 70 to 74 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 75 to 79 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 80 to 84 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Male; 85 years and over (Estimate)'),
-                sex_by_age),
+              ('sex_by_age', 'male', cols.age_distribution[:23], sex_by_age),
 
-              ('sex_by_age', 'female',
-                ('Universe:  TOTAL POPULATION: Female; Under 5 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 5 to 9 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 10 to 14 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 15 to 17 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 18 and 19 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 20 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 21 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 22 to 24 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 25 to 29 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 30 to 34 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 35 to 39 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 40 to 44 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 45 to 49 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 50 to 54 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 55 to 59 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 60 and 61 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 62 to 64 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 65 and 66 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 67 to 69 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 70 to 74 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 75 to 79 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 80 to 84 years (Estimate)',
-                'Universe:  TOTAL POPULATION: Female; 85 years and over (Estimate)'),
-                sex_by_age),
+              ('sex_by_age', 'female', cols.age_distribution[23:], sex_by_age),
 
               ('hispanic_or_latino', 'pct_hispanic_or_latino',
                 ('Universe:  TOTAL POPULATION: Hispanic or Latino (Estimate)',
                  'Universe:  TOTAL POPULATION: Total (Estimate)'),
                 ratio),
 
-              ('race', 'totals',
-                ('Universe:  TOTAL POPULATION: White alone (Estimate)',
-                'Universe:  TOTAL POPULATION: Black or African American alone (Estimate)',
-                'Universe:  TOTAL POPULATION: American Indian and Alaska Native alone (Estimate)',
-                'Universe:  TOTAL POPULATION: Asian alone (Estimate)',
-                'Universe:  TOTAL POPULATION: Native Hawaiian and Other Pacific Islander alone (Estimate)',
-                'Universe:  TOTAL POPULATION: Some other race alone (Estimate)',
-                'Universe:  TOTAL POPULATION: Two or more races (Estimate)'),
-                list_id),
+              ('race', 'distribution', cols.race_distribution, list_id),
               
-              ('race', 'totals_moe',
-                ('Universe:  TOTAL POPULATION: White alone(Margin of Error (+/-))',
-                'Universe:  TOTAL POPULATION: Black or African American alone(Margin of Error (+/-))',
-                'Universe:  TOTAL POPULATION: American Indian and Alaska Native alone(Margin of Error (+/-))',
-                'Universe:  TOTAL POPULATION: Asian alone(Margin of Error (+/-))',
-                'Universe:  TOTAL POPULATION: Native Hawaiian and Other Pacific Islander alone(Margin of Error (+/-))',
-                'Universe:  TOTAL POPULATION: Some other race alone(Margin of Error (+/-))',
-                'Universe:  TOTAL POPULATION: Two or more races(Margin of Error (+/-))'),
-list_id),
+              ('race', 'distribution_moe', cols.race_distribution_moe, list_id),
+
+              ('educational_attainment_18plus', 'distribution', 
+               cols.educational_attainment_18plus, educational_attainment_18plus),
+              
+              ('educational_attainment_18plus', 'total',
+               'Universe:  POPULATION 18 YEARS AND OVER: Total (Estimate)', id),
+               
 
               ('population','nonexistant', 'FOOO', id)]
 
