@@ -101,6 +101,19 @@ def veteran_status(longtuple):
 
     return ratio((total_veteran_pop, total_civilian_pop)) 
 
+def pct_live_alone(longtuple):
+    _households = [int_0nan(x) for x in longtuple]
+    _households_arr = np.asarray(_households)
+
+    total_occupied_housing_units = _households_arr[0]
+    if total_occupied_housing_units == 0:
+        return 0
+
+    total_live_alone = _households_arr[4] + _households_arr[20]
+    
+    return ratio((total_live_alone, total_occupied_housing_units))
+    
+
   
 transforms = [('population','total',
                'Universe:  TOTAL POPULATION: Total (Estimate)',
@@ -168,6 +181,8 @@ transforms = [('population','total',
                'Universe:  POPULATION 18 YEARS AND OVER: Total (Estimate)', id),
 
               ('veteran_status', 'pct_veteran', cols.veteran_status, veteran_status),
+
+              ('household_size', 'pct_live_alone', cols.household_size, pct_live_alone),
 
               ('population','nonexistant', 'FOOO', id)]
 
