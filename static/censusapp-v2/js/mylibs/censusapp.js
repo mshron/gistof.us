@@ -1,7 +1,20 @@
 var fetch_url = 'http://localhost:8080/context';
+var colorscale = ['#e78dc5', '#f8daec', '#fbfbfb', '#dbf0c2', '#a6d592']
+
+function quintilebg(x) {
+    //expects a decimal from 0.0 to 1.0
+    return colorscale[Math.floor(x*5)]
+}
+
+function setuplegend() {
+    for (var i = 0; i < 5; i++) {
+        $('#quintilelegend #'+i+'.legend').css('background-color',colorscale[i])
+    }
+}
 
 $(function() {
 
+    setuplegend()
 
     Tract = Backbone.Model.extend({
         initialize: function() {
@@ -17,7 +30,7 @@ $(function() {
         url: function() {
             // server has a default n (amt of context)
             // so no need to specify one
-            var url = 'http://localhost:8080/context';
+            var url = fetch_url;
             var hash = window.location.hash;            
             if (hash !== '' && !isNaN(hash)) { 
                 url += '?j='+hash; 
@@ -481,6 +494,7 @@ $(function() {
             var pop_total = data.population.total;
             var pop_moe = data.population.total_moe;
             $('#population-stat .stat_local').html(pop_total+'&plusmn;'+pop_moe);
+
             //age
             var age_distribution = data.age.distribution;
             $age_stat = $('#age-distribution-stat .stat_local');
@@ -494,10 +508,12 @@ $(function() {
             }
             pct_below_100pc = (pct_below_100pc * 100).toFixed(2);
             pct_below_100pc = pct_below_100pc + "%";            
-            
+
+            bgcolor = quintilebg(.8)
+
+            $('div#below-poverty-stat').css('background-color',bgcolor);
             $('#below-poverty-stat .stat_local').html(pct_below_100pc);
-            $('#below-poverty-stat .stat_local').animate({fontSize: fontsize},
-                                                         2000);
+            //$('#below-poverty-stat .stat_local').animate({fontSize: fontsize}, 2000);
            
             //sex
             var female = data.sex.female;
