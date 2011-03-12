@@ -2,6 +2,6 @@ Backend:
     - support for 'show me my tract'
 
 Frontend:
-    - fix layout to have proper columns again
+    X fix layout to have proper columns again
     - rearrange stats boxes to be squares
     - set background color of stats boxes based on quintile
