@@ -99,7 +99,7 @@ div.button {
 
 div.author {
     text-align: right;
-    font-style: italic;
+    font-size: .8em;
 }
 
 div.author a {
@@ -121,14 +121,16 @@ div.stat {
     float: left;
     width: 31%;
     margin: 1%;
+    margin-bottom: 3px;
     background-color: #fcfcfc;
     height: 90px;
 }
 
 .stat_title {
-   font-size: .8em;
+ /*  font-size: .8em;*/
    text-align: center;
    display: block;
+   margin-bottom: .1em;
 }
 
 .stat_local {
@@ -150,13 +152,8 @@ div#credits {
     text-align: right;
 }
 
-div.container {
-  font-family: 'Old Standard TT', arial, serif;
-
-}
 
 h1#title {
-    font-family: 'Old Standard TT', arial, serif;
 
 }
 
@@ -178,6 +175,9 @@ div.legend {
 .container {
 padding-left: 20px;
 padding-right: 20px;
+/*font-family: Helvetica, Arial, sans-serif;*/
+font-family: "etica-display-1","etica-display-2",sans-serif;
+font-weight: 300;
 }
 
 .row {
