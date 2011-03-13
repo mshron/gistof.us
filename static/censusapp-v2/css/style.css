@@ -107,12 +107,14 @@ div.author a {
 }
 
 div.rightnav {
-    text-align: right;
+    text-align: center;
+    padding-right: 3pt;
 }
 
 div.navbar {
-    background-color: #fafafa;
-    font-style: italic;
+    /*background-color: #fafafa;*/
+    background-color: #fff1d0;
+    /*font-style: italic;*/
     margin-top: 16px;
 }
 
@@ -154,7 +156,8 @@ div#credits {
 
 
 h1#title {
-
+    font-size: 2em;
+    margin-bottom: 2pt;
 }
 
 div.debug {
@@ -169,6 +172,16 @@ div.legend {
     margin-top: 16px;
 }
 
+div.next_nav {
+    /*margin-bottom: 19pt;*/
+    font-size: 1.4em;
+}
+
+div.prev_nav {
+    font-size: .9em;
+    margin-top: 3pt;
+}
+
 /* Remove this pretty soon... okay for now */
 /* The 1140px Grid by Andy Taylor – http://cssgrid.net – http://www.twitter.com/andytlr – http://www.catchingzebra.com */
 
@@ -178,6 +191,14 @@ padding-right: 20px;
 /*font-family: Helvetica, Arial, sans-serif;*/
 font-family: "etica-display-1","etica-display-2",sans-serif;
 font-weight: 300;
+}
+
+#main {
+margin: auto;
+}
+
+
+body {
 }
 
 .row {
