@@ -12,9 +12,32 @@ function setuplegend() {
     }
 }
 
-$(function() {
+function mapcallback() {
+  var myLatlng = new google.maps.LatLng(-34.397, 150.644);
+  var myOptions = {
+    zoom: 4,
+    center: myLatlng,
+    disableDefaultUI: true,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  }
+  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+}
+  
+function loadMapScript() {
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = "http://maps.google.com/maps/api/js?sensor=false&callback=mapcallback";
+  document.body.appendChild(script);
+}
 
+$(function() {
+    // layout
     setuplegend()
+
+    // map
+    loadMapScript()
+
+    // API communication
 
     Tract = Backbone.Model.extend({
         initialize: function() {
