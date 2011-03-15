@@ -26,7 +26,7 @@ function mapcallback() {
 function loadMapScript() {
   var script = document.createElement("script");
   script.type = "text/javascript";
-  script.src = "http://maps.google.com/maps/api/js?sensor=false&callback=mapcallback";
+  script.src = "http://maps.google.com/maps/api/js?v=3.3&sensor=false&callback=mapcallback";
   document.body.appendChild(script);
 }
 
@@ -37,8 +37,7 @@ function updateMap(lat, lng) {
     map.panTo(LL); 
     var newMarker = new google.maps.Marker({
         position: LL,
-        // DROP animation makes for weird double pin visual
-       // animation: google.maps.Animation.DROP,
+        animation: google.maps.Animation.DROP,
         map: map});
     old = markers[0];
     if (old != null) {
@@ -523,6 +522,9 @@ $(function() {
 
             // show the correct stats for this new tract            
             this.displayStats(this.shownView.model);       
+
+            // pan the map/set a marker for the new location we're viewing
+            // updateMap(lat, lng)
         },
 
         displayStats: function(tract) {
@@ -534,12 +536,13 @@ $(function() {
             var pop_total = data.population.total;
             var pop_moe = data.population.total_moe;
             $('#population-stat .stat_local').html(pop_total+'&plusmn;'+pop_moe);
-
+            /*
             //age
             var age_distribution = data.age.distribution;
             $age_stat = $('#age-distribution-stat .stat_local');
             $age_stat.sparkline(age_distribution, {type: 'bar', barColor: 'blue'});
-
+            */
+/*
             //poverty
             var pct_below_100pc = data.poverty.pct_below_100pc
             var fontsize = 18;
@@ -554,7 +557,8 @@ $(function() {
             $('div#below-poverty-stat').css('background-color',bgcolor);
             $('#below-poverty-stat .stat_local').html(pct_below_100pc);
             //$('#below-poverty-stat .stat_local').animate({fontSize: fontsize}, 2000);
-           
+            */
+            /* 
             //sex
             var female = data.sex.female;
             var female_moe = data.sex.female_moe;
@@ -567,6 +571,15 @@ $(function() {
 //            var sex_string = female_string+' | '+male_string;
 
 //            $('#sex-stat .stat_local').html(sex_string);
+            */
+            //sex by age
+            var female = data.sex_by_age.female;
+            var male = data.sex_by_age.male;
+            
+            var dom_element = $('#age-distribution-stat .stat_local')[0];
+            protovis_sex_age(male, female, dom_element);
+
+              
         },
 
 

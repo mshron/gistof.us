@@ -38,12 +38,15 @@ def sex_by_age(longtuple):
     _ages_arr = np.asarray(_ages)
 
     # five age categories
-    out = [0]*5
-    out[0] = _ages_arr[0:6].sum()
-    out[1] = _ages_arr[6:11].sum()
-    out[2] = _ages_arr[11:15].sum()
-    out[3] = _ages_arr[15:21].sum()
-    out[4] = _ages_arr[21:23].sum()
+    out = [0]*8
+    out[0] = _ages_arr[0:2].sum()
+    out[1] = _ages_arr[3:5].sum()
+    out[2] = _ages_arr[6:8].sum()
+    out[3] = _ages_arr[9:11].sum()
+    out[4] = _ages_arr[12:14].sum()
+    out[5] = _ages_arr[15:17].sum()
+    out[6] = _ages_arr[18:20].sum()
+    out[7] = _ages_arr[21:23].sum()
     return out
 
 
