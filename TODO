@@ -6,3 +6,9 @@ Frontend:
     X rearrange stats boxes to be squares
     / set background color of stats boxes based on quintile
     - Add squares for additional stats
+    - Fix map code to not have that double dot
+   
+Data:
+    - Find center points for all tracts; add
+    - Grab more photos; add
+    - Figure out how to do percentiles; do

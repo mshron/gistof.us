@@ -20,7 +20,7 @@ function mapcallback() {
     disableDefaultUI: true,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
-  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
   
 function loadMapScript() {
@@ -30,12 +30,28 @@ function loadMapScript() {
   document.body.appendChild(script);
 }
 
+var markers = [null];
+
+function updateMap(lat, lng) {
+    var LL = new google.maps.LatLng(lat,lng);
+    map.panTo(LL); 
+    var newMarker = new google.maps.Marker({
+        position: LL,
+        animation: google.maps.Animation.DROP,
+        map: map});
+    old = markers[0];
+    if (old != null) {
+        old.setMap(null)
+        }
+    markers[0] = newMarker;
+}
+
 $(function() {
     // layout
-    setuplegend()
+    setuplegend();
 
     // map
-    loadMapScript()
+    loadMapScript();
 
     // API communication
 
