@@ -1,8 +1,8 @@
 protovis_sex_age = function(male, female, renderTarget) {
-    var w = 50,
+    var w = 100,
         h = 50,
-        x = pv.Scale.linear(0, 700).range(0, w),
-        y = pv.Scale.ordinal(pv.range(10)).splitBanded(0, h, 9/10);
+        x = pv.Scale.linear(0,800).range(0, w/2),
+        y = pv.Scale.ordinal(pv.range(8)).splitBanded(0, h, 8/10);
 
     console.debug(x);
     var vis = new pv.Panel()
@@ -14,14 +14,14 @@ protovis_sex_age = function(male, female, renderTarget) {
         .top(5);
 
 
-    var bar = vis.add(pv.Bar)
+    var femalebar = vis.add(pv.Bar)
         .data(female)
         .top(function() y(this.index))
         .height(y.range().band)
         .left(25)
         .width(x);
 
-    var bar = vis.add(pv.Bar)
+    var malebar = vis.add(pv.Bar)
         .data(male)
         .top(function() y(this.index))
         .height(y.range().band)
@@ -34,12 +34,14 @@ protovis_sex_age = function(male, female, renderTarget) {
         .textStyle('white')
         .text(function(d) d.toFixed(0));
     */    
-    /*
-    bar.anchor('left').add(pv.Label)
+    
+    femalebar.add(pv.Label)
         .textMargin(5)
+        .top(function() y(this.index)+10)
+        .left(100)
         .textAlign('right')
-        .text(function() "ABCDEFGHIJK".charAt(this.index));
-    */
+        .text(function() ['15', '', '', '44', '', '', '', '79'][this.index]);
+    
     /*
     vis.add(pv.Rule)
         .data(x.ticks(5))
