@@ -13,7 +13,7 @@ function setuplegend() {
 }
 
 function mapcallback() {
-  var myLatlng = new google.maps.LatLng(-34.397, 150.644);
+  var myLatlng = new google.maps.LatLng(47.7, -122.3);//-34.397, 150.644);
   var myOptions = {
     zoom: 4,
     center: myLatlng,
@@ -37,7 +37,8 @@ function updateMap(lat, lng) {
     map.panTo(LL); 
     var newMarker = new google.maps.Marker({
         position: LL,
-        animation: google.maps.Animation.DROP,
+        // DROP animation makes for weird double pin visual
+       // animation: google.maps.Animation.DROP,
         map: map});
     old = markers[0];
     if (old != null) {
