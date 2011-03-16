@@ -4,7 +4,6 @@ protovis_sex_age = function(male, female, renderTarget) {
         x = pv.Scale.linear(0,800).range(0, w/2),
         y = pv.Scale.ordinal(pv.range(8)).splitBanded(0, h, 8/10);
 
-    console.debug(x);
     var vis = new pv.Panel()
         .width(w)
         .height(h)
@@ -40,7 +39,7 @@ protovis_sex_age = function(male, female, renderTarget) {
         .top(function() y(this.index)+10)
         .left(100)
         .textAlign('right')
-        .text(function() ['15', '', '', '44', '', '', '', '79'][this.index]);
+        .text(function() ['79', '', '', '44', '', '', '', '15'][this.index]);
     
     /*
     vis.add(pv.Rule)
@@ -58,3 +57,20 @@ protovis_sex_age = function(male, female, renderTarget) {
     vis.render();
 
 };
+
+protovis_sex = function(male, female, renderTarget) {
+    var vis = 
+      new pv.Panel()
+        .width(50)
+        .height(50)
+      .add(pv.Wedge)
+        .data(pv.normalize([male, female]))
+        .left(25)
+        .bottom(25)
+        .outerRadius(25)
+        .angle(function(d) d * 2 * Math.PI);
+
+    vis.canvas(renderTarget);
+    vis.render();
+
+}

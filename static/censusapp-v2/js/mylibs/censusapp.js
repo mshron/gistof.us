@@ -558,26 +558,34 @@ $(function() {
             $('#below-poverty-stat .stat_local').html(pct_below_100pc);
             //$('#below-poverty-stat .stat_local').animate({fontSize: fontsize}, 2000);
             */
-            /* 
+
+            //veteran status
+            var pct_veterans = data.veteran_status.pct_veteran;
+            pct_veterans = (pct_veterans * 100).toFixed(0);
+            pct_veterans = pct_veterans + "%";
+
+            $('#veteran-status-stat .stat_local').html(pct_veterans);
+
             //sex
-            var female = data.sex.female;
+            var female_total = data.sex.female;
             var female_moe = data.sex.female_moe;
-            var male = data.sex.male;
+            var male_total = data.sex.male;
             var male_moe = data.sex.male_moe;
 
-            $('#sex-stat .stat_local').sparkline([female, -male], {type: 'bar'})
-//            var female_string = 'Female: '+female+'&plusmn;'+female_moe;
-//            var male_string = 'Male: '+male+'&plusmn;'+male_moe;
-//            var sex_string = female_string+' | '+male_string;
+            var sex_dom = $('#sex-stat .stat_local')[0];
+            $('#sex-stat .stat_local').sparkline(
+                [male_total, female_total],
+                {type: 'pie', sliceColors: ['#4985D6', '#EA8DFE'],
+                 offset: -90,
+                 width: '70px', height: '70px'});
+            //protovis_sex(male_total, female_total, sex_dom);
 
-//            $('#sex-stat .stat_local').html(sex_string);
-            */
             //sex by age
             var female = data.sex_by_age.female;
             var male = data.sex_by_age.male;
-            
-            var dom_element = $('#age-distribution-stat .stat_local')[0];
-            protovis_sex_age(male, female, dom_element);
+           
+            var sex_by_age_dom = $('#age-distribution-stat .stat_local')[0];
+            protovis_sex_age(male.reverse(), female.reverse(), sex_by_age_dom);
 
               
         },

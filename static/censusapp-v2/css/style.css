@@ -137,8 +137,10 @@ div.stat {
 
 .stat_local {
 width: 80%;
+text-align: center;
 margin: auto;
 }
+
 
 .stat_global {
     float: right;
