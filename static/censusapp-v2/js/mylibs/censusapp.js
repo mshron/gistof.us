@@ -566,6 +566,14 @@ $(function() {
 
             $('#veteran-status-stat .stat_local').html(pct_veterans);
 
+            //hispanic or latino origin
+            var pct_latino = data.hispanic_or_latino.pct_hispanic_or_latino;
+            pct_latino = (pct_latino * 100).toFixed(0);
+            pct_latino = pct_latino + "%";
+
+            $('#latino-stat .stat_local').html(pct_latino);
+
+
             //sex
             var female_total = data.sex.female;
             var female_moe = data.sex.female_moe;
