@@ -129,6 +129,19 @@ function updateMap(lat, lng) {
     markers[0] = newMarker;
 }
 
+function update_map(d) {
+    try {
+        lat = d.loc.lat;
+        lon = d.loc.lon;
+        updateMap(lat,lon);
+    } catch (e) {
+        raise(e)
+    }
+}
+
+render_functions = [population, poverty, veteran, sex, sex_by_age, update_map]
+
+
 $(function() {
     // layout
     setuplegend();
@@ -614,17 +627,9 @@ $(function() {
             console.debug('displaying stats:');
             console.debug(tract);
             var data = tract.get('data');
-
-            //population
-            population(data)
-            //poverty
-            poverty(data)
-            //veteran status
-            veteran(data)
-            //sex
-            sex(data)
-            //sex by age
-            sex_by_age(data)              
+            for (var i=0;i<render_functions.length;i++) {
+                render_functions[i](data)
+            }
         },
 
 
