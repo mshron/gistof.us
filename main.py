@@ -61,7 +61,27 @@ def getcontext(n, j, direction=None):
         out.extend(query.fetch(n-l))
     return out
 
-class Context(webapp.RequestHandler):
+class Tracts(webapp.RequestHandler):
+    def put(self):
+        # is there one yet?
+        first = False if Tract.all().count(1) > 0 else True
+        lines = csv.reader(self.request.body_file)
+        for line in lines:
+            tract = Tract()
+            tractid = line[0]
+            data = line[1].decode('hex')
+            tract.tractid = tractid
+            if first:
+                rand = 2**32 - 1
+                first = False
+            else:
+                rand = random.randint(0, 2**32 - 1)
+            tract.order = rand
+            tract.data = data
+            tract.has_pictures = False
+            tract.put()
+            self.response.out.write('Put %s @ %s\n'%(tractid, rand))
+
     def get(self):
         # j is the order property of the tract from which we want context
         j = self.request.get('j')
@@ -100,28 +120,7 @@ class Context(webapp.RequestHandler):
         self.response.out.write(out)
         
 
-class AddTracts(webapp.RequestHandler):
-    def put(self):
-        # is there one yet?
-        first = False if Tract.all().count(1) > 0 else True
-        lines = csv.reader(self.request.body_file)
-        for line in lines:
-            tract = Tract()
-            tractid = line[0]
-            data = line[1].decode('hex')
-            tract.tractid = tractid
-            if first:
-                rand = 2**32 - 1
-                first = False
-            else:
-                rand = random.randint(0, 2**32 - 1)
-            tract.order = rand
-            tract.data = data
-            tract.has_pictures = False
-            tract.put()
-            self.response.out.write('Put %s @ %s\n'%(tractid, rand))
-
-class AssociatePictures(webapp.RequestHandler):
+class Pictures(webapp.RequestHandler):
     def put(self): #patterned after addtracts
         lines = csv.reader(self.request.body_file)
         for line in lines:
@@ -145,7 +144,7 @@ class AssociatePictures(webapp.RequestHandler):
                 tract.put()
         self.response.out.write("Finished.")
 
-class AssociatePicturesJSON(webapp.RequestHandler):
+class PicturesJSON(webapp.RequestHandler):
     def put(self): # now takes json files: {'tractid': [photo1,photo2], etc.}
         _data = json.load(self.request.body_file)
         assert isinstance(_data, dict)
@@ -178,10 +177,8 @@ class ReadMemcache(webapp.RequestHandler):
         print memcache.get(key)
 
 def main():
-    application = webapp.WSGIApplication([('/addtracts', AddTracts),
-        ('/addpictures', AssociatePictures),
-        ('/addpictures_json', AssociatePicturesJSON),
-        ('/context',Context),
+    application = webapp.WSGIApplication([('/tracts', Tracts),
+        ('/pictures', PicturesJSON),
         ('/orders',OrderData),
         ('/mem',ReadMemcache)], debug=True)
     util.run_wsgi_app(application)
