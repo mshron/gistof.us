@@ -50,6 +50,26 @@ function population(d) {
 }
 
 
+function race(d) {
+    try {
+// ['White', 'Black', 'Native', 'Asian', 'Pacific Islander', 'Other', 'Two or More'];
+        var pop_total = d.population.total;
+        var white_only = d.race.distribution[0];
+        console.debug('white only: '+white_only+', total: '+pop_total);
+
+        var pct_white = percentify(white_only/pop_total, 0);
+        pct_white = pct_white + " white";
+
+        $('#race-stat .stat_local').html(pct_white);
+
+    } catch(e) {
+        raise(e);
+    }
+    
+
+
+
+}
 function poverty(d) {
     try {
             var pct_below_100pc = d.poverty.pct_below_100pc
@@ -155,7 +175,7 @@ function update_map(d) {
     }
 }
 
-render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino]
+render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race]
 
 
 $(function() {

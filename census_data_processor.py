@@ -196,6 +196,10 @@ transforms = [('population','total',
               
               ('race', 'distribution_moe', cols.race_distribution_moe, list_id),
 
+              ('race', 'white_not_latino', 
+               'Universe:  TOTAL POPULATION: Not Hispanic or Latino; White alone (Estimate)',
+               id),
+
               ('educational_attainment_18plus', 'distribution', 
                cols.educational_attainment_18plus, educational_attainment_18plus),
               
@@ -208,6 +212,9 @@ transforms = [('population','total',
 
               ('language_spoken_at_home', 'distribution', 
                 cols.language_at_home, home_language_distribution),
+
+              ('location', 'lat', 'INTPTLAT', id),
+              ('location', 'long', 'INTPTLONG', id),
 
               ('population','nonexistant', 'FOOO', id)]
 
