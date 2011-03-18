@@ -26,7 +26,7 @@ function mapcallback() {
 function loadMapScript() {
   var script = document.createElement("script");
   script.type = "text/javascript";
-  script.src = "http://maps.google.com/maps/api/js?v=3.3&sensor=false&callback=mapcallback";
+  script.src = "http://maps.google.com/maps/api/js?&sensor=false&callback=mapcallback";
   document.body.appendChild(script);
 }
 

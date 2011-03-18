@@ -135,6 +135,15 @@ def home_language_distribution(longtuple):
     return out
         
 
+def county_name(geostring):
+    return geostring.split(',')[1].strip()    
+
+def state_name(geostring):
+    return geostring.split(',')[2].strip()
+
+def tract_number(geostring):
+    return geostring.split(',')[0].split()[2].strip() 
+
   
 transforms = [('population','total',
                'Universe:  TOTAL POPULATION: Total (Estimate)',
@@ -215,6 +224,9 @@ transforms = [('population','total',
 
               ('loc', 'lat', 'INTPTLAT', id),
               ('loc', 'lon', 'INTPTLONG', id),
+              ('loc', 'county', 'Geography', county_name),
+              ('loc', 'state', 'Geography', state_name),
+              ('loc', 'tract_number', 'Geography', tract_number),
 
               ('population','nonexistant', 'FOOO', id)]
 
