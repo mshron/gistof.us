@@ -141,6 +141,8 @@ text-align: center;
 margin: auto;
 }
 
+.big_number {font-size: 2em;}
+
 
 .stat_global {
     float: right;

@@ -154,6 +154,7 @@ transforms = [('population','total',
               ('sex', 'female_moe',
                'Universe:  TOTAL POPULATION: Female(Margin of Error (+/-))',
                id),
+#poverty from table B06012
               ('poverty', 'below_100pc',
                'Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Below 100 percent of the poverty level (Estimate)',
                id),

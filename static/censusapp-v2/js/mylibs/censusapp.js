@@ -38,16 +38,17 @@ function population(d) {
     try {
             var pop_total = d.population.total;
             var pop_moe = d.population.total_moe;
-            $('#population-stat .stat_local').html(pop_total+'&plusmn;'+pop_moe);
+            $('#population-stat .stat_local').html(pop_total);
             //age
             var age_distribution = d.age.distribution;
-            $age_stat = $('#age-distribution-stat .stat_local');
+            $age_stat = $('#age-distribution-stat .inlinebar');
             $age_stat.sparkline(age_distribution, {type: 'bar', barColor: 'blue'});
 
     } catch (e) {
        raise(e);
     }
 }
+
 
 function poverty(d) {
     try {
@@ -56,8 +57,8 @@ function poverty(d) {
             if (pct_below_100pc < 0.1) {
                 fontsize = 12;
             }
-            pct_below_100pc = (pct_below_100pc * 100).toFixed(2);
-            pct_below_100pc = pct_below_100pc + "%";            
+
+            pct_below_100pc = percentify(pct_below_100pc, 0);
 
             bgcolor = quintilebg(.8)
 
@@ -113,6 +114,21 @@ function sex_by_age(d) {
     }
 }
 
+function latino(d) {
+    try {
+        var pct_latino = percentify(d.hispanic_or_latino.pct_hispanic_or_latino, 0);
+        $('#latino-stat .stat_local').html(pct_latino);
+    } catch(e) {
+        raise(e);
+    }
+}
+
+
+function percentify(n, places) {
+    var string = (n*100).toFixed(places);
+    return string + "%";
+}    
+
 var markers = [null];
 
 function updateMap(lat, lng) {
@@ -139,7 +155,7 @@ function update_map(d) {
     }
 }
 
-render_functions = [population, poverty, veteran, sex, sex_by_age, update_map]
+render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino]
 
 
 $(function() {
@@ -630,56 +646,6 @@ $(function() {
             for (var i=0;i<render_functions.length;i++) {
                 render_functions[i](data)
             }
-<<<<<<< HEAD
-            pct_below_100pc = (pct_below_100pc * 100).toFixed(2);
-            pct_below_100pc = pct_below_100pc + "%";            
-
-            bgcolor = quintilebg(.8)
-
-            $('div#below-poverty-stat').css('background-color',bgcolor);
-            $('#below-poverty-stat .stat_local').html(pct_below_100pc);
-            //$('#below-poverty-stat .stat_local').animate({fontSize: fontsize}, 2000);
-            */
-
-            //veteran status
-            var pct_veterans = data.veteran_status.pct_veteran;
-            pct_veterans = (pct_veterans * 100).toFixed(0);
-            pct_veterans = pct_veterans + "%";
-
-            $('#veteran-status-stat .stat_local').html(pct_veterans);
-
-            //hispanic or latino origin
-            var pct_latino = data.hispanic_or_latino.pct_hispanic_or_latino;
-            pct_latino = (pct_latino * 100).toFixed(0);
-            pct_latino = pct_latino + "%";
-
-            $('#latino-stat .stat_local').html(pct_latino);
-
-
-            //sex
-            var female_total = data.sex.female;
-            var female_moe = data.sex.female_moe;
-            var male_total = data.sex.male;
-            var male_moe = data.sex.male_moe;
-
-            var sex_dom = $('#sex-stat .stat_local')[0];
-            $('#sex-stat .stat_local').sparkline(
-                [male_total, female_total],
-                {type: 'pie', sliceColors: ['#4985D6', '#EA8DFE'],
-                 offset: -90,
-                 width: '70px', height: '70px'});
-            //protovis_sex(male_total, female_total, sex_dom);
-
-            //sex by age
-            var female = data.sex_by_age.female;
-            var male = data.sex_by_age.male;
-           
-            var sex_by_age_dom = $('#age-distribution-stat .stat_local')[0];
-            protovis_sex_age(male.reverse(), female.reverse(), sex_by_age_dom);
-
-              
-=======
->>>>>>> 9dcb252fbff376dad53254f9fb449f4080e0f032
         },
 
 
