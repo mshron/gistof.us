@@ -213,8 +213,8 @@ transforms = [('population','total',
               ('language_spoken_at_home', 'distribution', 
                 cols.language_at_home, home_language_distribution),
 
-              ('location', 'lat', 'INTPTLAT', id),
-              ('location', 'long', 'INTPTLONG', id),
+              ('loc', 'lat', 'INTPTLAT', id),
+              ('loc', 'lon', 'INTPTLONG', id),
 
               ('population','nonexistant', 'FOOO', id)]
 

@@ -34,6 +34,22 @@ function raise(e) {
     console.debug(e);
 }   
 
+
+function latlon(d) {
+    try {
+        var lat = d.loc.lat;
+        var lon = d.loc.lon;
+
+        var loc_string = lat+", "+lon;
+        $('#lat_lon').html(loc_string);
+
+    } catch(e) {
+        raise(e)
+    }
+
+
+}
+
 function population(d) {
     try {
             var pop_total = d.population.total;
@@ -175,7 +191,7 @@ function update_map(d) {
     }
 }
 
-render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race]
+render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon]
 
 
 $(function() {
