@@ -22,7 +22,7 @@ for key in shelves[0]:
         if d:
             for k,v in d.iteritems():
                 final.setdefault(k,{}).update(v)
-    out.writerow([key,json.dumps(final).encode('hex')])
+    out.writerow([key,json.dumps(final, ensure_ascii=False).encode('hex')])
     print "Wrote: %s"%key
 
 print "Done"
