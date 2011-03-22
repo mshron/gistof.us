@@ -65,13 +65,12 @@ class Tracts(webapp.RequestHandler):
     def put(self):
         # is there one yet?
         first = False if Tract.all().count(1) > 0 else True
-        lines = csv.reader(self.request.body_file)
-        for line in lines:
+
+        tract_data = json.loads(self.request.body_file)
+        for key in tract_data:
             tract = Tract()
-            tractid = line[0]
-            data = line[1].decode('hex')
-            data = data.decode('utf-8')
-            tract.tractid = tractid
+            tract.tractid = key
+            data = tract_data[key]
             if first:
                 rand = 2**32 - 1
                 first = False
@@ -180,6 +179,7 @@ class ReadMemcache(webapp.RequestHandler):
 def main():
     application = webapp.WSGIApplication([('/tracts', Tracts),
         ('/pictures', PicturesJSON),
+        ('/photos', PicturesJSON),
         ('/orders',OrderData),
         ('/mem',ReadMemcache)], debug=True)
     util.run_wsgi_app(application)
