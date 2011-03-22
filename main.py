@@ -179,6 +179,7 @@ class ReadMemcache(webapp.RequestHandler):
 def main():
     application = webapp.WSGIApplication([('/tracts', Tracts),
         ('/pictures', PicturesJSON),
+        ('/photos', PicturesJSON),
         ('/orders',OrderData),
         ('/mem',ReadMemcache)], debug=True)
     util.run_wsgi_app(application)
