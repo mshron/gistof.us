@@ -23,6 +23,7 @@ import cPickle as cp
 import random
 import hashlib
 import csv
+import json
 
 class Tract(db.Model):
     picturelist = db.ListProperty(db.Blob)
@@ -65,13 +66,12 @@ class Tracts(webapp.RequestHandler):
     def put(self):
         # is there one yet?
         first = False if Tract.all().count(1) > 0 else True
-        lines = csv.reader(self.request.body_file)
-        for line in lines:
+
+        tract_data = json.loads(self.request.body_file)
+        for key in tract_data:
             tract = Tract()
-            tractid = line[0]
-            data = line[1].decode('hex')
-            data = data.decode('utf-8')
-            tract.tractid = tractid
+            tract.tractid = key
+            data = tract_data[key]
             if first:
                 rand = 2**32 - 1
                 first = False
