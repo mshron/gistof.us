@@ -70,6 +70,7 @@ class Tracts(webapp.RequestHandler):
             tract = Tract()
             tractid = line[0]
             data = line[1].decode('hex')
+            data = data.decode('utf-8')
             tract.tractid = tractid
             if first:
                 rand = 2**32 - 1

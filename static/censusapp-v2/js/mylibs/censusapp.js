@@ -159,6 +159,17 @@ function latino(d) {
     }
 }
 
+function placename(d) {
+    try {
+        var name = d.loc.county+", "+d.loc.state;
+        $('#loc').html(name);
+    } catch(e) {
+       raise(e);
+    }
+    
+
+}
+
 
 function percentify(n, places) {
     var string = (n*100).toFixed(places);
@@ -191,7 +202,7 @@ function update_map(d) {
     }
 }
 
-render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon]
+render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon, placename]
 
 
 $(function() {
