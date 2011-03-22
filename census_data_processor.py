@@ -8,7 +8,10 @@ def addone(n):
     return int(n)+1
 
 def id(x):
-    return x
+    try:
+        return int(x)
+    except:
+        return str(x)
 
 def list_id(longtuple):
     list = [int(x) for x in longtuple if can_int(x)]
@@ -253,16 +256,18 @@ def transform(data, transforms):
 
 def main():
     shelf = setup_shelf(sys.argv[1])
-    for i,line in enumerate(csv.reader(sys.stdin,
-            delimiter='|')):
+    for i,line in enumerate(csv.reader(sys.stdin, delimiter='|')):
         if i==0:
             continue
+
+        line = map(lambda l: l.decode('ISO-8859-1'), line)
+        
         if i==1:
             titles = line
             continue
         data = dict(zip(titles,line))
         out = transform(data,transforms)
-        id = data['Geography Identifier']
+        id = str(data['Geography Identifier'])
         print {id: out}
         shelf[id] = out
 

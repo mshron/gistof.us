@@ -2,6 +2,7 @@ import shelve
 import json
 import numpy as np
 from optparse import OptionParser
+import sys
 
 class JSONDecodesNumpy(json.JSONEncoder):
     def default(self, o):
@@ -21,7 +22,7 @@ parser = OptionParser(usage=usage)
 shelves = [shelve.open(sh,'r') for sh in args]
 out = {}
 
-print "Opened files for reading and writing."
+sys.stderr.write("Opened files for reading and writing.\n")
 
 for key in shelves[0]:
     final = {}
@@ -31,8 +32,8 @@ for key in shelves[0]:
             for k,v in d.iteritems():
                 final.setdefault(k,{}).update(v)
     out[key] = json.dumps(final, cls=JSONDecodesNumpy)
-    print "Wrote: %s"%key
+    sys.stderr.write("Wrote: %s\n"%key)
 
 print json.dumps(out) 
 
-print "Done"
+sys.stderr.write("Done\n")

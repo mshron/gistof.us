@@ -66,11 +66,11 @@ class Tracts(webapp.RequestHandler):
         # is there one yet?
         first = False if Tract.all().count(1) > 0 else True
 
-        tract_data = json.loads(self.request.body_file)
-        for key in tract_data:
+        tract_data = json.loads(self.request.body_file.getvalue())
+        for tractid in tract_data:
             tract = Tract()
-            tract.tractid = key
-            data = tract_data[key]
+            tract.tractid = tractid
+            data = tract_data[tractid]
             if first:
                 rand = 2**32 - 1
                 first = False
