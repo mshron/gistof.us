@@ -23,7 +23,6 @@ import cPickle as cp
 import random
 import hashlib
 import csv
-import json
 
 class Tract(db.Model):
     picturelist = db.ListProperty(db.Blob)
