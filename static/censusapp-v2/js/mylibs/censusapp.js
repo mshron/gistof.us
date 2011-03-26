@@ -12,7 +12,7 @@ function setuplegend() {
     }
 }
 
-function mapcallback() {
+function mapinit() {
   var myLatlng = new google.maps.LatLng(47.7, -122.3);//-34.397, 150.644);
   var myOptions = {
     zoom: 4,
@@ -20,14 +20,8 @@ function mapcallback() {
     disableDefaultUI: true,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
-  map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-}
-  
-function loadMapScript() {
-  var script = document.createElement("script");
-  script.type = "text/javascript";
-  script.src = "http://maps.google.com/maps/api/js?&sensor=false&callback=mapcallback";
-  document.body.appendChild(script);
+  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  return map;
 }
 
 function raise(e) {
@@ -166,10 +160,7 @@ function placename(d) {
     } catch(e) {
        raise(e);
     }
-    
-
 }
-
 
 function percentify(n, places) {
     var string = (n*100).toFixed(places);
@@ -178,25 +169,26 @@ function percentify(n, places) {
 
 var markers = [null];
 
-function updateMap(lat, lng) {
+function updateMap(map, lat, lng) {
     var LL = new google.maps.LatLng(lat,lng);
     map.panTo(LL); 
+    console.debug(lat,lng);
     var newMarker = new google.maps.Marker({
         position: LL,
         animation: google.maps.Animation.DROP,
         map: map});
-    old = markers[0];
+    var old = markers[0];
     if (old != null) {
         old.setMap(null)
         }
     markers[0] = newMarker;
 }
 
-function update_map(d) {
+function update_map(d, map) {
     try {
-        lat = d.loc.lat;
-        lon = d.loc.lon;
-        updateMap(lat,lon);
+        var lat = d.loc.lat;
+        var lon = d.loc.lon;
+        updateMap(map, lat,lon);
     } catch (e) {
         raise(e)
     }
@@ -204,13 +196,12 @@ function update_map(d) {
 
 render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon, placename]
 
-
 $(function() {
     // layout
     setuplegend();
 
     // map
-    loadMapScript();
+    var map = mapinit();
 
     // API communication
 
@@ -691,7 +682,7 @@ $(function() {
             console.debug(tract);
             var data = tract.get('data');
             for (var i=0;i<render_functions.length;i++) {
-                render_functions[i](data)
+                render_functions[i](data, map);
             }
         },
 
