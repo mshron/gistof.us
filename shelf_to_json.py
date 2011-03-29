@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import shelve
 import json
 import numpy as np

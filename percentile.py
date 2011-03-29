@@ -36,6 +36,7 @@ def setup_shelf(shelf_file):
 scalar_targets = [
     ('poverty', 'pct_below_100pc'),
 
+
 ]
 
 usage = "usage: %prog [options] shelf_1 [shelf_2 ... shelf_n] -o result.json\nFirst shelf is primary; its keys are the final ones."
@@ -60,6 +61,7 @@ amal = {}
 for t in scalar_targets:
     m = t[0] #main stat category
     s = t[1] #subcategory
+    print("%s > %s" % (m, s))
     for in_shelf in in_shelves:
         for tractid in in_shelf:
             #skip the tid for this shelf if this shelf doesn't have
@@ -72,9 +74,9 @@ for t in scalar_targets:
 
     obs_list = sorted([amal[tid] for tid in amal])
     for i,tractid in enumerate(amal):
-        ile = percentile(obs_list, amal[tractid])
+        ile = percentile(obs_list, amal[tractid], ile=100)
         tract = out_shelf.get(tractid, {})
-        tract.setdefault(m, {})[s+'_quintile'] = ile
+        tract.setdefault(m, {})[s+'_percentile'] = ile
         out_shelf[tractid] = tract
         if (i!= 0) and ((i%100) == 0):
             out_shelf.sync()
