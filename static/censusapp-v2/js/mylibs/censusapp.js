@@ -40,8 +40,6 @@ function latlon(d) {
     } catch(e) {
         raise(e)
     }
-
-
 }
 
 function population(d) {
@@ -82,7 +80,7 @@ function race(d) {
 }
 function poverty(d) {
     try {
-            var pct_below_100pc = d.poverty.pct_below_100pc
+            var pct_below_100pc = d.poverty.pct_below_100pc;
             var fontsize = 18;
             if (pct_below_100pc < 0.1) {
                 fontsize = 12;
@@ -90,8 +88,13 @@ function poverty(d) {
 
             pct_below_100pc = percentify(pct_below_100pc, 0);
 
-            bgcolor = quintilebg(.8)
-
+            var percentile = d.poverty.pct_below_100pc_percentile;
+            if (percentile) {
+                bgcolor = quintilebg(percentile/100)
+            }
+            else {
+                bgcolor = quintilebg(.5)
+            }
             $('div#below-poverty-stat').css('background-color',bgcolor);
             $('#below-poverty-stat .stat_local').html(pct_below_100pc);
             //$('#below-poverty-stat .stat_local').animate({fontSize: fontsize}, 2000);
