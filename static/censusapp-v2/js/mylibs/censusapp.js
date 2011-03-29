@@ -2,8 +2,12 @@ var fetch_url = 'http://localhost:8080/tracts';
 var colorscale = ['#e78dc5', '#f8daec', '#fbfbfb', '#dbf0c2', '#a6d592']
 
 function quintilebg(x) {
-    //expects a decimal from 0.0 to 1.0
-    return colorscale[Math.floor(x*5)]
+    try {
+        //expects a decimal from 0.0 to 1.0
+        return colorscale[Math.floor(x*5)]
+    } catch(e) {
+        return colorscale[2]
+    } 
 }
 
 function setuplegend() {
@@ -62,21 +66,15 @@ function race(d) {
     try {
 // ['White', 'Black', 'Native', 'Asian', 'Pacific Islander', 'Other', 'Two or More'];
         var pop_total = d.population.total;
-        var white_not_latino = d.race.white_not_latino;
+        var pct_wnl = d.race.pct_white_not_latino;
 
-        var pct_white_not_latino = percentify(white_not_latino/pop_total, 0);
-        pct_white_not_latino = pct_white_not_latino + " white";
+        pct_wnl = percentify(pct_wnl, 0) + " white";
+        $('#race-stat .stat_local').html(pct_wnl);
 
-        var percentile = d.race.white_not_latino_percentile;
-        if (percentile) {
-            bgcolor = quintilebg(percentile/100);
-        }
-        else {
-            bgcolor = quintilebg(.5);
-        }
+        var percentile = d.race.pct_white_not_latino_percentile;
+        bgcolor = quintilebg(percentile/100);
         $('div#race-stat').css('background-color',bgcolor);
         
-        $('#race-stat .stat_local').html(pct_white_not_latino);
 
     } catch(e) {
         raise(e);
@@ -95,14 +93,8 @@ function poverty(d) {
             }
 
             pct_below_100pc = percentify(pct_below_100pc, 0);
-
             var percentile = d.poverty.pct_below_100pc_percentile;
-            if (percentile) {
                 bgcolor = quintilebg(percentile/100);
-            }
-            else {
-                bgcolor = quintilebg(.5);
-            }
             $('div#below-poverty-stat').css('background-color',bgcolor);
             $('#below-poverty-stat .stat_local').html(pct_below_100pc);
             //$('#below-poverty-stat .stat_local').animate({fontSize: fontsize}, 2000);
@@ -149,7 +141,7 @@ function sex_by_age(d) {
        var male = d.sex_by_age.male;
        
        var sex_by_age_dom = $('#age-distribution-stat .stat_local')[0];
-       protovis_sex_age(male.reverse(), female.reverse(), sex_by_age_dom);
+       //protovis_sex_age(male.reverse(), female.reverse(), sex_by_age_dom);
     } catch(e) {
         raise(e);
     }
@@ -183,7 +175,7 @@ var markers = [null];
 function updateMap(map, lat, lng) {
     var LL = new google.maps.LatLng(lat,lng);
     map.panTo(LL); 
-    console.debug(lat,lng);
+    //console.debug(lat,lng);
     var newMarker = new google.maps.Marker({
         position: LL,
         animation: google.maps.Animation.DROP,

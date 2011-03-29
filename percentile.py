@@ -26,7 +26,7 @@ def percentile(l, n, ile=5, presort=True):
     for i in range(1,ile): 
         if n <= l[step*i]:
             return i-1
-    return ile                    #must be top percentile if we get here
+    return ile-1                    #must be top percentile if we get here
 
 
 def setup_shelf(shelf_file):
@@ -35,7 +35,7 @@ def setup_shelf(shelf_file):
 
 scalar_targets = [
     ('poverty', 'pct_below_100pc'),
-    ('race', 'white_not_latino')
+    ('race', 'pct_white_not_latino')
 
 
 ]
@@ -67,7 +67,7 @@ for t in scalar_targets:
         for tractid in in_shelf:
             #skip the tid for this shelf if this shelf doesn't have
             #the stat we're looking for
-            if in_shelf[tractid].get(m,{}).get(s,{}):
+            if in_shelf[tractid].get(m,{}).get(s,{}) != {}: 
                 #don't overwrite a value from a prior shelf
                 #the earlier ones have precedence
                 if not amal.has_key(tractid):

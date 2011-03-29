@@ -212,6 +212,10 @@ transforms = [('population','total',
                'Universe:  TOTAL POPULATION: Not Hispanic or Latino; White alone (Estimate)',
                id),
 
+              ('race', 'pct_white_not_latino',
+              ('Universe:  TOTAL POPULATION: Not Hispanic or Latino; White alone (Estimate)',
+               'Universe:  TOTAL POPULATION: Total (Estimate)'), ratio),
+
               ('educational_attainment_18plus', 'distribution', 
                cols.educational_attainment_18plus, educational_attainment_18plus),
               
