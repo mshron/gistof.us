@@ -35,6 +35,7 @@ def setup_shelf(shelf_file):
 
 scalar_targets = [
     ('poverty', 'pct_below_100pc'),
+    ('race', 'white_not_latino')
 
 
 ]
@@ -81,5 +82,8 @@ for t in scalar_targets:
         if (i!= 0) and ((i%100) == 0):
             out_shelf.sync()
     
+    amal = {}
+
+
 out_shelf.close()
 sys.stderr.write('Done\n')

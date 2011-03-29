@@ -62,13 +62,22 @@ function race(d) {
     try {
 // ['White', 'Black', 'Native', 'Asian', 'Pacific Islander', 'Other', 'Two or More'];
         var pop_total = d.population.total;
-        var white_only = d.race.distribution[0];
-        console.debug('white only: '+white_only+', total: '+pop_total);
+        var white_not_latino = d.race.white_not_latino;
 
-        var pct_white = percentify(white_only/pop_total, 0);
-        pct_white = pct_white + " white";
+        var pct_white_not_latino = percentify(white_not_latino/pop_total, 0);
+        pct_white_not_latino = pct_white_not_latino + " white";
 
-        $('#race-stat .stat_local').html(pct_white);
+        var percentile = d.race.white_not_latino_percentile;
+        if (percentile) {
+            bgcolor = quintilebg(percentile/100);
+            console.debug(bgcolor);
+        }
+        else {
+            bgcolor = quintilebg(.5);
+        }
+        $('div#race-stat').css('background-color',bgcolor);
+        
+        $('#race-stat .stat_local').html(pct_white_not_latino);
 
     } catch(e) {
         raise(e);
@@ -90,10 +99,10 @@ function poverty(d) {
 
             var percentile = d.poverty.pct_below_100pc_percentile;
             if (percentile) {
-                bgcolor = quintilebg(percentile/100)
+                bgcolor = quintilebg(percentile/100);
             }
             else {
-                bgcolor = quintilebg(.5)
+                bgcolor = quintilebg(.5);
             }
             $('div#below-poverty-stat').css('background-color',bgcolor);
             $('#below-poverty-stat .stat_local').html(pct_below_100pc);
