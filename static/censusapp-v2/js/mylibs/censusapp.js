@@ -70,7 +70,6 @@ function race(d) {
         var percentile = d.race.white_not_latino_percentile;
         if (percentile) {
             bgcolor = quintilebg(percentile/100);
-            console.debug(bgcolor);
         }
         else {
             bgcolor = quintilebg(.5);

@@ -25,7 +25,7 @@ def percentile(l, n, ile=5, presort=True):
     step = obs_count/ile
     for i in range(1,ile): 
         if n <= l[step*i]:
-            return i
+            return i-1
     return ile                    #must be top percentile if we get here
 
 
