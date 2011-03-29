@@ -94,7 +94,7 @@ function poverty(d) {
 
             pct_below_100pc = percentify(pct_below_100pc, 0);
             var percentile = d.poverty.pct_below_100pc_percentile;
-                bgcolor = quintilebg(percentile/100);
+            bgcolor = quintilebg(percentile/100);
             $('div#below-poverty-stat').css('background-color',bgcolor);
             $('#below-poverty-stat .stat_local').html(pct_below_100pc);
             //$('#below-poverty-stat .stat_local').animate({fontSize: fontsize}, 2000);
@@ -106,11 +106,16 @@ function poverty(d) {
 
 function veteran(d) {
    try {
+      var name = 'pct_veteran';
       var pct_veterans = d.veteran_status.pct_veteran;
       pct_veterans = (pct_veterans * 100).toFixed(0);
-      pct_veterans = pct_veterans + "%";
+      pct_veterans = pct_veterans + '%';
 
       $('#veteran-status-stat .stat_local').html(pct_veterans);
+
+      var percentile = d.veteran_status[name+'_percentile']
+      bgcolor = quintilebg(percentile/100);
+      $('div#veteran-status-stat').css('background-color',bgcolor);
     } catch(e) {
        raise(e);
     }
