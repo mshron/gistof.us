@@ -36,10 +36,8 @@ def setup_shelf(shelf_file):
 scalar_targets = [
     ('poverty', 'pct_below_100pc'),
     ('race', 'pct_white_not_latino'),
-    ('veteran_status', 'pct_veteran')
-
-
-
+    ('veteran_status', 'pct_veteran'),
+    ('hispanic_or_latino', 'pct_hispanic_or_latino')
 ]
 
 usage = "usage: %prog [options] shelf_1 [shelf_2 ... shelf_n] -o result.json\nFirst shelf is primary; its keys are the final ones."

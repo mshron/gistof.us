@@ -154,8 +154,13 @@ function sex_by_age(d) {
 
 function latino(d) {
     try {
+        var name = 'pct_hispanic_or_latino';
         var pct_latino = percentify(d.hispanic_or_latino.pct_hispanic_or_latino, 0);
         $('#latino-stat .stat_local').html(pct_latino);
+
+        var percentile = d.hispanic_or_latino[name+'_percentile']
+        bgcolor = quintilebg(percentile/100);
+        $('div#latino-stat').css('background-color',bgcolor);
     } catch(e) {
         raise(e);
     }
