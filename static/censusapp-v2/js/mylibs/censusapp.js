@@ -72,7 +72,9 @@ function race(d) {
         $('#race-stat .stat_local').html(pct_wnl);
 
         var percentile = d.race.pct_white_not_latino_percentile;
-        bgcolor = quintilebg(percentile/100);
+        // the 1- makes "highest" mean "highest diversity"... does this
+        // make sense? Or should we change the stat to be % NOT wnl?
+        bgcolor = quintilebg(0.99-percentile/100);
         $('div#race-stat').css('background-color',bgcolor);
         
 
