@@ -156,15 +156,21 @@ transforms = [('population','total',
               ('population','total_moe',
                'Universe:  TOTAL POPULATION: Total(Margin of Error (+/-))', 
                 id),
+
+              ('population', 'population_density',
+               ('Universe:  TOTAL POPULATION: Total (Estimate)', 
+                'Land Area (Square Miles)'),
+               ratio),
+
               ('sex','male',
                 'Universe:  TOTAL POPULATION: Male (Estimate)',
-                addone),
+                id),
               ('sex', 'male_moe',
                'Universe:  TOTAL POPULATION: Male(Margin of Error (+/-))',
                id),
               ('sex','female',
                 'Universe:  TOTAL POPULATION: Female (Estimate)',
-                addone),
+                id),
               ('sex', 'female_moe',
                'Universe:  TOTAL POPULATION: Female(Margin of Error (+/-))',
                id),
@@ -236,6 +242,9 @@ transforms = [('population','total',
               ('loc', 'county', 'Geography', county_name),
               ('loc', 'state', 'Geography', state_name),
               ('loc', 'tract_number', 'Geography', tract_number),
+              ('loc', 'land_area', 'Land Area (Square Miles)', id),
+              ('loc', 'water_area', 'Water Area (Square Miles)', id),
+
 
               ('population','nonexistant', 'FOOO', id)]
 
