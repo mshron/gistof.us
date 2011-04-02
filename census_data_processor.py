@@ -125,19 +125,11 @@ def home_language_distribution(longtuple):
     _languages = [int_0nan(x) for x in longtuple]  
     _languages_arr = np.asarray(_languages)
 
-    total_pop_over_5 = _languages_arr[0]
+    over_5 = _languages_arr[0]
+    distribution = _languages_arr[1:]
+    pct_distribution = map(lambda x: ratio((x,over_5)), distribution)
 
-    english_only = ratio((sum([_languages_arr[x] for x in [2,12,22]]), total_pop_over_5))
-    spanish = ratio((sum([_languages_arr[x] for x in [4,14,24]]), total_pop_over_5))
-    other_indo_european = ratio((sum([_languages_arr[x] for x in [6,16,26]]), total_pop_over_5))
-    asian_or_pacific_island = ratio((sum([_languages_arr[x] for x in [8,18,28]]), total_pop_over_5))
-    other = ratio((sum([_languages_arr[x] for x in [10,20,30]]), total_pop_over_5))
-    
-    out = [english_only, spanish, other_indo_european, 
-            asian_or_pacific_island, other]
-
-
-    return out
+    return pct_distribution
         
 
 def county_name(geostring):
@@ -235,7 +227,10 @@ transforms = [('population','total',
               ('household_size', 'pct_live_alone', cols.household_size, pct_live_alone),
 
               ('language_spoken_at_home', 'distribution', 
-                cols.language_at_home, home_language_distribution),
+                cols.language_spoken_at_home, home_language_distribution),
+              ('language_spoken_at_home', 'total_population_over_5',
+                'B16001_1_EST', id),
+
 
               ('loc', 'lat', 'INTPTLAT', id),
               ('loc', 'lon', 'INTPTLONG', id),
