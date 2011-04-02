@@ -1,0 +1,192 @@
+<!doctype html>  
+
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>gistof dot us</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="css/style.css?v=2">
+  <script src="js/libs/modernizr-1.6.min.js"></script>
+  <script src="http://maps.google.com/maps/api/js?&sensor=false" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+    </header>
+    
+    <div id="main">
+      <div id='census-app' class='container'>        
+      
+        <div id='title-row' class='row'>
+          <div class='title twelvecol last'>
+            <h1 id='title'>gistof.us</h1>
+          </div>      
+        </div>
+
+        <div id='stats-row' class='row'>
+            <div id='stats-box' class='twelvecol'>
+              <!--<div id="quintilelegend">
+                <div class="legend" id="0">Lowest</div>
+                <div class="legend" id="1">&nbsp;</div>
+                <div class="legend" id="2">Median</div>
+                <div class="legend" id="3">&nbsp;</div>
+                <div class="legend" id="4">Highest</div>
+              </div> -->
+              <div id='whereat'>
+                <h2>You are currently inside <span id="county"></span> in <span id="state"></span>, near (<span id="lat"></span>, <span id="lon"></span>) and...
+              </div>
+              <div id='population-stat' class='stat'>
+                <div class='stat_title'>... <span class='stat_local'></span> people live nearby</div>
+                <div class='stat_global'>&nbsp;</div>
+              </div>
+              <div id='below-poverty-stat' class='stat transparent'>
+                <div class='stat_title'>... <span class='stat_local'></span> percent of them below the poverty line </div>
+                <div class='stat_global'>&nbsp;</div>
+              </div>
+              <div id='age-distribution-stat' class='stat'>
+                <div class='stat_title'>... the age distribution from young to old is </div>
+                <div class='stat_local'><span class="inlinebar"></span></div>
+                <div class='stat_global'>&nbsp;</div>
+              </div>
+              <div id='race-stat' class='stat'>
+                <div class='stat_title'>... <span class='stat_local'></span> percent of them that identifies as non-Hispanic whites </div>
+              </div>
+              <div id='languages-spoken-stat' class='stat transparent'>
+                <!--<div class='stat_title'>Languages Spoken</div>
+                <div class='stat_local'>&nbsp;</div>
+                <div class='stat_global'>&nbsp;</div>
+              </div>-->
+              <div id='veteran-status-stat' class='stat'>
+                <div class='stat_title'>... <span class='stat_local'></span> percent of them that are veterans </div>
+                <div class='stat_global'>&nbsp;</div>
+              </div>
+             <div id='latino-stat' class='stat'>
+                <div class='stat_title'>... <span class='stat_local'></span> percent of them that identifies as Hispanic or Latino </div>
+                <div class='stat_global'>&nbsp;</div>
+              </div>
+
+
+        </div>
+         
+        <div id='data-row' class='row'>
+            <div id='fluff' class='onecol'>&nbsp;</div> 
+            <div id="pictures" class='sixcol'>
+                <div class='picnav prev_nav'>
+                  <a href="#" id="previousPicture">&lt;&nbsp;&nbsp;go back</a>
+                </div>
+                <div class='picnav next_nav'>
+                  <a href="#" id="nextPicture">&gt;&nbsp;&nbsp;Show me another picture</a>
+                </div>
+
+                <div id='tract-view-box'></div>     
+            </div>
+
+            <div id='nav-box' class='fivecol last'>
+                <div class='placenav prev_nav'>
+                  <a href="#" id="left">&lt;&lt;&nbsp;go back</a>
+                </div>
+                <div class='placenav next_nav '>
+                  <a href="#" id="right">&gt;&gt;&nbsp;Take me to another random place</a>
+                </div>
+
+              <div id="map_canvas"></div>
+            </div>
+        </div>
+
+      <div class='row'>
+        <div id='credits' class='twelvecol'>These are the credits</div>
+      </div>
+      </div> <!--end of #census-app --> 
+    </div>   <!--end of #main -->
+    
+    <footer>
+    </footer>
+  </div> <!-- end of #container -->
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery-1.4.2.js"%3E%3C/script%3E'))</script>
+  
+  
+  <!-- scripts concatenated and minified via ant build script-->
+  <script src="js/plugins.js"></script>
+  <script src="js/script.js"></script>
+  <!-- end concatenated and minified scripts-->
+  
+  
+  <!--[if lt IE 7 ]>
+    <script src="js/libs/dd_belatedpng.js"></script>
+    <script> DD_belatedPNG.fix('img, .png_bg'); </script>
+  <![endif]-->
+
+  <!-- yui profiler and profileviewer - remove for production -->
+  <script src="js/profiling/yahoo-profiling.min.js"></script>
+  <script src="js/profiling/config.js"></script>
+  <!-- end profiling code -->
+  <script type="text/javascript" src="http://use.typekit.com/czs6ani.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+ 
+  <script src="js/libs/protovis.js"></script>
+  <!--<script src="js/mylibs/statsdisplay.js"></script>-->
+  <script src="js/mylibs/underscore.js"></script>
+  <script src="js/mylibs/backbone.js"></script>
+  <script src="js/mylibs/censusapp.js"></script>
+  <script src="js/mylibs/sparklines.js"></script>
+
+
+  <!-- change the UA-XXXXX-X to be your site's ID -->
+  <script>
+   var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
+   (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.async = true;
+    g.src = ('https:' == location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g, s);
+   })(document, 'script');
+  </script>
+  
+</body>
+  <!-- Templates -->
+  <script type='text/temGplate' id='tract-template'>
+      <div class='tract-view'>        
+         <div class='tract-pictures'>&nbsp;</div>
+      </div>
+
+</script>
+  <script type='text/template' id='imgdiv-template'>
+      <div class='imgdiv'>
+          <img class="tractpic" src='<%= pictures[nowImgIndex].url %>'></img>
+          <div class="author"><a href='<%= pictures[nowImgIndex].original_url %>'><%= pictures[nowImgIndex].metadata.title %></a></div>
+      </div>
+  </script>
+
+  <script type="text/javascript">
+   // Design stuff goes here
+   $('.inlinebar').sparkline('html', {type: 'bar', barColor: 'blue'} );
+  </script>
+
+  <script type='text/template' id='stats-template'>
+  </script>
+    
+
+  <script type='text/template' id='nav-template'>
+
+  </script>
+<script type="text/javascript" src="http://use.typekit.com/czs6ani.js"></script>
+<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+</html>
