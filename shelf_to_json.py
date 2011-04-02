@@ -32,7 +32,10 @@ for key in shelves[0]:
         if d:
             for k,v in d.iteritems():
                 final.setdefault(k,{}).update(v)
-    out[key] = json.dumps(final, cls=JSONDecodesNumpy)
+    try:out[key] = json.dumps(final, cls=JSONDecodesNumpy)
+    except:
+        sys.stderr.write("FAIL: %s\n"%key)
+        continue
     sys.stderr.write("Wrote: %s\n"%key)
 
 print json.dumps(out) 
