@@ -121,6 +121,16 @@ def pct_live_alone(longtuple):
     
     return ratio((total_live_alone, total_occupied_housing_units))
 
+def pct_below_150pc(longtuple):
+    _poverty = [int_0nan(x) for x in longtuple]
+    _poverty_arr = np.asarray(_poverty)
+
+    people_below_150 = _poverty_arr[0] + _poverty_arr[1]
+    total_people = _poverty_arr[2]
+
+    return ratio((people_below_150, total_people))
+    
+
 def home_language_distribution(longtuple):
     _languages = [int_0nan(x) for x in longtuple]  
     _languages_arr = np.asarray(_languages)
@@ -189,6 +199,13 @@ transforms = [('population','total',
                ('Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Below 100 percent of the poverty level (Estimate)',
                 'Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Total (Estimate)'),
                ratio),
+
+              ('poverty', 'pct_below_150pc',
+                ('Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: 100 to 149 percent of the poverty level (Estimate)',
+                'Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Below 100 percent of the poverty level (Estimate)',
+                'Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Total (Estimate)'), 
+                pct_below_150pc),
+               
               ('born', 'pct_foreign',
                ('Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Foreign born (Estimate)',
                 'Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Total (Estimate)'),
@@ -240,8 +257,6 @@ transforms = [('population','total',
               ('loc', 'tract_number', 'Geography', tract_number),
               ('loc', 'land_area', 'Land Area (Square Miles)', id),
               ('loc', 'water_area', 'Water Area (Square Miles)', id),
-
-
               ('population','nonexistant', 'FOOO', id)]
 
 def setup_shelf(shelf_file):
