@@ -2,6 +2,16 @@ var fetch_url = 'http://localhost:8080/tracts';
 var global_data_url = 'http://localhost:8080/static/censusapp-v3/histograms.json';
 var colorscale = ['#e78dc5', '#f8daec', '#fbfbfb', '#dbf0c2', '#a6d592']
 
+function which_bin(bin_edges, v) {
+    for (var i=0; i<bin_edges.length; i++) {
+        if (v < bin_edges[i]) {
+            return i
+        }
+
+    }
+    return bin_edges.length-1
+}
+
 function quintilebg(x) {
     try {
         //expects a decimal from 0.0 to 1.0
