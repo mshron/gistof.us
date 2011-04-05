@@ -29,9 +29,61 @@ def percentile(l, n, ile=5, presort=True):
     return ile-1                    #must be top percentile if we get here
 
         
-def histogram(l, bins=10):
-    pass   
-     
+def histogram(l, bottom, top, bins=10):
+
+    w = top-bottom
+    binsize = float(w)/float(bins)
+
+    #top edges of bins
+    bin_edges = [top-(i*binsize) for i in reversed(range(bins))] 
+    
+    bin_counts = [0 for x in range(bins)]
+    for d in l:
+        for n in range(bins):
+            if d < bin_edges[n]:
+                bin_counts[n] = bin_counts[n]+1 
+                break
+    return {'bin_edges': bin_edges, 'bin_counts': bin_counts}
+
+def process_scalar_targets(in_shelves, out_shelf):
+    #amal: {tractid => value} for the current target stat
+    amal = {}
+    for t in scalar_targets:
+        m = t[0] #main stat category
+        s = t[1] #subcategory
+        print("%s > %s" % (m, s))
+
+        #amalgamate all the values we have
+        for in_shelf in in_shelves:
+            for tractid in in_shelf:
+                #skip the tid for this shelf if this shelf doesn't have
+                #the stat we're looking for
+                if in_shelf[tractid].get(m,{}).get(s,{}) != {}: 
+                    #don't overwrite a value from a prior shelf
+                    #the earlier ones have precedence
+                    if not amal.has_key(tractid):
+                        try:
+                            amal[tractid] = float(in_shelf[tractid][m][s])
+                        except ValueError:
+                            pass
+                            
+
+        obs_list = sorted([amal[tid] for tid in amal])
+        h = histogram(obs_list, float(obs_list[0]), float(obs_list[-1]))
+        global_data = out_shelf.get('global_data', {})
+        global_data.setdefault(m,{}).setdefault(s,{})['histogram'] = h
+        out_shelf ['global_data'] = global_data
+
+        for i,tractid in enumerate(amal):
+            ile = percentile(obs_list, amal[tractid], ile=100)
+            tract = out_shelf.get(tractid, {})
+            tract.setdefault(m, {})[s+'_percentile'] = ile
+            out_shelf[tractid] = tract
+            if (i!= 0) and ((i%100) == 0):
+                out_shelf.sync()
+        
+        amal = {}
+    out_shelf.sync()
 
 def setup_shelf(shelf_file):
     shelf = shelve.open(shelf_file)
@@ -43,6 +95,7 @@ scalar_targets = [
     ('veteran_status', 'pct_veteran'),
     ('hispanic_or_latino', 'pct_hispanic_or_latino')
 ]
+
 
 def main():
     usage = "usage: %prog [options] shelf_1 [shelf_2 ... shelf_n] -o result.json\nFirst shelf is primary; its keys are the final ones."
@@ -62,35 +115,11 @@ def main():
     out_shelf = setup_shelf(options.out_filename)
     sys.stderr.write("Opened out-file for writing.\n")
 
-    #amal: {tractid => value} for the current target stat
-    amal = {}
-    for t in scalar_targets:
-        m = t[0] #main stat category
-        s = t[1] #subcategory
-        print("%s > %s" % (m, s))
-        for in_shelf in in_shelves:
-            for tractid in in_shelf:
-                #skip the tid for this shelf if this shelf doesn't have
-                #the stat we're looking for
-                if in_shelf[tractid].get(m,{}).get(s,{}) != {}: 
-                    #don't overwrite a value from a prior shelf
-                    #the earlier ones have precedence
-                    if not amal.has_key(tractid):
-                        amal[tractid] = in_shelf[tractid][m][s]
-
-        obs_list = sorted([amal[tid] for tid in amal])
-        for i,tractid in enumerate(amal):
-            ile = percentile(obs_list, amal[tractid], ile=100)
-            tract = out_shelf.get(tractid, {})
-            tract.setdefault(m, {})[s+'_percentile'] = ile
-            out_shelf[tractid] = tract
-            if (i!= 0) and ((i%100) == 0):
-                out_shelf.sync()
-        
-        amal = {}
-
+    #this is where the magic happens
+    process_scalar_targets(in_shelves, out_shelf)
 
     out_shelf.close()
+    
     sys.stderr.write('Done\n')
 
 if __name__ == '__main__':
