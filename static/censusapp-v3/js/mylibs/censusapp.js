@@ -1,4 +1,5 @@
 var fetch_url = 'http://localhost:8080/tracts';
+var global_data_url = 'http://localhost:8080/static/censusapp-v3/histograms.json';
 var colorscale = ['#e78dc5', '#f8daec', '#fbfbfb', '#dbf0c2', '#a6d592']
 
 function quintilebg(x) {
@@ -224,7 +225,8 @@ $(function() {
     var map = mapinit();
 
     // API communication
-
+    
+    
     Tract = Backbone.Model.extend({
         initialize: function() {
             App.addOneView(this);
@@ -257,7 +259,11 @@ $(function() {
                 });
                 
             this.bind('add:left', this.fixDisplacedIndex);
-                
+            
+            this.global_data = null;
+            this.getGlobalData();
+
+
             // create a new TractDataManager
             this.manager = new TractDataManager(this);
             
@@ -266,6 +272,19 @@ $(function() {
 
         },             
         
+        getGlobalData: function() {
+            request = $.ajax({
+                            url: global_data_url,
+                            type: 'GET',
+                            dataType: 'json',
+                            context: this,         //context for callbacks
+                            success: function(json) {
+                                this.global_data = json;
+                            }
+                            //error: this.retryAjax
+            });
+        },
+
         addLeft: function(models, options) {
             if (_.isArray(models)) {
                 for (var i = 0, l = models.length; i < l; i++) {
