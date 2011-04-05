@@ -35,7 +35,7 @@ def histogram(l, bottom, top, bins=10):
     binsize = float(w)/float(bins)
 
     #top edges of bins
-    bin_edges = [top-(i*binsize) for i in reversed(range(bins))] 
+    bin_edges = [top-(i*binsize) for i in reversed(range(bins))]
     
     bin_counts = [0 for x in range(bins)]
     for d in l:
@@ -43,7 +43,9 @@ def histogram(l, bottom, top, bins=10):
             if d < bin_edges[n]:
                 bin_counts[n] = bin_counts[n]+1 
                 break
-    return {'bin_edges': bin_edges, 'bin_counts': bin_counts}
+
+    return {'bin_edges': map(lambda x: str(round(x,2)), bin_edges),
+            'bin_counts': bin_counts}
 
 def process_scalar_targets(in_shelves, out_shelf):
     #amal: {tractid => value} for the current target stat
@@ -62,26 +64,30 @@ def process_scalar_targets(in_shelves, out_shelf):
                     #don't overwrite a value from a prior shelf
                     #the earlier ones have precedence
                     if not amal.has_key(tractid):
+                        # skip non-numeric values
                         try:
                             amal[tractid] = float(in_shelf[tractid][m][s])
-                        except ValueError:
+                        except ValueError:                            
                             pass
                             
-
+        # generate histogram
         obs_list = sorted([amal[tid] for tid in amal])
         h = histogram(obs_list, float(obs_list[0]), float(obs_list[-1]))
-        global_data = out_shelf.get('global_data', {})
-        global_data.setdefault(m,{}).setdefault(s,{})['histogram'] = h
-        out_shelf ['global_data'] = global_data
 
+        # generate percentiles
         for i,tractid in enumerate(amal):
             ile = percentile(obs_list, amal[tractid], ile=100)
             tract = out_shelf.get(tractid, {})
+
+            # store percentile and histogram in each tract
             tract.setdefault(m, {})[s+'_percentile'] = ile
+            tract.setdefault('global',{}).setdefault(m,{}).setdefault(s,{})['histogram'] = h
+                    
             out_shelf[tractid] = tract
             if (i!= 0) and ((i%100) == 0):
                 out_shelf.sync()
         
+        out_shelf.sync()
         amal = {}
     out_shelf.sync()
 

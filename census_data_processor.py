@@ -224,7 +224,8 @@ transforms = [('population','total',
 
               ('veteran_status', 'pct_veteran', cols.veteran_status, veteran_status),
 
-              ('household_size', 'pct_live_alone', cols.household_size, pct_live_alone),
+              ('household_size', 'pct_live_alone', 
+               ('Universe:  HOUSEHOLDS: Nonfamily households; 1-person household (Estimate)','Universe:  TOTAL POPULATION: Total (Estimate)'), ratio),
 
               ('language_spoken_at_home', 'distribution', 
                 cols.language_spoken_at_home, home_language_distribution),
