@@ -2,6 +2,7 @@
 
 import shelve
 import sys
+import json
 from optparse import OptionParser
 
 def percentile(l, n, ile=5, presort=True):
@@ -39,6 +40,8 @@ def histogram(l, bottom, top, bins=10):
     
     bin_counts = [0 for x in range(bins)]
     for d in l:
+        if d >= bin_edges[-1]:
+            bin_counts[-1] = bin_counts[-1]+1
         for n in range(bins):
             if d < bin_edges[n]:
                 bin_counts[n] = bin_counts[n]+1 
@@ -47,9 +50,10 @@ def histogram(l, bottom, top, bins=10):
     return {'bin_edges': map(lambda x: str(round(x,2)), bin_edges),
             'bin_counts': bin_counts}
 
-def process_scalar_targets(in_shelves, out_shelf):
+def process_scalar_targets(in_shelves, out_shelf, histogram_filename):
     #amal: {tractid => value} for the current target stat
     amal = {}
+    histograms = {'histograms': {}}
     for t in scalar_targets:
         m = t[0] #main stat category
         s = t[1] #subcategory
@@ -72,7 +76,11 @@ def process_scalar_targets(in_shelves, out_shelf):
                             
         # generate histogram
         obs_list = sorted([amal[tid] for tid in amal])
+        sys.stderr.write('low: %f, high: %f\n'%(obs_list[0],obs_list[-1]))
+
         h = histogram(obs_list, float(obs_list[0]), float(obs_list[-1]))
+        histograms['histograms'].setdefault(m,{}).setdefault(s,{})
+        histograms['histograms'][m][s] = h
 
         # generate percentiles
         for i,tractid in enumerate(amal):
@@ -81,7 +89,6 @@ def process_scalar_targets(in_shelves, out_shelf):
 
             # store percentile and histogram in each tract
             tract.setdefault(m, {})[s+'_percentile'] = ile
-            tract.setdefault('global',{}).setdefault(m,{}).setdefault(s,{})['histogram'] = h
                     
             out_shelf[tractid] = tract
             if (i!= 0) and ((i%100) == 0):
@@ -89,6 +96,13 @@ def process_scalar_targets(in_shelves, out_shelf):
         
         out_shelf.sync()
         amal = {}
+    histogram_json = json.dumps(histograms)
+    try:
+        f = open(histogram_filename, 'w')
+        f.write(histogram_json)
+        f.close()
+    except:
+        sys.stderr.write("couldn't write to %s as histogram flatfile\n"%(histogram_filename))
     out_shelf.sync()
 
 def setup_shelf(shelf_file):
@@ -104,10 +118,12 @@ scalar_targets = [
 
 
 def main():
-    usage = "usage: %prog [options] shelf_1 [shelf_2 ... shelf_n] -o result.json\nFirst shelf is primary; its keys are the final ones."
+    usage = "usage: %prog [options] shelf_1 [shelf_2 ... shelf_n] -o result.shelf\nFirst shelf is primary; its keys are the final ones."
     parser = OptionParser(usage=usage)
     parser.add_option("-o", "--out", dest="out_filename", 
                 help="output percentile data to shelf named FILE", metavar="FILE")
+    parser.add_option("-f", "--histogram", dest="histogram_filename",
+                help="output histogram data to JSON flatfile named FILE", metavar="FILE")
 
     (options, args) = parser.parse_args()
 
@@ -122,7 +138,7 @@ def main():
     sys.stderr.write("Opened out-file for writing.\n")
 
     #this is where the magic happens
-    process_scalar_targets(in_shelves, out_shelf)
+    process_scalar_targets(in_shelves, out_shelf, options.histogram_filename)
 
     out_shelf.close()
     
