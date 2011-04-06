@@ -482,3 +482,9 @@ school_enrollment = ("Universe:  POPULATION 3 YEARS AND OVER: Total (Estimate)",
   "Universe:  POPULATION 3 YEARS AND OVER: Female; Not enrolled in school; 35 years and over(Margin of Error (+/-))")
 
 language_spoken_at_home = ("B16001_1_EST","B16001_2_EST","B16001_3_EST","B16001_6_EST","B16001_9_EST","B16001_12_EST","B16001_15_EST","B16001_18_EST","B16001_21_EST","B16001_24_EST","B16001_27_EST","B16001_30_EST","B16001_33_EST","B16001_36_EST","B16001_39_EST","B16001_42_EST","B16001_45_EST","B16001_48_EST","B16001_51_EST","B16001_54_EST","B16001_57_EST","B16001_60_EST","B16001_63_EST","B16001_66_EST","B16001_69_EST","B16001_72_EST","B16001_75_EST","B16001_78_EST","B16001_81_EST","B16001_84_EST","B16001_87_EST","B16001_90_EST","B16001_93_EST","B16001_96_EST","B16001_99_EST","B16001_102_EST","B16001_105_EST","B16001_108_EST","B16001_111_EST","B16001_114_EST","B16001_117_EST")
+
+linguistic_isolation = ("Universe:  HOUSEHOLDS: Total (Estimate)",
+"Universe:  HOUSEHOLDS: Spanish; Linguistically isolated (Estimate)",
+"Universe:  HOUSEHOLDS: Other Indo-European languages; Linguistically isolated (Estimate)",
+"Universe:  HOUSEHOLDS: Asian and Pacific Island languages; Linguistically isolated (Estimate)",
+"Universe:  HOUSEHOLDS: Other languages; Linguistically isolated (Estimate)")

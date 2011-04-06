@@ -140,7 +140,23 @@ def home_language_distribution(longtuple):
     pct_distribution = map(lambda x: ratio((x,over_5)), distribution)
 
     return pct_distribution
-        
+
+def pct_linguistic_isolation(longtuple):
+    _lingiso = [int_0nan(x) for x in longtuple]  
+    _lingiso_arr = np.asarray(_lingiso)
+
+    total_households = _lingiso_arr[0]
+    isolated_households = sum(_lingiso_arr[1:]) 
+
+    return ratio((isolated_households, total_households))
+ 
+def linguistic_isolation_distribution(longtuple):
+    _lingiso = [int_0nan(x) for x in longtuple]  
+    _lingiso_arr = np.asarray(_lingiso)
+    
+    # spanish, other indo-european, asian/pac island, other
+    return list(_lingiso_arr[1:])
+
 
 def county_name(geostring):
     return geostring.split(',')[1].strip()    
@@ -244,11 +260,15 @@ transforms = [('population','total',
               ('household_size', 'pct_live_alone', 
                ('Universe:  HOUSEHOLDS: Nonfamily households; 1-person household (Estimate)','Universe:  TOTAL POPULATION: Total (Estimate)'), ratio),
 
-              ('language_spoken_at_home', 'distribution', 
+              ('language', 'spoken_at_home_distribution', 
                 cols.language_spoken_at_home, home_language_distribution),
-              ('language_spoken_at_home', 'total_population_over_5',
+              ('language', 'total_population_over_5',
                 'B16001_1_EST', id),
 
+              ('language', 'pct_linguistic_isolation',
+                cols.linguistic_isolation, pct_linguistic_isolation),
+              ('language', 'linguistic_isolation_distribution',
+                cols.linguistic_isolation, linguistic_isolation_distribution),
 
               ('loc', 'lat', 'INTPTLAT', id),
               ('loc', 'lon', 'INTPTLONG', id),
