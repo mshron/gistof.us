@@ -1,6 +1,7 @@
 var fetch_url = 'http://localhost:8080/tracts';
 var global_data_url = 'http://localhost:8080/static/censusapp-v3/histograms.json';
 var colorscale = ['#e78dc5', '#f8daec', '#fbfbfb', '#dbf0c2', '#a6d592']
+var language_names = ['Only English','Spanish or Spanish Creole','French (incl. Patois, Cajun)','French Creole','Italian','Portuguese or Portuguese Creole','German','Yiddish','Other West Germanic languages','Scandinavian languages','Greek','Russian','Polish','Serbo-Croatian','Other Slavic languages','Armenian','Persian','Gujarati','Hindi','Urdu','Other Indic languages','Other Indo-European languages','Chinese','Japanese','Korean','Mon-Khmer, Cambodian','Hmong','Thai','Laotian','Vietnamese','Other Asian languages','Tagalog','Other Pacific Island languages','Navajo','Other Native North American languages','Hungarian','Arabic','Hebrew','African languages','Other and unspecified languages']
 
 function which_bin(bin_edges, v) {
     for (var i=0; i<bin_edges.length; i++) {
