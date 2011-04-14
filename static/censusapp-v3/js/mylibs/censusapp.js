@@ -408,21 +408,7 @@ $(function() {
             templateParams = this.model.toJSON();
             templateParams['nowImgIndex'] = this.nowImgIndex;
             $(this.el).html(this.template(templateParams));            
-            /*
-            var nowImgDiv = null;
-            if (templateParams.pictures.length != 0) {
-                nowImgDiv = $(this.imgDivTemplate(templateParams));
-            }
-            else {
-                nowImgDiv = $('<div>No pictures here, move along</div>');
-                console.debug('theoretically creating an empty div thing');
-                console.debug(nowImgDiv);
-            }
-            this.imgDivs[this.nowImgIndex] = nowImgDiv;   
-            this.$('.tract-pictures').append(nowImgDiv);
-            console.debug('nowImgDiv is always:');
-            console.debug(this.nowImgDiv)
-            */
+
             //this.setRenderDistance(true, 0);
             this.setRenderDistance(false, 0);
         },
@@ -728,8 +714,8 @@ $(function() {
         },
 
         displayStats: function(tract) {
-            console.debug('displaying stats:');
-            console.debug(tract);
+//            console.debug('displaying stats:');
+//            console.debug(tract);
             var data = tract.get('data');
             for (var i=0;i<render_functions.length;i++) {
                 render_functions[i](data, map);
