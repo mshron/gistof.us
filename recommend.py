@@ -15,7 +15,7 @@ def poverty(data):
     vs = 'pct_below_100pc'
     ps = 'pct_below_100pc_percentile'
     v, p = reach(data, 'poverty', vs, ps)
-    if p > 20:
+    if p > 80:
         ss = '...many people are income-*poor* (%.02f%%)'%float(100*v)
     elif p < 20:
         ss = '...*few* people are income-poor (%.02f%%)'%float(100*v)
