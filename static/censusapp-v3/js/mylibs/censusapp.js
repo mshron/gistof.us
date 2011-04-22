@@ -13,6 +13,22 @@ function which_bin(bin_edges, v) {
     return bin_edges.length-1
 }
 
+function markdown_to_html(s) {
+    var boldPre = '<em>';
+    var boldPost = '</em>';
+
+    var boldRE = /\*[^*]*\*/g;
+    var bold_me = s.match(boldRE);
+    $.each(bold_me, function(i,ss) {
+        var r = ss.substring(1, ss.length-1);
+        r = boldPre + r + boldPost;
+        s=s.replace(ss, r);
+
+        });
+
+    return s;
+
+}
 function make_color_map(bin, num_bins) {
     var normal_color = 'red';
     var individual_color = 'blue';
@@ -764,7 +780,7 @@ $(function() {
                 $('#stat-summaries').html(list_html);
                 $('.histogram').each(function(i,span) {
                     
-                    $(span).sparkline('html', {type:'bar', colorMap:cmaps[i]});
+                        $(span).sparkline('html', {type:'bar', colorMap:cmaps[i]});
 
                     });
                 
