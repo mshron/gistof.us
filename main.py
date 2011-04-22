@@ -23,6 +23,7 @@ import cPickle as cp
 import random
 import hashlib
 import csv
+import recommend
 
 class Tract(db.Model):
     picturelist = db.ListProperty(db.Blob)
@@ -34,6 +35,7 @@ class Tract(db.Model):
 def prepare(tract):
     out = {}
     out['data'] = json.loads(tract.data) #TODO turn this in to pickle?
+    out['summaries'] = recommend.parse(out['data'])
     out['tractid'] = tract.tractid
     out['order'] = tract.order
     out['pictures'] = map(cp.loads,tract.picturelist)
