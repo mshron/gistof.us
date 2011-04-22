@@ -158,7 +158,9 @@
   <script type='text/template' id='summary-template'>
       <li id='<%= statName %>-summary' class='summary'>
           <span class='sentence'><%= sentence %></span>
-          <span class='histogram'>&nbsp;</div>
+          <span id='<%= statName %>-histogram' class='histogram'>
+                <%= data %>
+          </span>
       </li>
   </script>
     

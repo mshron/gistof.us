@@ -13,6 +13,18 @@ function which_bin(bin_edges, v) {
     return bin_edges.length-1
 }
 
+function make_color_map(bin, num_bins) {
+    var normal_color = 'red';
+    var individual_color = 'blue';
+    var cmap = [];
+    for (var i=0; i<num_bins; i++) {
+        cmap.push(normal_color);
+    }
+    cmap[bin] = individual_color;
+
+    return cmap;
+
+}
 function quintilebg(x) {
     try {
         //expects a decimal from 0.0 to 1.0
@@ -227,7 +239,7 @@ function update_map(d, map) {
 }
 
 //render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon, placename]
-render_functions = [update_map, latlon, placename]
+render_functions = [update_map, latlon, placename];
 
 
 
@@ -726,23 +738,36 @@ $(function() {
 
         displayStats: function(tract) {
 
-            summaryTemplate = _.template($('#summary-template').html()),
-            console.debug('displaying stats:');
-            console.debug(tract);
+            summaryTemplate = _.template($('#summary-template').html());
+            //console.debug('displaying stats:');
+            //console.debug(tract);
             // displaying stats is now displaying summaries
             // for the first 3 items in tract.summaries
                 var display_count = 3;
+                
                 var list_html = '';
                 s = tract.get('summaries');
+                var gd = Tracts.global_data.histograms;
+                var cmaps = [];
                 for (var i=0; i<display_count; i++) {
+                    var d = gd[s[i].category][s[i].name].bin_counts;
                     var t = {'sentence': s[i].sentence,
+                             'data': d.join(','),
                              'statName': s[i].category+s[i].name};
-                                          
+
+                    var bin = (which_bin(gd[s[i].category][s[i].name].bin_edges,
+                      tract.get('data')[s[i].category][s[i].name+"_percentile"]));
+                    cmaps.push(make_color_map(bin, d.length));
                     list_html += summaryTemplate(t);
                 }
                 
                 $('#stat-summaries').html(list_html);
+                $('.histogram').each(function(i,span) {
+                    
+                    $(span).sparkline('html', {type:'bar', colorMap:cmaps[i]});
 
+                    });
+                
             
             var data = tract.get('data');
             for (var i=0;i<render_functions.length;i++) {
