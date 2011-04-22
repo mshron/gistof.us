@@ -23,11 +23,38 @@ def poverty(data):
         ss = '...people are not unusually poor (%.02f%%)'%float(100*v)
     return (v,(ss, vs, ps))
 
-transforms = [poverty]
+def hispanic(data):
+    vs = 'pct_hispanic_or_latino'
+    ps = 'pct_hispanic_or_latino_percentile'
+    v, p = reach(data, 'hispanic_or_latino', vs, ps)
+    if p > 80:
+        ss = '...a large portion of the population is hispanic/latino (%.02f%%)'%float(100*v)
+    elif p < 20:
+        ss = '...a relatively *small portion* of the population is hispanic/latino (%.02f%%)'%float(100*v)
+    else:
+        ss = '...the population is not particularly hispanic/latino (%.02f%%)'%float(100*v)
+    return (v,(ss, vs, ps))
+
+def veteran(data):
+    vs = 'pct_veteran'
+    ps = 'pct_veteran_percentile'
+    v, p = reach(data, 'veteran_status', vs, ps)
+    if p > 80:
+        ss = "...many people are *veterans* (%.02f%%)"%float(100*v)
+    if p < 20:
+        ss = "...few people are *veterans* (%.02f%%)"%float(100*v)
+    else:
+        ss = "...there are not an especially high concentration of veterans (%.02f%%)"%float(100*v)
+    return (v,(ss, vs, ps))
+
+
+transforms = [poverty, hispanic, veteran]
+
+sortfcn = lambda x: float(abs(x[0]-50))
 
 def parse(data):
     out = []
     for t in transforms:
         out.append(t(data))
-    return map(prepare,sorted(out, key=lambda x: float(x[0])))
+    return map(prepare,sorted(out, key=sortfcn))
         
