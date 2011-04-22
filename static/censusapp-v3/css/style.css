@@ -133,11 +133,11 @@ div.stat {
     margin-bottom: 8px;
     background-color: #fcfcfc;
     text-align: center;
+    font-size: 1.2em;
 /*height: 90px;*/
 }
 
 .stat_title {
-   /*font-size: 1.1em;*/
    text-align: center;
    display: inline;
    margin-bottom: .1em;
@@ -170,7 +170,7 @@ div#credits {
 
 
 h1#title {
-    font-size: 3.2em;
+    font-size: 3.4em;
     margin-bottom: 2em;
     display: inline;
 }
@@ -199,6 +199,7 @@ div.prev_nav {
 
 div.tract_nav {
     font-size: 1.6em;
+    font-weight: 400;
 }
 
 #map_canvas {

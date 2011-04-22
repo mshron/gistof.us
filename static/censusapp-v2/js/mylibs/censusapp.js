@@ -1,4 +1,4 @@
-var fetch_url = 'http://localhost:8080/tracts';
+var fetch_url = 'http://gistofus.appspot.com/tracts';
 var colorscale = ['#e78dc5', '#f8daec', '#fbfbfb', '#dbf0c2', '#a6d592']
 
 function quintilebg(x) {

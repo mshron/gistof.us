@@ -228,6 +228,17 @@ function update_map(d, map) {
 
 render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon, placename]
 
+
+
+/*function handlekeys(event) {
+    switch (event.keycode) {
+        37: //left
+        38: //up
+        39: //right
+        40: //down
+    }
+}*/
+
 $(function() {
     // layout
     setuplegend();
@@ -507,15 +518,6 @@ $(function() {
         },
         
         nextPicture: function() {            
-            var imgIndex = this.nowImgIndex;
-            var maxImgIndex = this.model.get('pictures').length-1;
-
-            this.trigger('nav:img', 'right');
-            
-            // roll around to start if overflowing the end of the pictures
-            if (imgIndex === maxImgIndex) { this.gotoImg(0) }
-            // otherwise, increment
-            else                          { this.gotoImg(imgIndex+1)  }
         },
         
         previousPicture: function() {
@@ -681,7 +683,7 @@ $(function() {
             'click #left':              'left',
             'click #right':             'right',
             'click #nextPicture':       'nextPicture',
-            'click #previousPicture':   'previousPicture'
+            'click #previousPicture':   'previousPicture',
         },
         
         initialize: function() {
