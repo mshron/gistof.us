@@ -508,12 +508,10 @@ $(function() {
             var maxImgIndex = this.model.get('pictures').length-1;
 
             this.trigger('nav:img', 'right');
-                                              
             // roll around to start if overflowing the end of the pictures
             if (imgIndex === maxImgIndex) { this.gotoImg(0) }
             // otherwise, increment
             else                          { this.gotoImg(imgIndex+1)  }
-                                                           
         },
         
         previousPicture: function() {

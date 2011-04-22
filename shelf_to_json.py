@@ -32,6 +32,10 @@ for key in shelves[0]:
         if d:
             for k,v in d.iteritems():
                 final.setdefault(k,{}).update(v)
+
+    #Remove 0 population tracts
+    if final.get('population', {}).get('total', 0) == 0:
+        continue
     try:out[key] = json.dumps(final, cls=JSONDecodesNumpy)
     except:
         sys.stderr.write("FAIL: %s\n"%key)
