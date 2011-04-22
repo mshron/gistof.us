@@ -226,7 +226,8 @@ function update_map(d, map) {
     }
 }
 
-render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon, placename]
+//render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon, placename]
+render_functions = [update_map, latlon, placename]
 
 
 
@@ -734,9 +735,6 @@ $(function() {
                 var list_html = '';
                 s = tract.get('summaries');
                 for (var i=0; i<display_count; i++) {
-                    console.debug('sentence:');
-                    console.debug(s);
-                    console.debug(s[i].sentence);
                     var t = {'sentence': s[i].sentence,
                              'statName': s[i].category+s[i].name};
                                           
@@ -745,12 +743,12 @@ $(function() {
                 
                 $('#stat-summaries').html(list_html);
 
-            /*
+            
             var data = tract.get('data');
             for (var i=0;i<render_functions.length;i++) {
                 render_functions[i](data, map);
             }
-            */
+            
         },
 
 
