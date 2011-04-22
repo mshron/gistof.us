@@ -716,12 +716,33 @@ $(function() {
         },
 
         displayStats: function(tract) {
-//            console.debug('displaying stats:');
-//            console.debug(tract);
+
+            summaryTemplate = _.template($('#summary-template').html()),
+            console.debug('displaying stats:');
+            console.debug(tract);
+            // displaying stats is now displaying summaries
+            // for the first 3 items in tract.summaries
+                var display_count = 3;
+                var list_html = '';
+                s = tract.get('summaries');
+                for (var i=0; i<display_count; i++) {
+                    console.debug('sentence:');
+                    console.debug(s);
+                    console.debug(s[i].sentence);
+                    var t = {'sentence': s[i].sentence,
+                             'statName': s[i].category+s[i].name};
+                                          
+                    list_html += summaryTemplate(t);
+                }
+                
+                $('#stat-summaries').html(list_html);
+
+            /*
             var data = tract.get('data');
             for (var i=0;i<render_functions.length;i++) {
                 render_functions[i](data, map);
             }
+            */
         },
 
 
