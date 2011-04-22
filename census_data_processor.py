@@ -6,9 +6,6 @@ import sys
 import numpy as np
 import transforms_columns as cols
 
-def addone(n):
-    return int(n)+1
-
 def id(x):
     try:
         return int(x)
@@ -20,10 +17,28 @@ def list_id(longtuple):
     return list
 
 def ratio((a,b)):
-  try:
+    try:
         _r =  float(a)/float(b)
         return "%.04f"%_r
-  except: return "***"
+    except: return "***"
+
+#Simpson Diversity Index
+def simpson_raw_counts(longtuple):
+    d = [int(x) for x in longtuple if can_int(x)]
+    total = sum(d)
+    #prevent division by zero
+    if total == 0:
+        return "-1"
+    try:
+        pcts = [float(x)/float(total) for x in d]
+    except: return "***"
+    return simpson_pcts(pcts)
+
+def simpson_pcts(d):
+    a = 1.0
+    for i in range(len(d)):
+        a = a - (d[i]**2)
+    return "%.04f"%a
 
 def int_0nan(x):
     if can_int(x):
@@ -241,6 +256,8 @@ transforms = [('population','total',
               
               ('race', 'distribution_moe', cols.race_distribution_moe, list_id),
 
+              ('race', 'simpson_index', cols.race_distribution, simpson_raw_counts),
+
               ('race', 'white_not_latino', 
                'Universe:  TOTAL POPULATION: Not Hispanic or Latino; White alone (Estimate)',
                id),
@@ -262,6 +279,10 @@ transforms = [('population','total',
 
               ('language', 'spoken_at_home_distribution', 
                 cols.language_spoken_at_home, home_language_distribution),
+
+              ('language', 'simpson_index',
+                cols.language_spoken_at_home, simpson_raw_counts),
+
               ('language', 'total_population_over_5',
                 'B16001_1_EST', id),
 
