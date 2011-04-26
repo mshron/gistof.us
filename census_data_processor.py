@@ -84,6 +84,21 @@ def age_distribution(longtuple):
     out[4] = ages[21:23].sum()
     return out
 
+def edu_sums(l):
+    lt9th_indices = [6,22,38,54,70,88,104,120,136,152]
+
+    lt9 = sum([l[x] for x in lt9th_indices])
+    hs_no_degree = sum([l[x+2] for x in lt9th_indices])
+    hs_grad_or_equiv = sum([l[x+4] for x in lt9th_indices])
+    college_no_degree = sum([l[x+6] for x in lt9th_indices])
+    associates_degree = sum([l[x+8] for x in lt9th_indices])
+    bachelors_degree = sum([l[x+10] for x in lt9th_indices])
+    grad_or_professional_degree = sum([l[x+12] for x in lt9th_indices])
+    
+    out = [lt9, hs_no_degree, hs_grad_or_equiv, college_no_degree,
+            associates_degree, bachelors_degree, grad_or_professional_degree]
+    return out
+
 def educational_attainment_18plus(longtuple):
     # sum each educational level from each age group
     # results will be list: 
@@ -94,21 +109,19 @@ def educational_attainment_18plus(longtuple):
     _attains = [int_0nan(x) for x in longtuple] 
     _attains_arr = np.asarray(_attains)
 
-    lt9th_indices = [6,22,38,54,70,88,104,120,136,152]
+    total_18plus = _attains_arr[0]
+    raw_counts = edu_sums(_attains_arr)
 
-    print len(longtuple)
-    lt9 = sum([_attains_arr[x] for x in lt9th_indices])
-    hs_no_degree = sum([_attains_arr[x+2] for x in lt9th_indices])
-    hs_grad_or_equiv = sum([_attains_arr[x+4] for x in lt9th_indices])
-    college_no_degree = sum([_attains_arr[x+6] for x in lt9th_indices])
-    associates_degree = sum([_attains_arr[x+8] for x in lt9th_indices])
-    bachelors_degree = sum([_attains_arr[x+10] for x in lt9th_indices])
-    grad_or_professional_degree = sum([_attains_arr[x+12] for x in lt9th_indices])
+    return [ratio((x,total_18plus)) for x in raw_counts]
 
-    out = [lt9, hs_no_degree, hs_grad_or_equiv, college_no_degree,
-            associates_degree, bachelors_degree, grad_or_professional_degree]
+def educational_attainment_simpson(longtuple):
 
-    return out
+    _attains = [int_0nan(x) for x in longtuple] 
+    _attains_arr = np.asarray(_attains)
+
+    raw_counts = edu_sums(_attains_arr)
+    return simpson_raw_counts(raw_counts)
+
 
 def veteran_status(longtuple):
     _vets = [int_0nan(x) for x in longtuple]
@@ -256,7 +269,7 @@ transforms = [('population','total',
               
               ('race', 'distribution_moe', cols.race_distribution_moe, list_id),
 
-              ('race', 'simpson_index', cols.race_distribution, simpson_raw_counts),
+              ('race', 'distribution_simpson', cols.race_distribution, simpson_raw_counts),
 
               ('race', 'white_not_latino', 
                'Universe:  TOTAL POPULATION: Not Hispanic or Latino; White alone (Estimate)',
@@ -272,6 +285,9 @@ transforms = [('population','total',
               ('educational_attainment_18plus', 'total',
                'Universe:  POPULATION 18 YEARS AND OVER: Total (Estimate)', id),
 
+              ('educational_attainment_18plus', 'distribution_simpson',
+               cols.educational_attainment_18plus, educational_attainment_simpson),
+
               ('veteran_status', 'pct_veteran', cols.veteran_status, veteran_status),
 
               ('household_size', 'pct_live_alone', 
@@ -280,7 +296,7 @@ transforms = [('population','total',
               ('language', 'spoken_at_home_distribution', 
                 cols.language_spoken_at_home, home_language_distribution),
 
-              ('language', 'simpson_index',
+              ('language', 'spoken_at_home_distribution_simpson',
                 cols.language_spoken_at_home, simpson_raw_counts),
 
               ('language', 'total_population_over_5',
