@@ -51,8 +51,25 @@ def veteran(data):
         ss = "...there are not an especially high concentration of veterans (%.02f%%)"%float(100*v)
     return (v,(ss, vs, ps, cat))
 
+def population_density(data):
+    cat = 'population'
+    vs = 'population_density'
+    ps = 'population_density_percentile'
+    v, p = reach(data, cat, vs, ps)
 
-transforms = [poverty, hispanic, veteran]
+    if v > 20000 and v < 30000:
+        ss = "...the population density is similar to that of New York, NY (%.02f/sq. mi.)"%float(v)
+    elif v > 100000:
+        ss = "... the population density is similar to that of Manila, Phillipines, the densest city on earth (%.02f/sq. mi.)"%float(v)
+    elif p > 80:
+        ss = "...the population is very dense (%.02f/sq. mi.)"%float(v)
+    elif p < 20:
+        ss = "...the population is very sparse (%.02f/sq. mi.)"%float(v)
+    else:
+        ss = "...population density is not unusually high or low (%.02f/sq. mi.)"%float(v)
+    return (v,(ss,vs,ps,cat))
+
+transforms = [poverty, hispanic, veteran, population_density]
 
 sortfcn = lambda x: float(abs(x[0]-50))
 

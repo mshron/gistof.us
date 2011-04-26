@@ -286,10 +286,12 @@ transforms = [('population','total',
                ('Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Foreign born (Estimate)',
                 'Universe:  POPULATION IN THE UNITED STATES FOR WHOM POVERTY STATUS IS DETERMINED: Total (Estimate)'),
                ratio),
+
               ('age', 'distribution', cols.age_distribution, age_distribution),
+              ('age', 'distribution_simpson',
+               cols.age_distribution, simpson_raw_counts),
 
               ('sex_by_age', 'male', cols.age_distribution[:23], sex_by_age),
-
               ('sex_by_age', 'female', cols.age_distribution[23:], sex_by_age),
 
               ('hispanic_or_latino', 'pct_hispanic_or_latino',
@@ -298,15 +300,11 @@ transforms = [('population','total',
                 ratio),
 
               ('race', 'distribution', cols.race_distribution, list_id),
-              
               ('race', 'distribution_moe', cols.race_distribution_moe, list_id),
-
               ('race', 'distribution_simpson', cols.race_distribution, simpson_raw_counts),
-
               ('race', 'white_not_latino', 
                'Universe:  TOTAL POPULATION: Not Hispanic or Latino; White alone (Estimate)',
                id),
-
               ('race', 'pct_white_not_latino',
               ('Universe:  TOTAL POPULATION: Not Hispanic or Latino; White alone (Estimate)',
                'Universe:  TOTAL POPULATION: Total (Estimate)'), ratio),
