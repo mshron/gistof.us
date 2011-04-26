@@ -84,7 +84,7 @@ def age_distribution(longtuple):
     out[4] = ages[21:23].sum()
     return out
 
-def edu_sums(l):
+def _edu_sums(l):
     lt9th_indices = [6,22,38,54,70,88,104,120,136,152]
 
     lt9 = sum([l[x] for x in lt9th_indices])
@@ -110,7 +110,7 @@ def educational_attainment_18plus(longtuple):
     _attains_arr = np.asarray(_attains)
 
     total_18plus = _attains_arr[0]
-    raw_counts = edu_sums(_attains_arr)
+    raw_counts = _edu_sums(_attains_arr)
 
     return [ratio((x,total_18plus)) for x in raw_counts]
 
@@ -119,9 +119,41 @@ def educational_attainment_simpson(longtuple):
     _attains = [int_0nan(x) for x in longtuple] 
     _attains_arr = np.asarray(_attains)
 
-    raw_counts = edu_sums(_attains_arr)
+    raw_counts = _edu_sums(_attains_arr)
     return simpson_raw_counts(raw_counts)
 
+def _enrolled_sums(l):
+    indices_enrolled = [0,8,24,32]
+    indices_not = [16,40]
+
+    enrolled_by_age = []
+    unenrolled_by_age = []
+    for agecat in range(4):
+        offset = 2*agecat
+        enrolled = sum([l[x+offset] for x in indices_enrolled])
+        enrolled_by_age.append(enrolled)
+        unenrolled = sum([l[x+offset] for x in indices_not])
+        unenrolled_by_age.append(unenrolled)
+
+    return enrolled_by_age, unenrolled_by_age
+
+def pct_school_enrollment_by_age(longtuple):
+    _enroll = [int_0nan(x) for x in longtuple] 
+    _enroll_arr = np.asarray(_enroll)
+   
+    enrolled_by_age, unenrolled_by_age = _enrolled_sums(_enroll_arr)
+
+    return [ratio((en,en+un)) for (en,un) in zip(enrolled_by_age, unenrolled_by_age)]
+
+def pct_under18_enrolled(longtuple):
+    _enroll = [int_0nan(x) for x in longtuple] 
+    _enroll_arr = np.asarray(_enroll)
+   
+    enrolled_by_age, unenrolled_by_age = _enrolled_sums(_enroll_arr)
+    enrolled = sum(enrolled_by_age)
+    unenrolled = sum(unenrolled_by_age)
+    total = enrolled + unenrolled
+    return ratio( (enrolled, total) ) 
 
 def veteran_status(longtuple):
     _vets = [int_0nan(x) for x in longtuple]
@@ -287,6 +319,11 @@ transforms = [('population','total',
 
               ('educational_attainment_18plus', 'distribution_simpson',
                cols.educational_attainment_18plus, educational_attainment_simpson),
+
+              ('school_enrollment', 'pct_by_age_distribution',
+               cols.school_enrollment_distribution, pct_school_enrollment_by_age),
+              ('school_enrollment', 'pct_under18_enrolled',
+               cols.school_enrollment_distribution, pct_under18_enrolled),
 
               ('veteran_status', 'pct_veteran', cols.veteran_status, veteran_status),
 
