@@ -4,8 +4,8 @@ var colorscale = ['#e78dc5', '#f8daec', '#fbfbfb', '#dbf0c2', '#a6d592']
 var language_names = ['Only English','Spanish or Spanish Creole','French (incl. Patois, Cajun)','French Creole','Italian','Portuguese or Portuguese Creole','German','Yiddish','Other West Germanic languages','Scandinavian languages','Greek','Russian','Polish','Serbo-Croatian','Other Slavic languages','Armenian','Persian','Gujarati','Hindi','Urdu','Other Indic languages','Other Indo-European languages','Chinese','Japanese','Korean','Mon-Khmer, Cambodian','Hmong','Thai','Laotian','Vietnamese','Other Asian languages','Tagalog','Other Pacific Island languages','Navajo','Other Native North American languages','Hungarian','Arabic','Hebrew','African languages','Other and unspecified languages']
 
 function which_bin(bin_edges, v) {
-    console.debug(bin_edges);
-    console.debug(v);
+    //console.debug(bin_edges);
+    //console.debug(v);
     for (var i=0; i<bin_edges.length; i++) {
         if (v < bin_edges[i]) {
             console.debug(i);
@@ -13,13 +13,12 @@ function which_bin(bin_edges, v) {
         }
 
     }
-    console.debug('escaped the loop');
     return bin_edges.length-1
 }
 
 function markdown_to_html(s) {
-    var boldPre = '<em>';
-    var boldPost = '</em>';
+    var boldPre = '<span class="stat_emph">';
+    var boldPost = '</span>';
 
     var boldRE = /\*[^*]*\*/g;
     var bold_me = s.match(boldRE);
@@ -33,6 +32,7 @@ function markdown_to_html(s) {
         
         });
     }
+    console.debug(s);
     return s;
 
 }
@@ -684,7 +684,7 @@ $(function() {
                 else {
                     this.ring.addLeft(newTract);
                 }
-                console.debug('adding: '+newTract.order);
+                //console.debug('adding: '+newTract.order);
                 
             }, this);  //set the context for the _.each to the manager
 

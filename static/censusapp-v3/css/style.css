@@ -300,7 +300,9 @@ img, object, embed {
 max-width: 100%;
 }
 
-
+.stat_emph {
+font-weight: bold;
+}
 
 
 
