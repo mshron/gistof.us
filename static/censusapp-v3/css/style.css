@@ -158,6 +158,10 @@ margin: auto;
     float: right;
 }
 
+.stats-box {
+    text-align: center;
+}
+
 
 div.inline {
     display: inline;

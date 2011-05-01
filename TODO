@@ -5,15 +5,21 @@ Frontend:
     X fix layout to have proper columns again
     X rearrange stats boxes to be squares
     / set background color of stats boxes based on quintile
-    - Add squares for additional stats
-    - Fix map code to not have that double dot
+    X Add squares for additional stats
+    X Fix map code to not have that double dot
+    - read in entropy
+    - order stats by distance from median and entropy value
+    - (low priority) be capable of displaying a sparkline
+    - continuing design tweaks
    
 Data:
-    - Find center points for all tracts; add
+    X Find center points for all tracts; add
     X Grab more photos; add
     X Figure out how to do percentiles; do
+    - calculate entropies in histogrammer
+    - make awesome stats
 
 Random ideas:
-    - put distribution under numbers; highlight by value 
+    X put distribution under numbers; highlight by value 
 
 
