@@ -6,13 +6,12 @@ def reach(data, cat, vs, ps):
     percentile = d[ps]
     return float(value), float(percentile)
 
-def prepare((s, values)):
+def prepare(s, values):
     out =   {'sentence': values[0], 
             'name': values[1],
             'category': values[3],
     }
     return out
-
 
 def poverty(data):
     cat = 'poverty'
@@ -25,7 +24,7 @@ def poverty(data):
         ss = '...*few* people are income-poor (%.02f%%)'%float(100*v)
     else:
         ss = '...people are not unusually poor (%.02f%%)'%float(100*v)
-    return (v,(ss, vs, ps, cat))
+    return (ss, vs, ps, cat)
 
 def hispanic(data):
     cat = 'hispanic_or_latino'
@@ -38,7 +37,7 @@ def hispanic(data):
         ss = '...a relatively *small portion* of the population is hispanic/latino (%.02f%%)'%float(100*v)
     else:
         ss = '...the population is not particularly hispanic/latino (%.02f%%)'%float(100*v)
-    return (v,(ss, vs, ps, cat))
+    return (ss, vs, ps, cat)
 
 def white_not_latino(data):
     cat = 'race'
@@ -92,7 +91,7 @@ def veteran(data):
         ss = "...*few* people are *veterans* (%.02f%%)"%float(100*v)
     else:
         ss = "...there are not an especially high concentration of veterans (%.02f%%)"%float(100*v)
-    return (v,(ss, vs, ps, cat))
+    return (ss, vs, ps, cat)
 
 def population_density(data):
     cat = 'population'
@@ -110,7 +109,7 @@ def population_density(data):
         ss = "...the *population* is *very sparse* (%.02f/sq. mi.)"%float(v)
     else:
         ss = "...population density is not unusually high or low (%.02f/sq. mi.)"%float(v)
-    return (v,(ss,vs,ps,cat))
+    return (ss,vs,ps,cat)
 
 
 
@@ -123,5 +122,5 @@ def parse(data):
     out = []
     for t in transforms:
         out.append(t(data))
-    return map(prepare,sorted(out, key=sortfcn))
+    return map(prepare,out)
         
