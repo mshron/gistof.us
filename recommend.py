@@ -4,7 +4,7 @@ def reach(data, cat, vs, ps):
     percentile = d[ps]
     return float(value), float(percentile)
 
-def prepare(s, values):
+def prepare(values):
     out =   {'sentence': values[0], 
             'name': values[1],
             'category': values[3],
