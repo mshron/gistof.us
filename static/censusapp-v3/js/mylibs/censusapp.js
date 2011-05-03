@@ -220,10 +220,17 @@ function latino(d) {
 
 function placename(d) {
     try {
-        $('#lat').html(parseFloat(d.loc.lat).toFixed(2))
-        $('#lon').html(parseFloat(d.loc.lon).toFixed(2))
-        $('#county').html(d.loc.county)
-        $('#state').html(d.loc.state)
+        $('#lat').html(parseFloat(d.loc.lat).toFixed(2));
+        $('#lon').html(parseFloat(d.loc.lon).toFixed(2));
+        $('#county').html(d.loc.county);
+        $('#state').html(d.loc.state);
+        $('#tractid').html(d.loc.tractid);
+        var pop = d.population.total;
+        var pop_moe = d.population.total_moe;
+        var pop_low = Math.max(pop-pop_moe,0);
+        var pop_high = pop+pop_moe;
+        $('#pop_low').html(pop_low);
+        $('#pop_high').html(pop_high);
     } catch(e) {
        raise(e);
     }
@@ -793,6 +800,8 @@ $(function() {
                 
             
             var data = tract.get('data');
+            var tractid = tract.get('tractid');
+            data.loc.tractid = tractid;
             for (var i=0;i<render_functions.length;i++) {
                 render_functions[i](data, map);
             }

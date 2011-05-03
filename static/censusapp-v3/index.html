@@ -47,7 +47,7 @@
                 <div class="legend" id="4">Highest</div>
               </div> -->
               <div id='whereat'>
-                <h2>At this spot in <span id="county"></span> in <span id="state"></span>, near (<span id="lat"></span>, <span id="lon"></span>)...
+                <h2><span id="pop_low"></span>-<span id="pop_high"></span> people live in US Census tract <span id="tractid"></span> in <span id="county"></span> in <span id="state"></span>...
               </div>
               <ul id='stat-summaries'>
 
@@ -57,30 +57,40 @@
         </div>
          
         <div id='data-row' class='row'>
-            <div id='fluff' class='onecol'>&nbsp;</div> 
-            <div id='nav-box' class='fivecol'>
-                <div class='placenav prev_nav'>
-                  <a href="#" id="left">&lt;&lt;&nbsp;go back</a>
-                </div>
-                <div class='placenav next_nav '>
-                  <a href="#" id="right">&gt;&gt;&nbsp;Take me to another random place</a>
-                </div>
-
+            <div id='nav-box' class='threecol'>
               <div id="map_canvas"></div>
             </div>
 
-            <div id="pictures" class='sixcol last'>
-                <div class='picnav prev_nav'>
-                  <a href="#" id="previousPicture">&lt;&nbsp;&nbsp;go back</a>
-                </div>
-                <div class='picnav next_nav'>
-                  <a href="#" id="nextPicture">&gt;&nbsp;&nbsp;Show me another picture</a>
-                </div>
-
+            <div id="pictures" class='ninecol last'>
                 <div id='tract-view-box'></div>     
-            </div>
+                <div class='picnav'>
+                  <a href="#" id="previousPicture">&lt;&nbsp;&nbsp;previous</a>
+                </div>
+                <div class='picnav'>
+                  <a href="#" id="nextPicture">Show me another picture&nbsp;&nbsp;&gt;</a>
+                </div>
 
+            </div>
         </div>
+        <div id="nav-row" class="row">
+            <div id="left_nav" class="threecol">
+                <div class='placenav prev_nav'>
+                  <a href="#" id="left">&larr;&nbsp;go back</a>
+                 </div>
+            </div>
+            <div id="center_nav" class="sixcol">&nbsp;</div>
+            <div id="right_nav" class="threecol last">
+                <div class='placenav next_nav '>
+                  <a href="#" id="right">Next tract &nbsp;&rarr;</a>
+                </div>
+            </div>
+        </div>
+
+
+                
+            
+
+
 
       <div class='row'>
         <div id='credits' class='twelvecol'>These are the credits</div>
