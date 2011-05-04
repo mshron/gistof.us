@@ -5,12 +5,11 @@ abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp,
 small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, figcaption, figure,  footer, header, hgroup, 
-menu, nav, section, summary, time, mark, audio, video {
+menu, nav, section, time, mark, audio, video {
   margin:0;
   padding:0;
   border:0;
   outline:0;
-  font-size:100%;
   vertical-align:baseline;
   background:transparent;
 }                  
@@ -124,44 +123,9 @@ div.navbar {
     margin-top: 16px;
 }
 
-div.stat {
-    /*border: 1px #eee solid;*/
-    /*float: left;*/
-    display: block;
-    /*width: 31%;*/
-    margin: 1%;
-    margin-bottom: 8px;
-    background-color: #fcfcfc;
-    text-align: center;
-    font-size: 1.2em;
-/*height: 90px;*/
+span.sentence {
+    font-size: 1.1em;
 }
-
-.stat_title {
-   text-align: center;
-   display: inline;
-   margin-bottom: .1em;
-}
-
-.stat_local {
-/*width: 80%;*/
-/*text-align: center;*/
-  margin-left: 1em;
-display: inline;
-margin: auto;
-}
-
-.big_number {font-size: 1em;}
-
-
-.stat_global {
-    float: right;
-}
-
-.stats-box {
-    text-align: center;
-}
-
 
 div.inline {
     display: inline;
@@ -176,6 +140,7 @@ div#credits {
 h1#title {
     font-size: 3.4em;
     display: inline;
+    background-color: yellow;
 }
 
 div.debug {
