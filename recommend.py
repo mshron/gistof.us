@@ -51,7 +51,7 @@ def white_not_latino(data):
         ss = '...there are few White people (%.02f%%)'%float(100*v)
     else:
         ss = '...there is not a particular concentration or lack of White non-Latino people here (%.02f%%)'%float(100*v)
-    return (v, (ss,vs,ps,cat))
+    return (ss,vs,ps,cat)
 
 def linguistic_isolation(data):
     cat = 'language'
@@ -64,7 +64,7 @@ def linguistic_isolation(data):
         ss = '...very few households lack an English speaking member (%.02f%%)'%float(100*v)
     else:
         ss = '...neither many nor few households are linguistically isolated (%.02f%%)'%float(100*v)
-    return (v, (ss,vs,ps,cat))
+    return (ss,vs,ps,cat)
 
 def live_alone(data):
     cat = 'household_size'
@@ -77,7 +77,7 @@ def live_alone(data):
         ss = '...*most* households contain more than just one person (%.02f%%)'%float(100*v)
     else:
         ss = '...a not unusual number of people live alone (%.02f%%)'%float(100*v)
-    return (v, (ss,vs,ps,cat))
+    return (ss,vs,ps,cat)
     
 
 def veteran(data):

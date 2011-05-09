@@ -3,6 +3,7 @@
 import shelve
 import sys
 import json
+import math
 from optparse import OptionParser
 
 def percentile(l, n, ile=5, presort=True):
@@ -47,8 +48,14 @@ def histogram(l, bottom, top, bins=10):
                 bin_counts[n] = bin_counts[n]+1 
                 break
 
+    total = len(l)
+    bin_probs = [float(x)/float(total) for x in bin_counts]
+    entropy = -1*sum([x*math.log(x) for x in bin_probs if x > 0])
+   
+
     return {'bin_edges': map(lambda x: str(round(x,2)), bin_edges),
-            'bin_counts': bin_counts}
+            'bin_counts': bin_counts,
+            'entropy': entropy}
 
 def process_scalar_targets(in_shelves, out_shelf, histogram_filename):
     #amal: {tractid => value} for the current target stat
