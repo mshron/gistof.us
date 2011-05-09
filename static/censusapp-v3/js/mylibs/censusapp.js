@@ -37,8 +37,8 @@ function markdown_to_html(s) {
 
 }
 function make_color_map(bin, num_bins) {
-    var normal_color = 'red';
-    var individual_color = 'blue';
+    var normal_color = '#3914AF';
+    var individual_color = '#CD0074';
     var cmap = [];
     for (var i=0; i<num_bins; i++) {
         cmap.push(normal_color);
@@ -64,7 +64,7 @@ function setuplegend() {
 }
 
 function mapinit() {
-  var myLatlng = new google.maps.LatLng(47.7, -122.3);//-34.397, 150.644);
+  var myLatlng = new google.maps.LatLng(39.8, -98.5);
   var myOptions = {
     zoom: 6,
     center: myLatlng,
@@ -99,6 +99,9 @@ function population(d) {
     try {
             var pop_total = d.population.total;
             var pop_moe = d.population.total_moe;
+            if (isNaN(pop_moe)) {
+                pop_moe = 0;
+            }
             $('#population-stat .stat_local').html(pop_total);
             //age
             var age_distribution = d.age.distribution;
@@ -220,10 +223,17 @@ function latino(d) {
 
 function placename(d) {
     try {
-        $('#lat').html(parseFloat(d.loc.lat).toFixed(2))
-        $('#lon').html(parseFloat(d.loc.lon).toFixed(2))
-        $('#county').html(d.loc.county)
-        $('#state').html(d.loc.state)
+        $('#lat').html(parseFloat(d.loc.lat).toFixed(2));
+        $('#lon').html(parseFloat(d.loc.lon).toFixed(2));
+        $('#county').html(d.loc.county);
+        $('#state').html(d.loc.state);
+        $('#tractid').html(d.loc.tractid);
+        var pop = d.population.total;
+        var pop_moe = d.population.total_moe;
+        var pop_low = Math.max(pop-pop_moe,0);
+        var pop_high = pop+pop_moe;
+        $('#pop_low').html(pop_low);
+        $('#pop_high').html(pop_high);
     } catch(e) {
        raise(e);
     }
@@ -234,22 +244,27 @@ function percentify(n, places) {
     return string + "%";
 }    
 
-var markers = [null];
+var markers = null;
 
 function updateMap(map, lat, lng) {
     var LL = new google.maps.LatLng(lat,lng);
-    map.panTo(LL); 
+    var LL_1 = new google.maps.LatLng(Number(lat)+.1,lng);
+    var LL_2 = new google.maps.LatLng(Number(lat)+.1,Number(lng)+.1);
+    var LL_3 = new google.maps.LatLng(lat, Number(lng)+.1);
+    map.setZoom(4);
+    map.panTo(LL);
+    map.setZoom(8);
     //console.debug(lat,lng);
-    var newMarker = new google.maps.Marker({
-        position: LL,
-        animation: google.maps.Animation.DROP,
-        map: map});
-    var old = markers[0];
-    if (old != null) {
-        old.setMap(null)
+    var newPolyline = new google.maps.Polyline({
+        map: map,
+        path: [LL, LL_1, LL_2, LL_3]
+        });
+    if (markers != null) {
+    markers.setMap(null);
         }
-    markers[0] = newMarker;
-}
+    markers = newPolyline;
+
+    }
 
 function update_map(d, map) {
     try {
@@ -793,6 +808,8 @@ $(function() {
                 
             
             var data = tract.get('data');
+            var tractid = tract.get('tractid');
+            data.loc.tractid = tractid;
             for (var i=0;i<render_functions.length;i++) {
                 render_functions[i](data, map);
             }
