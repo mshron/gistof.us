@@ -8,7 +8,7 @@ function which_bin(bin_edges, v) {
     //console.debug(v);
     for (var i=0; i<bin_edges.length; i++) {
         if (v < bin_edges[i]) {
-            console.debug(i);
+         //   console.debug(i);
             return i
         }
 
@@ -274,6 +274,54 @@ function update_map(d, map) {
     } catch (e) {
         raise(e)
     }
+}
+
+function summaries(t) {
+    summaryTemplate = _.template($('#summary-template').html());
+    var display_count = 3;
+
+    var list_html = '';
+    s = t.get('summaries');
+    d = t.get('data');
+    var gd = Tracts.global_data.histograms;
+    for (var i=0; i<s.length; i++) {
+        var cat = s[i].category;
+        var name = s[i].name;
+        var ile;
+        var entropy
+        try {
+            ile = Math.abs(d[cat][name+'_percentile']);
+            entropy = gd[cat][name].entropy;
+            s[i].rank = ile*entropy; 
+            console.debug(cat+"/"+name+": "+s[i].rank+" ("+ile+"*"+entropy+")");
+        } catch (e) {
+            //???   
+            // don't want to explode, just ignore 
+        }
+    }
+    
+    s = _.sortBy(s, function(x) { return -1*x.rank; });
+    console.debug(s);
+    var cmaps = [];
+    for (var i=0; i<display_count; i++) {
+      var bc = gd[s[i].category][s[i].name].bin_counts;
+      var sentence = markdown_to_html(s[i].sentence);
+      var sum = {'sentence': sentence,
+        'data': bc.join(','),
+        'statName': s[i].category+s[i].name};
+
+      var dpoint = d[s[i].category][s[i].name];
+      var edges = gd[s[i].category][s[i].name].bin_edges;
+      var bin = (which_bin(edges,dpoint));
+      cmaps.push(make_color_map(bin, bc.length));
+      list_html += summaryTemplate(sum);
+    }
+
+    $('#stat-summaries').html(list_html);
+    $('.histogram').each(function(i,span) {
+        $(span).sparkline('html', {type:'bar', colorMap:cmaps[i]});
+        });
+
 }
 
 //render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon, placename]
@@ -775,44 +823,13 @@ $(function() {
         },
 
         displayStats: function(tract) {
-
-            summaryTemplate = _.template($('#summary-template').html());
-            //console.debug('displaying stats:');
-            //console.debug(tract);
-            // displaying stats is now displaying summaries
-            // for the first 3 items in tract.summaries
-                var display_count = 3;
-                
-                var list_html = '';
-                s = tract.get('summaries');
-                var gd = Tracts.global_data.histograms;
-                var cmaps = [];
-                for (var i=0; i<display_count; i++) {
-                    var d = gd[s[i].category][s[i].name].bin_counts;
-                    var sentence = markdown_to_html(s[i].sentence);
-                    var t = {'sentence': sentence,
-                             'data': d.join(','),
-                             'statName': s[i].category+s[i].name};
-
-                    var dpoint = tract.get('data')[s[i].category][s[i].name];
-                    var edges = gd[s[i].category][s[i].name].bin_edges;
-                    var bin = (which_bin(edges,dpoint));
-                    cmaps.push(make_color_map(bin, d.length));
-                    list_html += summaryTemplate(t);
-                }
-                
-                $('#stat-summaries').html(list_html);
-                $('.histogram').each(function(i,span) {
-                    $(span).sparkline('html', {type:'bar', colorMap:cmaps[i]});
-                });
-                
-            
             var data = tract.get('data');
             var tractid = tract.get('tractid');
             data.loc.tractid = tractid;
             for (var i=0;i<render_functions.length;i++) {
                 render_functions[i](data, map);
             }
+            summaries(tract); 
             
         },
 
