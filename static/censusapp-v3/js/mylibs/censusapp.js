@@ -504,7 +504,8 @@ $(function() {
             
             // doubly-linked, can be convenient
             this.model.view = this;
-            
+
+            /*
             // keeping track of which image we're viewing at any given time
             this.numPictures = this.model.get('pictures').length;
             this.imgDivs = Array(this.numPictures);
@@ -516,7 +517,7 @@ $(function() {
             templateParams = this.model.toJSON();
             templateParams['nowImgIndex'] = this.nowImgIndex;
             $(this.el).html(this.template(templateParams));            
-
+            */
             //this.setRenderDistance(true, 0);
             this.setRenderDistance(false, 0);
         },
@@ -550,8 +551,10 @@ $(function() {
         //render always returns this (the view rendered) to permit
         //chaining of calls like (view.render().el).hide()
         render: function() {            
+
             if (!this.on)                           { return this; }
 
+            console.debug("render (on)");
             
             var $img_div = $('#tract-pictures').detach();
             $img_div.html('');
@@ -677,7 +680,7 @@ $(function() {
             if (ct.view) {
                 ct.view.setRenderDistance(true, 3);
             }
-            
+           /* 
             //adjacent to 1
             if (r.at(i+1)) {
                 r.at(i+1).view.setRenderDistance(true, 1);
@@ -693,6 +696,7 @@ $(function() {
             if (r.at(i-2)) {
                 r.at(i-2).view.setRenderDistance(true, 0);
             }
+            */
         },
 
         //direction comes from the second argument to the Backbone.trigger call
