@@ -23,7 +23,7 @@ function markdown_to_html(s) {
     var boldRE = /\*[^*]*\*/g;
     var bold_me = s.match(boldRE);
     
-    console.debug(bold_me);
+    //console.debug(bold_me);
     if (bold_me) {
         $.each(bold_me, function(i,ss) {
             var r = ss.substring(1, ss.length-1);
@@ -32,7 +32,7 @@ function markdown_to_html(s) {
         
         });
     }
-    console.debug(s);
+    //console.debug(s);
     return s;
 
 }
@@ -134,10 +134,6 @@ function race(d) {
     } catch(e) {
         raise(e);
     }
-    
-
-
-
 }
 function poverty(d) {
     try {
@@ -293,7 +289,7 @@ function summaries(t) {
             ile = Math.abs(d[cat][name+'_percentile']);
             entropy = gd[cat][name].entropy;
             s[i].rank = ile*entropy; 
-            console.debug(cat+"/"+name+": "+s[i].rank+" ("+ile+"*"+entropy+")");
+            //console.debug(cat+"/"+name+": "+s[i].rank+" ("+ile+"*"+entropy+")");
         } catch (e) {
             //???   
             // don't want to explode, just ignore 
@@ -301,7 +297,7 @@ function summaries(t) {
     }
     
     s = _.sortBy(s, function(x) { return -1*x.rank; });
-    console.debug(s);
+    //console.debug(s);
     var cmaps = [];
     for (var i=0; i<display_count; i++) {
       var bc = gd[s[i].category][s[i].name].bin_counts;
@@ -455,6 +451,7 @@ $(function() {
             // all the way right?  let everyone know
             // this only happens when we haven't succeeded in fetching
             // more tract data from the right
+            console.debug('moveright');
             lastIndex = this.length-1;
             if (this.currentTractIndex == lastIndex) {
                 this.trigger('nav:block', 'right');
@@ -495,6 +492,7 @@ $(function() {
 
         template: _.template($('#tract-template').html()),
         imgDivTemplate: _.template($('#imgdiv-template').html()),
+        imgTemplate: _.template($('#img-template').html()),
         
         
         initialize: function() {
@@ -554,6 +552,20 @@ $(function() {
         render: function() {            
             if (!this.on)                           { return this; }
 
+            
+            var $img_div = $('#tract-pictures').detach();
+            $img_div.html('');
+            
+            var pictures = this.model.get('pictures');
+            
+            _.each(pictures, function(p) {
+                    var url = p.url.replace(/.jpg$/, '_s.jpg'); 
+                    var img = this.imgTemplate({url: url});
+                    $img_div.append(img);
+                }, this);
+
+            $('#map').after($img_div)
+            /*
             //ensure that sufficient context exists left and right
 
             //current one
@@ -581,6 +593,7 @@ $(function() {
             this.nowImgDiv = newImgDiv;
 
             return this;
+            */
         },
         
         createImgDiv: function(index) {
@@ -736,7 +749,7 @@ $(function() {
             //don't add j again right after itself
             if (newTracts[0].order === from) { 
                 newTracts.shift(); 
-                console.debug('Server gave j back with results, not duping it');
+                //console.debug('Server gave j back with results, not duping it');
             }
             
 	        //for each new tract
@@ -770,7 +783,7 @@ $(function() {
     // the AppView handles controls for next/prev tract/img
     AppView = Backbone.View.extend({
 
-        el: $('#census-app'),
+        el: $('#container'),
         
         events: {            
             'click #left':              'left',
