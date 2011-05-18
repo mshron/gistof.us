@@ -97,10 +97,12 @@ a:hover { color: #036; }
 }
 
 #top_back {
+  height: 16em;
+  width: 100%
+  position: fixed;
+  background-color: white;
 }
 
-#top_shadow {
-}
 
 #map {
   left: 4em;
@@ -110,13 +112,6 @@ a:hover { color: #036; }
   position: fixed;
 }
 
-#map_back {
-  left: 0em;
-  top: 0em;
-  width: 20em;
-  height: 100em;
-  float: left;  
-}
 
 #map_canvas {
     width: 100%;
@@ -132,15 +127,20 @@ h1 {
 }
 
 #tract-pictures {
-    position: absolute;
-    left: 20em;
-    top: 26em;
+    margin-left: 27%;
+    margin-right: 6%;
+    position: relative;
 }
 
 div.photo {
   display: inline;
   float: left;
   margin: 3em;
+}
+
+div.main {
+  width: 1024px;
+  margin: auto;
 }
 
 
