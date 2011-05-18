@@ -92,24 +92,14 @@ a:hover { color: #036; }
   left: 4em;
   height: 12em;
   width: 96em;
-  position: fixed;
+  position: relative;
   background-color: white;
-  zorder: 2;
 }
 
 #top_back {
-  top: 0em;
-  left: 0em;
-  height: 16em;
-  width: 100em;
-  position: fixed;
-  background-color:white;
 }
 
 #top_shadow {
-  margin: 4em;
-  height: 12em;
-  width: 96em;
 }
 
 #map {
@@ -117,7 +107,6 @@ a:hover { color: #036; }
   top: 16em;
   width: 16em;
   height: 25em;
-  position: fixed;
 }
 
 #map_back {
