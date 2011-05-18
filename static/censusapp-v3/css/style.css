@@ -92,7 +92,7 @@ a:hover { color: #036; }
   left: 4em;
   height: 12em;
   width: 96em;
-  position: relative;
+  position: fixed;
   background-color: white;
 }
 
@@ -107,6 +107,7 @@ a:hover { color: #036; }
   top: 16em;
   width: 16em;
   height: 25em;
+  position: fixed;
 }
 
 #map_back {
