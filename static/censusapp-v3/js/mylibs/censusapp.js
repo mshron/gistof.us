@@ -638,6 +638,7 @@ $(function() {
             this.ring.bind('refresh', this.manageImages);
             this.pending = {};
             this.pending.left = this.pending.right = null;
+
         },
         
         manageImages: function() {
@@ -651,15 +652,17 @@ $(function() {
             if (ct.view) {
                 ct.view.setRenderDistance(true, 3);
             }
-           /* 
-            //adjacent to 1
-            if (r.at(i+1)) {
-                r.at(i+1).view.setRenderDistance(true, 1);
-            }
-            if (r.at(i-1)) {
-                r.at(i-1).view.setRenderDistance(true, 1);
-            }
-        
+
+            setInterval(function() {
+                //adjacent to 1
+                if (r.at(i+1)) {
+                    r.at(i+1).view.setRenderDistance(true, 1);
+                }
+                if (r.at(i-1)) {
+                    r.at(i-1).view.setRenderDistance(true, 1);
+                }
+            }, 3000);
+       /* 
             //doubly adjacent to on/0
             if (r.at(i+2)) {
                 r.at(i+2).view.setRenderDistance(true, 0);
