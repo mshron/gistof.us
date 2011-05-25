@@ -500,26 +500,36 @@ $(function() {
             // of the view since it is often run on a 'change' event
             // fired by the Tract model changing, which would otherwise
             // cause it to run in the context of the model
-            _.bindAll(this, 'render', 'setRenderDistance');
+            _.bindAll(this, 'render', 'setRenderDistance', 'onImgLoad');
             
+            this.bind('img:load', this.onImgLoad);
+
             // doubly-linked, can be convenient
             this.model.view = this;
 
-            /*
-            // keeping track of which image we're viewing at any given time
-            this.numPictures = this.model.get('pictures').length;
-            this.imgDivs = Array(this.numPictures);
-            this.nowImgDiv = null;
-            this.nowImgIndex = 0;
+            this.thumbs = [];
+
+            this.unloadedThumbs = this.model.get('pictures').length;
+
+            $(this.el).hide();
+            $("#tract-pictures").append(this.el);
             
-            // initial render
-            // create the first imgdiv
-            templateParams = this.model.toJSON();
-            templateParams['nowImgIndex'] = this.nowImgIndex;
-            $(this.el).html(this.template(templateParams));            
-            */
             //this.setRenderDistance(true, 0);
             this.setRenderDistance(false, 0);
+        },
+
+        onImgLoad: function(view) {
+            if (view === this) {
+                this.unloadedThumbs = this.unloadedThumbs-1;
+                if (this.unloadedThumbs == 0) {
+                    console.debug('done loading');
+                    $(this.el).html('');
+                    for (var i=0; i<this.thumbs.length; i++) {
+                        $(this.el).append(this.thumbs[i])
+                    }
+
+                }
+            }
         },
 
         // this function sets the img caching parameters for the View
@@ -554,69 +564,30 @@ $(function() {
 
             if (!this.on)                           { return this; }
 
-            console.debug("render (on)");
-            
-            var $img_div = $('#tract-pictures').detach();
-            $img_div.html('');
-            
-            var pictures = this.model.get('pictures');
-            
-            _.each(pictures, function(p) {
-                    var url = p.url.replace(/.jpg$/, '_s.jpg'); 
-                    var img = this.imgTemplate({url: url});
-                    $img_div.append(img);
-                }, this);
+            if (this.unloadedThumbs > 0) {
+                $(this.el).html('<img src="images/spinner.gif" />');
+                var pictures = this.model.get('pictures');
+                for (var i=0; i<pictures.length; i++ ) {
+                    var url = pictures[i].url;
+                    var surl = url.replace(/.jpg$/, '_s.jpg');
+                    var img = new Image;
+                    img.src = surl;
+                    this.thumbs.push(img);
 
-            $('#map').after($img_div)
-            /*
-            //ensure that sufficient context exists left and right
-
-            //current one
-            this.createImgDiv(this.nowImgIndex);
-
-            //actual distance
-            // (limited to half the number of pictures we have)
-            var dist = Math.min(Math.floor(this.numPictures/2), this.distance); 
-            
-            //context
-            for (var i=1; i<=dist; i++) {
-               var rightIndex = (this.nowImgIndex+i) % this.imgDivs.length;
-               var leftIndex = (this.nowImgIndex-i);
-               if (leftIndex < 0) {
-                   leftIndex = this.imgDivs.length + leftIndex;
-               }
-
-               this.createImgDiv(rightIndex);
-               this.createImgDiv(leftIndex);
+                    var v = this;
+                    $(img).load(function() {
+                       v.trigger('img:load', v); 
+                    });
+                }
+                //get loading going
+            }
+            else {
+                
             }
 
-            var newImgDiv = this.imgDivs[this.nowImgIndex];
-            $(this.nowImgDiv).hide();
-            $(newImgDiv).show();
-            this.nowImgDiv = newImgDiv;
-
             return this;
-            */
         },
-        
-        createImgDiv: function(index) {
-            var newImgDiv = (this.imgDivs[index] || null);
-            
-            // create a new div if it hasn't been created yet
-            if (newImgDiv === null) {
-                templateParams = this.model.toJSON();
-                templateParams['nowImgIndex'] = index;
-                if (templateParams.pictures.length != 0) {
-                    newImgDiv = $(this.imgDivTemplate(templateParams));
-                }
-                else {
-                    newImgDiv = $('<div>No pictures here, move along</div>');
-                }
-                this.imgDivs[index] = newImgDiv.hide();
-                this.$('.tract-pictures').append(newImgDiv);
-            }                        
-            
-        },
+
         
         nextPicture: function() {            
             var imgIndex = this.nowImgIndex;
