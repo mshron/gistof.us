@@ -2,7 +2,9 @@ var fetch_url = 'http://localhost:8080/tracts';
 var global_data_url = 'http://localhost:8080/static/censusapp-v3/histograms.json';
 var colorscale = ['#e78dc5', '#f8daec', '#fbfbfb', '#dbf0c2', '#a6d592']
 var language_names = ['Only English','Spanish or Spanish Creole','French (incl. Patois, Cajun)','French Creole','Italian','Portuguese or Portuguese Creole','German','Yiddish','Other West Germanic languages','Scandinavian languages','Greek','Russian','Polish','Serbo-Croatian','Other Slavic languages','Armenian','Persian','Gujarati','Hindi','Urdu','Other Indic languages','Other Indo-European languages','Chinese','Japanese','Korean','Mon-Khmer, Cambodian','Hmong','Thai','Laotian','Vietnamese','Other Asian languages','Tagalog','Other Pacific Island languages','Navajo','Other Native North American languages','Hungarian','Arabic','Hebrew','African languages','Other and unspecified languages']
-
+var map;
+var App;
+var Tracts;
 
 function which_bin(bin_edges, v) {
     //console.debug(bin_edges);
@@ -324,8 +326,6 @@ function summaries(t) {
 //render_functions = [population, poverty, veteran, sex, sex_by_age, update_map, latino, race, latlon, placename]
 render_functions = [update_map, latlon, placename];
 
-
-
 /*function handlekeys(event) {
     switch (event.keycode) {
         37: //left
@@ -335,483 +335,472 @@ render_functions = [update_map, latlon, placename];
     }
 }*/
 
+Tract = Backbone.Model.extend({
+    initialize: function() {
+        App.addOneView(this);
+    }
+});
+TractRing = Backbone.Collection.extend({
+
+    model: Tract,
+    
+    // url used for the initial fetch of "default" values
+    url: function() {
+        // server has a default n (amt of context)
+        // so no need to specify one
+        var url = fetch_url;
+        var hash = window.location.hash;            
+        if (hash !== '' && !isNaN(hash)) { 
+            url += '?j='+hash; 
+        }             
+        return url;
+    },
+    
+    initialize: function() {
+        this.bind('refresh', function() {            
+                if (this.length === 0) { return; }            
+                // center of non-empty list is floor(length/2)
+                var center = Math.floor(this.length/2)  ;
+                this.currentTract = this.at(center);
+                this.currentTractIndex = center;
+            });
+            
+        this.bind('add:left', this.fixDisplacedIndex);
+        
+        this.global_data = null;
+        this.getGlobalData();
+
+
+        // create a new TractDataManager
+        this.manager = new TractDataManager(this);
+        
+        this.currentTract = null;
+        this.currentTractIndex = null;
+
+    },             
+    
+    getGlobalData: function() {
+        request = $.ajax({
+                        url: global_data_url,
+                        type: 'GET',
+                        dataType: 'json',
+                        context: this,         //context for callbacks
+                        success: function(json) {
+                            this.global_data = json;
+                        }
+                        //error: this.retryAjax
+        });
+    },
+
+    addLeft: function(models, options) {
+        if (_.isArray(models)) {
+            for (var i = 0, l = models.length; i < l; i++) {
+                this._addLeft(models[i], options);
+            }
+        } 
+        else {
+            this._addLeft(models, options);
+        }
+        return this;
+    },
+
+    _addLeft: function(model, options) {
+
+           options || (options = {});
+           if (!(model instanceof Backbone.Model)) {
+               model = new this.model(model, {collection: this});
+           }
+           var already = this.getByCid(model);
+           if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
+           this._byId[model.id] = model;
+           this._byCid[model.cid] = model;
+           model.collection = this;
+           this.models.unshift(model);  //to the left!
+           model.bind('all', this._boundOnModelEvent);
+           this.length++;
+           if (!options.silent) model.trigger('add:left', model, this, options);
+           return model;
+
+
+    },
+    
+    moveLeft: function() {            
+        //all the way left?  let everyone know
+        // this only happens when we haven't succeeded in fetching
+        // more tract data from the left
+        if (this.currentTractIndex == 0) {
+            this.trigger('nav:block', 'left');
+        }
+        else {                
+            this.currentTract = this.at(--this.currentTractIndex);
+            this.trigger('nav:tract', 'left');
+        }
+    },
+        
+    moveRight: function() {
+        // all the way right?  let everyone know
+        // this only happens when we haven't succeeded in fetching
+        // more tract data from the right
+        console.debug("hi");
+        lastIndex = this.length-1;
+        if (this.currentTractIndex == lastIndex) {
+            this.trigger('nav:block', 'right');
+        }
+        else {
+            this.currentTract = this.at(++this.currentTractIndex);
+            this.trigger('nav:tract', 'right');
+        }
+    },
+    
+    // This function is called when an 'add:left' event is
+    // fired on the collection.        
+    fixDisplacedIndex: function() {        
+        // each time, we simply have to move the currentTractIndex
+        // one to the right
+                         
+        // example: currentTractIndex is 1
+        // we add an element on the left
+        // the current tract is now the 2th element, instead of the 1th
+        // (the new one is the 0th)
+        // so we increment currentTractIndex
+        
+        // if there's no currentTract, don't bother trying
+        // to fix things that don't exist
+        if (this.currentTract == null)           { return; }
+        
+        // orig is the currentTractIndex we had stored
+        // before we added in more tracts
+        this.currentTractIndex++;
+        
+    }
+            
+});    
+TractView = Backbone.View.extend({
+   
+    tagName: 'div',
+
+    
+    
+    initialize: function() {
+        // need to _.bind render to always run in the context
+        // of the view since it is often run on a 'change' event
+        // fired by the Tract model changing, which would otherwise
+        // cause it to run in the context of the model
+        _.bindAll(this, 'render', 'setRenderDistance', 'onImgLoad');
+        
+        this.template = _.template($('#tract-template').html()),
+        this.imgDivTemplate = _.template($('#imgdiv-template').html()),
+        this.imgTemplate = _.template($('#img-template').html()),
+
+        this.bind('img:load', this.onImgLoad);
+
+        // doubly-linked, can be convenient
+        this.model.view = this;
+
+        this.thumbs = [];
+
+        this.unloadedThumbs = this.model.get('pictures').length;
+
+        $(this.el).hide();
+        $("#tract-pictures").append(this.el);
+        
+        //this.setRenderDistance(true, 0);
+        this.setRenderDistance(false, 0);
+    },
+
+    onImgLoad: function(view, img) {
+        if (view === this) {
+            $(img).thumbPopup();
+            this.thumbs.push(img);
+            this.unloadedThumbs = this.unloadedThumbs-1;                
+            if (this.unloadedThumbs == 0 || this.thumbs.length >= 10) {
+                $el = $(this.el);
+                while (this.thumbs.length > 0) {
+                    $el.append(this.thumbs.pop());
+                }
+            }
+
+        }
+    },
+
+    // this function sets the img caching parameters for the View
+    // and then renders it
+    setRenderDistance: function(on, distance) {
+        //console.debug(this.model.get('tractid'), on, distance);
+        if (this.on && (on == false)) {
+            this.dumpDivs();
+        }
+        this.on = on;               //whether ANY img divs should be kept
+
+        this.distance = distance;   //how many right and left of current 
+                                    //we require to be present
+                                    //0 means "just the current"
+                                    //> numPictures/2 means all
+
+        this.render();
+
+
+    },
+
+    //render always returns this (the view rendered) to permit
+    //chaining of calls like (view.render().el).hide()
+    render: function() {            
+
+        if (!this.on)                           { return this; }
+
+        if (this.unloadedThumbs > 0) {
+            $(this.el).html('<img src="images/spinner.gif" />');
+            var pictures = this.model.get('pictures');
+            for (var i=0; i<pictures.length; i++ ) {
+                var url = pictures[i].url;
+                var surl = url.replace(/.jpg$/, '_s.jpg');
+                var img = new Image;
+                img.src = surl;
+
+                var v = this;
+                $(img).load(function() {
+                   v.trigger('img:load', v, this); 
+                });
+            }
+            //get loading going
+        }
+        else {
+            
+        }
+
+        return this;
+    },
+
+});
+
+TractDataManager = function(ring) {
+    this.ring = ring;
+    this.width = 2;       //number of tracts of context required
+    this.initialize();
+}
+
+//include Backbone Events in the TractDataManager
+_.extend(TractDataManager.prototype, Backbone.Events);
+
+//give real functionality to the TractDataManager
+_.extend(TractDataManager.prototype, {
+    
+    initialize: function() {
+        _.bindAll(this, 'addTractsCB', 'reach', 'manageImages');
+        this.ring.bind('nav:tract', this.reach);
+        this.ring.bind('nav:tract', this.manageImages);
+        this.ring.bind('refresh', this.manageImages);
+        this.pending = {};
+        this.pending.left = this.pending.right = null;
+
+    },
+    
+    manageImages: function() {
+        var r = this.ring;
+        var i = r.currentTractIndex;
+        var ct = r.currentTract;
+        
+        if (!ct) { return; }
+        
+        //set the current tract's view to 3
+        if (ct.view) {
+            ct.view.setRenderDistance(true, 3);
+        }
+/*
+        setInterval(function() {
+            //adjacent to 1
+            if (r.at(i+1)) {
+                r.at(i+1).view.setRenderDistance(true, 1);
+            }
+            if (r.at(i-1)) {
+                r.at(i-1).view.setRenderDistance(true, 1);
+            }
+        }, 3000);
+        */
+   /* 
+        //doubly adjacent to on/0
+        if (r.at(i+2)) {
+            r.at(i+2).view.setRenderDistance(true, 0);
+        }
+        if (r.at(i-2)) {
+            r.at(i-2).view.setRenderDistance(true, 0);
+        }
+        */
+    },
+
+    //direction comes from the second argument to the Backbone.trigger call
+    //that caused this callback to fire
+    reach: function(direction) {
+        var needContext = false;
+        var from = -1;
+        var amount = 10;
+
+        var allowable = (this.ring.length - 1) - this.width;
+        if (this.ring.currentTractIndex < this.width &&
+                               direction === 'left') {
+            needContext = true;
+            from = this.ring.first().get('order');
+        }
+        else if (this.ring.currentTractIndex > allowable &&
+                                  direction === 'right') {
+            needContext = true;
+            from = this.ring.last().get('order');
+        }
+        
+        //if we don't need context, we're done
+        if (!needContext)                         { return; }
+        // if we already are fetching context in this direction,
+        // don't do it again!
+        if (this.pending[direction])              { return; }
+
+        // GET parameters for the AJAX request
+        var getParams = {
+            n: amount,
+            j: from,
+            dir: direction,
+        };
+
+        // make the request
+        request = $.ajax({
+                        url: fetch_url,
+                        data: getParams,
+                        type: 'GET',
+                        dataType: 'json',
+                        context: this,         //context for callbacks
+                        success: function(tracts) {
+                            this.addTractsCB(tracts, direction, from);
+                        },
+                        error: this.retryAjax
+        });
+
+        //and note the request in this.pending
+        this.pending[direction] = request;
+    },
+
+    addTractsCB: function(newTracts, direction, from) {
+        //if the server gave back context that includes j,
+        //don't add j again right after itself
+        if (newTracts[0].order === from) { 
+            newTracts.shift(); 
+            //console.debug('Server gave j back with results, not duping it');
+        }
+        
+        //for each new tract
+        _.each(newTracts, function(newTract) {
+            if (direction === 'right') {
+                this.ring.add(newTract);
+            }
+            else {
+                this.ring.addLeft(newTract);
+            }
+            //console.debug('adding: '+newTract.order);
+            
+        }, this);  //set the context for the _.each to the manager
+
+        //request is finished, note it
+        this.pending[direction] = null;
+    },
+
+    //not a very good retrying function... TODO rewrite it 
+    retryAjax: function(xhr, textStatus, errorThrown) {
+        if (textStatus == 'timeout') {
+            this.trigger('error:fetch-timeout');
+            // failure?  try again in 10 seconds
+            setTimeout($.ajax(this), 10000);
+        }
+    }
+    
+});
+
+
+// the AppView handles controls for next/prev tract/img
+AppView = Backbone.View.extend({
+
+    events: {            
+        'click #left':              'left',
+        'click #right':             'right',
+    },
+    
+    initialize: function(Tracts) {
+        // might have to do some bindAlling here...
+        _.bindAll(this, 'addOneView','render','displayPopup');            
+    
+        this.el = $('#container');
+        this.delegateEvents();
+        this.currentTractOrder = 0;
+        this.shownView = null; 
+        this.Tracts = Tracts;
+        
+//      $("#tract-pictures").delegate("img", "click", this.displayPopup);
+
+        this.Tracts.bind('all',       this.render);
+        this.Tracts.fetch();
+
+
+    },
+    
+    render: function() {            
+        var currentTract = (Tracts.currentTract || null);  
+        if (currentTract === null) { return; }
+        var currentView = (currentTract.view || null);
+        if (currentView === null) { return; }
+       
+        var $debug_numTracts = ($('#DEBUG-numTracts') || null);
+        if ($debug_numTracts.length > 0) {
+            $debug_numTracts.html(Tracts.length-1);
+        }
+        var $debug_nowTract = ($('#DEBUG-nowTract') || null);
+        if ($debug_nowTract.length > 0) {
+            $debug_nowTract.html(Tracts.currentTractIndex);
+        }
+
+        // show the new tract's view, hide the old one
+        if (this.shownView !== null) { 
+            $(this.shownView.el).hide(); 
+        }
+        $(currentView.el).show();
+        this.shownView = currentView;
+
+        // show the correct stats for this new tract            
+        this.displayStats(this.shownView.model);       
+
+        // pan the map/set a marker for the new location we're viewing
+        // updateMap(lat, lng)
+    },
+
+    displayStats: function(tract) {
+        var data = tract.get('data');
+        var tractid = tract.get('tractid');
+        data.loc.tractid = tractid;
+        for (var i=0;i<render_functions.length;i++) {
+            render_functions[i](data, map);
+        }
+        summaries(tract); 
+        
+    },
+
+
+    //
+    addOneView: function(tract) {                  
+        var view = new TractView({model: tract});
+        $(view.render().el).hide();
+        this.$('#tract-view-box').append(view.el);
+    },
+    
+    left:  function() { this.Tracts.moveLeft(); },
+    right: function() { this.Tracts.moveRight(); },
+    
+});
+
+//Main
 $(function() {
     // layout
     setuplegend();
 
     // map
-    var map = mapinit();
-
-    // API communication
-    
-    
-    Tract = Backbone.Model.extend({
-        initialize: function() {
-            App.addOneView(this);
-        }
-    });
-    
-    TractRing = Backbone.Collection.extend({
-
-        model: Tract,
-        
-        // url used for the initial fetch of "default" values
-        url: function() {
-            // server has a default n (amt of context)
-            // so no need to specify one
-            var url = fetch_url;
-            var hash = window.location.hash;            
-            if (hash !== '' && !isNaN(hash)) { 
-                url += '?j='+hash; 
-            }             
-            return url;
-        },
-        
-        initialize: function() {
-            this.bind('refresh', function() {            
-                    if (this.length === 0) { return; }            
-                    // center of non-empty list is floor(length/2)
-                    var center = Math.floor(this.length/2)  ;
-                    this.currentTract = this.at(center);
-                    this.currentTractIndex = center;
-                });
-                
-            this.bind('add:left', this.fixDisplacedIndex);
-            
-            this.global_data = null;
-            this.getGlobalData();
-
-
-            // create a new TractDataManager
-            this.manager = new TractDataManager(this);
-            
-            this.currentTract = null;
-            this.currentTractIndex = null;
-
-        },             
-        
-        getGlobalData: function() {
-            request = $.ajax({
-                            url: global_data_url,
-                            type: 'GET',
-                            dataType: 'json',
-                            context: this,         //context for callbacks
-                            success: function(json) {
-                                this.global_data = json;
-                            }
-                            //error: this.retryAjax
-            });
-        },
-
-        addLeft: function(models, options) {
-            if (_.isArray(models)) {
-                for (var i = 0, l = models.length; i < l; i++) {
-                    this._addLeft(models[i], options);
-                }
-            } 
-            else {
-                this._addLeft(models, options);
-            }
-            return this;
-        },
-
-        _addLeft: function(model, options) {
-
-               options || (options = {});
-               if (!(model instanceof Backbone.Model)) {
-                   model = new this.model(model, {collection: this});
-               }
-               var already = this.getByCid(model);
-               if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
-               this._byId[model.id] = model;
-               this._byCid[model.cid] = model;
-               model.collection = this;
-               this.models.unshift(model);  //to the left!
-               model.bind('all', this._boundOnModelEvent);
-               this.length++;
-               if (!options.silent) model.trigger('add:left', model, this, options);
-               return model;
-
-
-        },
-        
-        moveLeft: function() {            
-            //all the way left?  let everyone know
-            // this only happens when we haven't succeeded in fetching
-            // more tract data from the left
-            if (this.currentTractIndex == 0) {
-                this.trigger('nav:block', 'left');
-            }
-            else {                
-                this.currentTract = this.at(--this.currentTractIndex);
-                this.trigger('nav:tract', 'left');
-            }
-        },
-            
-        moveRight: function() {
-            // all the way right?  let everyone know
-            // this only happens when we haven't succeeded in fetching
-            // more tract data from the right
-            console.debug('moveright');
-            lastIndex = this.length-1;
-            if (this.currentTractIndex == lastIndex) {
-                this.trigger('nav:block', 'right');
-            }
-            else {
-                this.currentTract = this.at(++this.currentTractIndex);
-                this.trigger('nav:tract', 'right');
-            }
-        },
-        
-        // This function is called when an 'add:left' event is
-        // fired on the collection.        
-        fixDisplacedIndex: function() {        
-            // each time, we simply have to move the currentTractIndex
-            // one to the right
-                             
-            // example: currentTractIndex is 1
-            // we add an element on the left
-            // the current tract is now the 2th element, instead of the 1th
-            // (the new one is the 0th)
-            // so we increment currentTractIndex
-            
-            // if there's no currentTract, don't bother trying
-            // to fix things that don't exist
-            if (this.currentTract == null)           { return; }
-            
-            // orig is the currentTractIndex we had stored
-            // before we added in more tracts
-            this.currentTractIndex++;
-            
-        }
-                
-    });    
-    
-    TractView = Backbone.View.extend({
-       
-        tagName: 'div',
-
-        template: _.template($('#tract-template').html()),
-        imgDivTemplate: _.template($('#imgdiv-template').html()),
-        imgTemplate: _.template($('#img-template').html()),
-        
-        
-        initialize: function() {
-            // need to _.bind render to always run in the context
-            // of the view since it is often run on a 'change' event
-            // fired by the Tract model changing, which would otherwise
-            // cause it to run in the context of the model
-            _.bindAll(this, 'render', 'setRenderDistance', 'onImgLoad');
-            
-            this.bind('img:load', this.onImgLoad);
-
-            // doubly-linked, can be convenient
-            this.model.view = this;
-
-            this.thumbs = [];
-
-            this.unloadedThumbs = this.model.get('pictures').length;
-
-            $(this.el).hide();
-            $("#tract-pictures").append(this.el);
-            
-            //this.setRenderDistance(true, 0);
-            this.setRenderDistance(false, 0);
-        },
-
-        onImgLoad: function(view) {
-            if (view === this) {
-                this.unloadedThumbs = this.unloadedThumbs-1;
-                if (this.unloadedThumbs == 0) {
-                    console.debug('done loading');
-                    $(this.el).html('');                    
-                    for (var i=0; i<this.thumbs.length; i++) {
-                        $(this.el).append(this.thumbs[i]);                    
-                        $(this.thumbs[i]).thumbPopup();
-                    }
-                }
-            }
-        },
-
-        // this function sets the img caching parameters for the View
-        // and then renders it
-        setRenderDistance: function(on, distance) {
-            //console.debug(this.model.get('tractid'), on, distance);
-            if (this.on && (on == false)) {
-                this.dumpDivs();
-            }
-            this.on = on;               //whether ANY img divs should be kept
-
-            this.distance = distance;   //how many right and left of current 
-                                        //we require to be present
-                                        //0 means "just the current"
-                                        //> numPictures/2 means all
-
-            this.render();
-
-
-        },
-
-        //render always returns this (the view rendered) to permit
-        //chaining of calls like (view.render().el).hide()
-        render: function() {            
-
-            if (!this.on)                           { return this; }
-
-            if (this.unloadedThumbs > 0) {
-                $(this.el).html('<img src="images/spinner.gif" />');
-                var pictures = this.model.get('pictures');
-                for (var i=0; i<pictures.length; i++ ) {
-                    var url = pictures[i].url;
-                    var surl = url.replace(/.jpg$/, '_s.jpg');
-                    var img = new Image;
-                    img.src = surl;
-                    this.thumbs.push(img);
-
-                    var v = this;
-                    $(img).load(function() {
-                       v.trigger('img:load', v); 
-                    });
-                }
-                //get loading going
-            }
-            else {
-                
-            }
-
-            return this;
-        },
-
-    });
-    
-    TractDataManager = function(ring) {
-        this.ring = ring;
-        this.width = 2;       //number of tracts of context required
-        this.initialize();
-    }
-    
-    //include Backbone Events in the TractDataManager
-    _.extend(TractDataManager.prototype, Backbone.Events);
-    
-    //give real functionality to the TractDataManager
-    _.extend(TractDataManager.prototype, {
-        
-        initialize: function() {
-            _.bindAll(this, 'addTractsCB', 'reach', 'manageImages');
-            this.ring.bind('nav:tract', this.reach);
-            this.ring.bind('nav:tract', this.manageImages);
-            this.ring.bind('refresh', this.manageImages);
-            this.pending = {};
-            this.pending.left = this.pending.right = null;
-
-        },
-        
-        manageImages: function() {
-            var r = this.ring;
-            var i = r.currentTractIndex;
-            var ct = r.currentTract;
-            
-            if (!ct) { return; }
-            
-            //set the current tract's view to 3
-            if (ct.view) {
-                ct.view.setRenderDistance(true, 3);
-            }
-
-            setInterval(function() {
-                //adjacent to 1
-                if (r.at(i+1)) {
-                    r.at(i+1).view.setRenderDistance(true, 1);
-                }
-                if (r.at(i-1)) {
-                    r.at(i-1).view.setRenderDistance(true, 1);
-                }
-            }, 3000);
-       /* 
-            //doubly adjacent to on/0
-            if (r.at(i+2)) {
-                r.at(i+2).view.setRenderDistance(true, 0);
-            }
-            if (r.at(i-2)) {
-                r.at(i-2).view.setRenderDistance(true, 0);
-            }
-            */
-        },
-
-        //direction comes from the second argument to the Backbone.trigger call
-        //that caused this callback to fire
-        reach: function(direction) {
-            var needContext = false;
-            var from = -1;
-            var amount = 10;
-
-            var allowable = (this.ring.length - 1) - this.width;
-            if (this.ring.currentTractIndex < this.width &&
-                                   direction === 'left') {
-                needContext = true;
-                from = this.ring.first().get('order');
-            }
-            else if (this.ring.currentTractIndex > allowable &&
-                                      direction === 'right') {
-                needContext = true;
-                from = this.ring.last().get('order');
-            }
-            
-            //if we don't need context, we're done
-            if (!needContext)                         { return; }
-            // if we already are fetching context in this direction,
-            // don't do it again!
-            if (this.pending[direction])              { return; }
-
-            // GET parameters for the AJAX request
-            var getParams = {
-                n: amount,
-                j: from,
-                dir: direction,
-            };
-
-            // make the request
-            request = $.ajax({
-                            url: fetch_url,
-                            data: getParams,
-                            type: 'GET',
-                            dataType: 'json',
-                            context: this,         //context for callbacks
-                            success: function(tracts) {
-                                this.addTractsCB(tracts, direction, from);
-                            },
-                            error: this.retryAjax
-            });
-
-            //and note the request in this.pending
-            this.pending[direction] = request;
-        },
-
-        addTractsCB: function(newTracts, direction, from) {
-            //if the server gave back context that includes j,
-            //don't add j again right after itself
-            if (newTracts[0].order === from) { 
-                newTracts.shift(); 
-                //console.debug('Server gave j back with results, not duping it');
-            }
-            
-	        //for each new tract
-            _.each(newTracts, function(newTract) {
-                if (direction === 'right') {
-                    this.ring.add(newTract);
-                }
-                else {
-                    this.ring.addLeft(newTract);
-                }
-                //console.debug('adding: '+newTract.order);
-                
-            }, this);  //set the context for the _.each to the manager
-
-            //request is finished, note it
-            this.pending[direction] = null;
-	    },
-
-        //not a very good retrying function... TODO rewrite it 
-        retryAjax: function(xhr, textStatus, errorThrown) {
-            if (textStatus == 'timeout') {
-                this.trigger('error:fetch-timeout');
-                // failure?  try again in 10 seconds
-                setTimeout($.ajax(this), 10000);
-            }
-        }
-        
-    });
-    
-    
-    // the AppView handles controls for next/prev tract/img
-    AppView = Backbone.View.extend({
-
-        el: $('#container'),
-        
-        events: {            
-            'click #left':              'left',
-            'click #right':             'right',
-            'click #nextPicture':       'nextPicture',
-            'click #previousPicture':   'previousPicture',
-        },
-        
-        initialize: function() {
-            // might have to do some bindAlling here...
-            _.bindAll(this, 'addOneView','render','displayPopup');            
-        
-            this.currentTractOrder = 0;
-            this.shownView = null;  
-            
- //           $("#tract-pictures").delegate("img", "click", this.displayPopup);
-
-            Tracts.bind('all',       this.render);
-            Tracts.fetch();
-
-
-        },
-        
-        render: function() {            
-            var currentTract = (Tracts.currentTract || null);  
-            if (currentTract === null) { return; }
-            var currentView = (currentTract.view || null);
-            if (currentView === null) { return; }
-           
-    	    var $debug_numTracts = ($('#DEBUG-numTracts') || null);
-            if ($debug_numTracts.length > 0) {
-        	    $debug_numTracts.html(Tracts.length-1);
-            }
-            var $debug_nowTract = ($('#DEBUG-nowTract') || null);
-            if ($debug_nowTract.length > 0) {
-                $debug_nowTract.html(Tracts.currentTractIndex);
-            }
- 
-            // show the new tract's view, hide the old one
-            if (this.shownView !== null) { 
-                $(this.shownView.el).hide(); 
-            }
-            $(currentView.el).show();
-            this.shownView = currentView;
-
-            // show the correct stats for this new tract            
-            this.displayStats(this.shownView.model);       
-
-            // pan the map/set a marker for the new location we're viewing
-            // updateMap(lat, lng)
-        },
-
-        displayStats: function(tract) {
-            var data = tract.get('data');
-            var tractid = tract.get('tractid');
-            data.loc.tractid = tractid;
-            for (var i=0;i<render_functions.length;i++) {
-                render_functions[i](data, map);
-            }
-            summaries(tract); 
-            
-        },
-
-
-        //
-        addOneView: function(tract) {                  
-            var view = new TractView({model: tract});
-            $(view.render().el).hide();
-            this.$('#tract-view-box').append(view.el);
-        },
-        
-        left:  function() { Tracts.moveLeft(); },
-        right: function() { Tracts.moveRight(); },
-        
-        nextPicture: function() {
-            Tracts.currentTract.view.nextPicture();
-        },
-        
-        previousPicture: function() {
-            Tracts.currentTract.view.previousPicture();
-        }
-    });
-
+    map = mapinit();
     Tracts = new TractRing();
-    App = new AppView();
+    App = new AppView(Tracts);
 
     DEBUGON = function() {
         $debugElements = $('.debug');
