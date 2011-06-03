@@ -552,13 +552,6 @@ $(function() {
 
         },
 
-        //$.remove()s all the imgDivs of the View to clear up space
-        dumpDivs: function() {
-            _.each(this.imgDivs, function(div) {
-                if (div) { $(div).remove(); }   
-            });
-        },
-
         //render always returns this (the view rendered) to permit
         //chaining of calls like (view.render().el).hide()
         render: function() {            
@@ -588,35 +581,6 @@ $(function() {
 
             return this;
         },
-
-        
-        nextPicture: function() {            
-            var imgIndex = this.nowImgIndex;
-            var maxImgIndex = this.model.get('pictures').length-1;
-
-            this.trigger('nav:img', 'right');
-            // roll around to start if overflowing the end of the pictures
-            if (imgIndex === maxImgIndex) { this.gotoImg(0) }
-            // otherwise, increment
-            else                          { this.gotoImg(imgIndex+1)  }
-        },
-        
-        previousPicture: function() {
-            var imgIndex = this.nowImgIndex;
-            var maxImgIndex = this.model.get('pictures').length-1;
-            
-            this.trigger('nav:img', 'left');
-
-            // roll around to end if going negative
-            if (imgIndex <= 0)        { this.gotoImg(maxImgIndex) }
-            // otherwise, decrement
-            else                       { this.gotoImg(imgIndex-1 ) }
-        },
-        
-        gotoImg: function(imgIndex) {
-            this.nowImgIndex = imgIndex;
-            this.render();
-        }
 
     });
     
