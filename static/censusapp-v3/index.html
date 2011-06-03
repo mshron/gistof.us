@@ -18,6 +18,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery-1.5.1.min.js"%3E%3C/script%3E'))</script>
 
+  <script src="js/libs/jquery.thumbhover.js"></script>
   <script src="js/mylibs/underscore.js"></script>
   <script src="js/mylibs/backbone.js"></script>
   <script src="js/mylibs/sparklines.js"></script>
@@ -30,27 +31,26 @@
 <body>
 	<div id="container">
 		<div id="main" role="main">
-      <div id="top_back">
-        <div id="top">
-          <h1>gistof.us</h1>
-          <div id="nav">
-             <a href="#" id="left">&larr;&nbsp;go back</a>
-             <a href="#" id="right">Next tract &nbsp;&rarr;</a>
-          </div>
-          <div id='whereat'>
-             <h3><span id="pop_low"></span>-<span id="pop_high"></span> people live in US Census tract <span id="tractid"></span> in <span id="county"></span> in <span id="state"></span>. Relative to the rest of New Mexico...</h3>
-         </div>
-           <ul id='stat-summaries'>
-           </ul>
+            <div id="top_back">
+                <div id="top">
+                    <h1>gistof.us</h1>
+                    <div id="nav">
+                        <a href="#" id="left">&larr;&nbsp;go back</a>
+                        <a href="#" id="right">Next tract &nbsp;&rarr;</a>
+                    </div>
+                    <div id='whereat'>
+                        <h3><span id="pop_low"></span>-<span id="pop_high"></span> people live in US Census tract <span id="tractid"></span> in <span id="county"></span> in <span id="state"></span>. Relative to the rest of New Mexico...</h3>
+                    </div>
+                    <ul id='stat-summaries'>
+                    </ul>
+                </div>
+            </div>
+            <div id="map">
+                <div id="map_canvas"></div>
+            </div>
+            <div id="tract-pictures"></div>
+            <div id="dialog"></div>
         </div>
-      </div>
-      <div id="map">
-        <div id="map_canvas"></div>
-      </div>
-      <div id="tract-pictures">
-
-      </div>
-		</div>
 	</div>
 
 		<script src="js/plugins.js"></script>
