@@ -485,7 +485,7 @@ TractView = Backbone.View.extend({
         // of the view since it is often run on a 'change' event
         // fired by the Tract model changing, which would otherwise
         // cause it to run in the context of the model
-        _.bindAll(this, 'render', 'setRenderDistance', 'onImgLoad');
+        _.bindAll(this, 'render', 'setRenderDistance', 'onImgLoad', 'fadeInImages');
         
         this.template = _.template($('#tract-template').html()),
         this.imgDivTemplate = _.template($('#imgdiv-template').html()),
@@ -500,12 +500,12 @@ TractView = Backbone.View.extend({
 
         this.unloadedThumbs = this.model.get('pictures').length;
 
-        var $el = $(this.el);
-        $el.append($('<p>Loading images of US Census Tract '
+        this.el = $(this.el);
+        this.el.append($('<p>Loading images of US Census Tract '
                        +this.model.get('tractid')
                        +'...</p>')
           .addClass('loadtext'));
-        $el.hide();
+        this.el.hide();
         $("#tract-pictures").append(this.el);
         
         //this.setRenderDistance(true, 0);
@@ -517,17 +517,37 @@ TractView = Backbone.View.extend({
             $(img).thumbPopup();
             this.thumbs.push(img);
             this.unloadedThumbs = this.unloadedThumbs-1;                
-            if (this.unloadedThumbs == 0 || this.thumbs.length >= 10) {
+        /*    if (this.unloadedThumbs == 0 || this.thumbs.length >= 1) {
                 $('.loadtext', this.el).hide();
-                $el = $(this.el);
+
+                var timer = 1000;
                 while (this.thumbs.length > 0) {
-                    $el.append(this.thumbs.pop());
+                    $img = $(this.thumbs.shift());
+                    $(this.el).append($img);
+                    $img.hide();
+                    $img.fadeIn(timer);
+                    timer = timer + 50;
                 }
+            }*/
+
+            if (this.unloadedThumbs == 0) {
+                $('.loadtext', this.el).fadeOut(1500);
+
+                this.fadeInImages();
             }
 
         }
     },
-
+    
+    fadeInImages: function() {
+        var img = this.thumbs.shift();
+        if (img !== undefined) {
+            $img = $(img);
+            this.el.append($img);
+            $img.hide();
+            $img.fadeIn(100, this.fadeInImages);
+        }
+    },
     // this function sets the img caching parameters for the View
     // and then renders it
     setRenderDistance: function(on, distance) {
@@ -555,9 +575,13 @@ TractView = Backbone.View.extend({
 
         if (this.unloadedThumbs > 0) {
             var pictures = this.model.get('pictures');
+            if (pictures.length == 0) {
+                this.el.html('<p>No pictures found for US Census Tract'+this.model.get('tractid')+'</p>');
+            }
             for (var i=0; i<pictures.length; i++ ) {
                 var url = pictures[i].url;
-                var surl = url.replace(/.jpg$/, '_s.jpg');
+                var suffix = (pictures.length<10) ? '_t.jpg' : '_s.jpg';
+                var surl = url.replace(/.jpg$/, suffix);
                 var img = new Image;
                 img.src = surl;
 
@@ -566,10 +590,6 @@ TractView = Backbone.View.extend({
                    v.trigger('img:load', v, this); 
                 });
             }
-            //get loading going
-        }
-        else {
-            
         }
 
         return this;
