@@ -441,7 +441,6 @@ TractRing = Backbone.Collection.extend({
         // all the way right?  let everyone know
         // this only happens when we haven't succeeded in fetching
         // more tract data from the right
-        console.debug("hi");
         lastIndex = this.length-1;
         if (this.currentTractIndex == lastIndex) {
             this.trigger('nav:block', 'right');
@@ -501,7 +500,12 @@ TractView = Backbone.View.extend({
 
         this.unloadedThumbs = this.model.get('pictures').length;
 
-        $(this.el).hide();
+        var $el = $(this.el);
+        $el.append($('<p>Loading images of US Census Tract '
+                       +this.model.get('tractid')
+                       +'...</p>')
+          .addClass('loadtext'));
+        $el.hide();
         $("#tract-pictures").append(this.el);
         
         //this.setRenderDistance(true, 0);
@@ -514,6 +518,7 @@ TractView = Backbone.View.extend({
             this.thumbs.push(img);
             this.unloadedThumbs = this.unloadedThumbs-1;                
             if (this.unloadedThumbs == 0 || this.thumbs.length >= 10) {
+                $('.loadtext', this.el).hide();
                 $el = $(this.el);
                 while (this.thumbs.length > 0) {
                     $el.append(this.thumbs.pop());
@@ -549,7 +554,6 @@ TractView = Backbone.View.extend({
         if (!this.on)                           { return this; }
 
         if (this.unloadedThumbs > 0) {
-            $(this.el).html('<img src="images/spinner.gif" />');
             var pictures = this.model.get('pictures');
             for (var i=0; i<pictures.length; i++ ) {
                 var url = pictures[i].url;
