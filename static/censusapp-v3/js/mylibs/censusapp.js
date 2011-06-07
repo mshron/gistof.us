@@ -349,7 +349,7 @@ TractRing = Backbone.Collection.extend({
         // server has a default n (amt of context)
         // so no need to specify one
         var url = fetch_url;
-        var hash = window.location.hash;            
+        var hash = window.location.hash.replace(/^#/, '');            
         if (hash !== '' && !isNaN(hash)) { 
             url += '?j='+hash; 
         }             
