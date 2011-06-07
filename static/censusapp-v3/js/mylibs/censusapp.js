@@ -788,6 +788,9 @@ AppView = Backbone.View.extend({
         // show the correct stats for this new tract            
         this.displayStats(this.shownView.model);       
 
+        location.hash = this.shownView.model.get('order');
+//$('#right').attr('href', '
+
         // pan the map/set a marker for the new location we're viewing
         // updateMap(lat, lng)
     },
@@ -811,8 +814,17 @@ AppView = Backbone.View.extend({
         this.$('#tract-view-box').append(view.el);
     },
     
-    left:  function() { this.Tracts.moveLeft(); },
-    right: function() { this.Tracts.moveRight(); },
+    left:  function(event) { 
+        this.Tracts.moveLeft(); 
+        event.preventDefault();
+        event.stopPropagation();
+    },
+    right: function(event) { 
+        this.Tracts.moveRight(); 
+        event.preventDefault();
+        event.stopPropagation();
+           
+    },
     
 });
 
