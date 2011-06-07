@@ -485,26 +485,33 @@ TractView = Backbone.View.extend({
         // of the view since it is often run on a 'change' event
         // fired by the Tract model changing, which would otherwise
         // cause it to run in the context of the model
-        _.bindAll(this, 'render', 'setRenderDistance', 'onImgLoad', 'fadeInImages');
+        _.bindAll(this, 'render', 'setRenderDistance', 'loadNextImg', 'showImg');
         
         this.template = _.template($('#tract-template').html()),
         this.imgDivTemplate = _.template($('#imgdiv-template').html()),
         this.imgTemplate = _.template($('#img-template').html()),
 
-        this.bind('img:load', this.onImgLoad);
+        this.bind('img:load', this.showImg);
+        this.bind('img:load', this.loadNextImg);
 
         // doubly-linked, can be convenient
         this.model.view = this;
 
-        this.thumbs = [];
+        //this.thumbs = [];
+        //this.unloadedThumbs = this.model.get('pictures').length;
 
-        this.unloadedThumbs = this.model.get('pictures').length;
+        var pictures = this.model.get('pictures');
+        var suffix = (pictures.length<10) ? '_t.jpg' : '_s.jpg';
+        this.surls = _.map(pictures, function(p) {
+                return p.url.replace(/.jpg$/, suffix);
+            });
 
         this.el = $(this.el);
         this.el.append($('<p>Loading images of US Census Tract '
                        +this.model.get('tractid')
                        +'...</p>')
           .addClass('loadtext'));
+        this.loadText = true;
         this.el.hide();
         $("#tract-pictures").append(this.el);
         
@@ -512,49 +519,41 @@ TractView = Backbone.View.extend({
         this.setRenderDistance(false, 0);
     },
 
-    onImgLoad: function(view, img) {
-        if (view === this) {
-            $(img).thumbPopup();
-            this.thumbs.push(img);
-            this.unloadedThumbs = this.unloadedThumbs-1;                
-        /*    if (this.unloadedThumbs == 0 || this.thumbs.length >= 1) {
-                $('.loadtext', this.el).hide();
-
-                var timer = 1000;
-                while (this.thumbs.length > 0) {
-                    $img = $(this.thumbs.shift());
-                    $(this.el).append($img);
-                    $img.hide();
-                    $img.fadeIn(timer);
-                    timer = timer + 50;
-                }
-            }*/
-
-            if (this.unloadedThumbs == 0) {
-                $('.loadtext', this.el).fadeOut(1500);
-
-                this.fadeInImages();
-            }
-
-        }
-    },
-    
-    fadeInImages: function() {
-        var img = this.thumbs.shift();
-        if (img !== undefined) {
+    showImg: function(view, img) {
+        if (this === view) {
             $img = $(img);
             this.el.append($img);
             $img.hide();
-            $img.fadeIn(100, this.fadeInImages);
+            $img.fadeIn(100);
+            $img.thumbPopup();
         }
     },
+
+    loadNextImg: function(view, img) {
+        if (this === view) {
+            var nextURL = this.surls.shift();
+            if (nextURL === undefined)      { return; }
+
+            var nextImg = new Image();
+            nextImg.src = nextURL;
+
+            $(nextImg).load(function() {
+               view.trigger('img:load', view, this); 
+            });
+
+
+        }
+    },
+
     // this function sets the img caching parameters for the View
     // and then renders it
     setRenderDistance: function(on, distance) {
         //console.debug(this.model.get('tractid'), on, distance);
+        /*
         if (this.on && (on == false)) {
             this.dumpDivs();
         }
+        */
         this.on = on;               //whether ANY img divs should be kept
 
         this.distance = distance;   //how many right and left of current 
@@ -573,23 +572,18 @@ TractView = Backbone.View.extend({
 
         if (!this.on)                           { return this; }
 
-        if (this.unloadedThumbs > 0) {
-            var pictures = this.model.get('pictures');
-            if (pictures.length == 0) {
-                this.el.html('<p>No pictures found for US Census Tract'+this.model.get('tractid')+'</p>');
-            }
-            for (var i=0; i<pictures.length; i++ ) {
-                var url = pictures[i].url;
-                var suffix = (pictures.length<10) ? '_t.jpg' : '_s.jpg';
-                var surl = url.replace(/.jpg$/, suffix);
-                var img = new Image;
-                img.src = surl;
-
-                var v = this;
-                $(img).load(function() {
-                   v.trigger('img:load', v, this); 
-                });
-            }
+        var pictures = this.model.get('pictures');
+        if (pictures.length == 0) {
+            this.el.html('<p>No pictures found for US Census Tract'+this.model.get('tractid')+'</p>');
+        }
+        else {
+            var firstImg = new Image();
+            firstImg.src = this.surls.shift();
+            var v = this;
+            $(firstImg).load(function() {
+               $('.loadtext:hidden', v.el).fadeOut(1500);
+               v.trigger('img:load', v, this); 
+            });
         }
 
         return this;
